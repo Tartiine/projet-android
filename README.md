@@ -15,7 +15,6 @@ Bienvenue sur le dépôt GitHub de notre application mobile Android éco-conçue
 
 ## Aperçu du projet
 
-(Incluez ici un résumé de ce qu'est l'application, pourquoi elle a été créée, et quels problèmes elle résout.)
 
 ## Caractéristiques
 
