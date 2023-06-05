@@ -1,7 +1,5 @@
 # ENSISAHub
 
-![ENSISA Logo]([https://upload.wikimedia.org/wikipedia/fr/c/c3/Logo_ensisa.svg)) 
-
 Bienvenue sur le dépôt GitHub de notre application mobile Android éco-conçue pour l'ENSISA. Notre application vise à améliorer la communication interne en fournissant une plateforme où les étudiants et le personnel peuvent partager du contenu.
 
 ## Table des matières
