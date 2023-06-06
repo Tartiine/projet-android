@@ -12,10 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.ensihub.Post
+import java.util.UUID
+import com.example.ensihub.back.Feed
+
 
 @Composable
 fun NewPostView() {
     val messageState = remember { mutableStateOf("") }
+    val feed = Feed()
 
     Column(
         modifier = Modifier
@@ -34,17 +39,18 @@ fun NewPostView() {
 
         Button(
             onClick = {
-                // Open the Post screen actualizing the post database
+                val newPost = Post(
+                    id = UUID.randomUUID().toString(),
+                    text = messageState.value,
+                    timestamp = System.currentTimeMillis(),
+                    author = "John Doe",  // Replace with the actual author's name or fetch from user information
+                    likesCount = 0  // Set the initial likes count as needed
+                )
+                feed.addPost(newPost)
             },
             modifier = Modifier.align(Alignment.End)
         ) {
             Text("Add Post")
         }
     }
-}
-
-@Preview
-@Composable
-fun NewPostViewPreview() {
-    NewPostView()
 }
