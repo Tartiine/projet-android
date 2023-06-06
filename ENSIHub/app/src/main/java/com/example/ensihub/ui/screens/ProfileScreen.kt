@@ -1,6 +1,7 @@
 package com.example.ensihub.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,20 +28,27 @@ val posts = listOf(
 )
 @Composable
 fun UserProfileScreen(user: User, posts: List<Post>) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = user.username,
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.h6,
-            color = Color.White
-        )
-        PostList(posts = posts)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+
+    )
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = user.username,
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.h6,
+                color = Color.White
+            )
+            PostList(posts = posts)
+        }
     }
-}
 
 @Composable
 fun PostList(posts: List<Post>) {
