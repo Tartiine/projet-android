@@ -15,9 +15,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.ensihub.Post
-import com.example.ensihub.Role
-import com.example.ensihub.User
+import com.example.ensihub.MainClasses.Post
+import com.example.ensihub.MainClasses.Role
+import com.example.ensihub.MainClasses.User
 
 
 val user = User("1", "joel_dion", "joel.dion@uha.fr", Role.USER)
