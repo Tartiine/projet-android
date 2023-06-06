@@ -6,8 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.ktx.firestore
 
 class EmailPasswordActivity : Activity() {
 
@@ -35,15 +37,36 @@ class EmailPasswordActivity : Activity() {
     }
     // [END on_start_check_user]
 
-    private fun createAccount(email: String, password: String) {
+    private fun createAccount(email: String, password: String, username : String) {
         // [START create_user_with_email]
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
-                    updateUI(user)
+                    val firebaseUser = auth.currentUser
+                    //Create the user profile with is username (ask in SignUp screen)
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(username)
+                        .build()
+                    //Update the user profile
+                    firebaseUser?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { task ->
+                            if(task.isSuccessful) {
+                                Log.d(TAG, "User profile updated !")
+                                val user = User(id = firebaseUser.uid, username, email, role = Role.USER)
+
+                                //Update the database with the user
+                                val db = Firebase.firestore
+                                val userMap = hashMapOf("id" to user.id, "name" to user.username, "email" to user.email, "role" to user.role.name)
+                                db.collection("users")
+                                    .document(user.id)
+                                    .set(userMap)
+                                    .addOnSuccessListener { Log.d(TAG, "User succesfully added") }
+                                    .addOnFailureListener { e -> Log.w(TAG, "Error, cannot add user")}
+                            }
+                        }
+                    updateUI(firebaseUser)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
