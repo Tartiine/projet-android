@@ -70,6 +70,17 @@ class Feed {
             }
     }
 
+    fun deletePost(post: Post){
+        db.collection("posts").document(post.id)
+            .delete()
+            .addOnSuccessListener{
+                Log.d(TAG, "Post deleted")
+            }
+            .addOnFailureListener{
+                Log.w(TAG, "Error in deleting the post")
+            }
+    }
+
     fun getData(): List<Post> {
         return this.posts
     }
