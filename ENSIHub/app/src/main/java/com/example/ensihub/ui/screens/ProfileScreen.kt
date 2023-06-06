@@ -1,5 +1,6 @@
 package com.example.ensihub.ui.screens
 
+import android.text.format.DateUtils
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.ensihub.MainClasses.Post
 import com.example.ensihub.MainClasses.Role
 import com.example.ensihub.MainClasses.User
+import androidx.compose.ui.unit.sp
 
 
 val user = User("1", "joel_dion", "joel.dion@uha.fr", Role.USER)
@@ -48,7 +50,7 @@ fun UserProfileScreen(user: User, posts: List<Post>) {
                     color = Color(0xFFFFA500),
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .size(width = 350.dp, height = 50.dp)
+                        .size(width = 350.dp, height = 60.dp)
                         .fillMaxWidth()
                 )
             }
@@ -77,26 +79,41 @@ fun PostList(posts: List<Post>) {
 fun PostItem2(post: Post) {
     Box(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(10.dp)
             .clip(shape = MaterialTheme.shapes.medium)
             .border(
                 border = BorderStroke(1.dp, Color.White),
                 shape = MaterialTheme.shapes.medium
             )
     ) {
-        Text(
-            text = post.text,
-            modifier = Modifier.padding(16.dp),
-            color = Color.White
-        )
+        Column {
+            Text(
+                text = post.text,
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = getTimeSincePost(post.timestamp),
+                color = Color.White,
+                fontSize = 12.sp)
+        }
     }
 }
 
+
+fun getTimeSincePost(timestamp: Long): String{
+    val now = System.currentTimeMillis()
+    val elapsedTime = now - timestamp
+    return DateUtils.getRelativeTimeSpanString(timestamp, now , DateUtils.MINUTE_IN_MILLIS).toString()
+}
+
+
 @Preview
 @Composable
-
 fun UserProfileScreenPreview(){
     UserProfileScreen(user, posts)
+
 
 }
 
