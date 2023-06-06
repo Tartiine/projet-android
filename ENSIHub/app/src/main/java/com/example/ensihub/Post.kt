@@ -7,8 +7,3 @@ data class Post (
     val author: String,
     val likesCount: Int,
 )
-
-fun deletePost(post: Post){
-
-}
-
