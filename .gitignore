@@ -129,7 +129,7 @@ test-results/
 *.iws
 
 # Firebase
-**/google-services.json
+#**/google-services.json
 
 # Generated Files
 bin/
