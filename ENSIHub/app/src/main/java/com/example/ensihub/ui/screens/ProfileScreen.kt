@@ -32,14 +32,26 @@ fun UserProfileScreen(user: User, posts: List<Post>) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-
-    )
-
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Your profile",
+                    style = MaterialTheme.typography.h4,
+                    color = Color(0xFFFFA500),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(width = 350.dp, height = 50.dp)
+                        .fillMaxWidth()
+                )
+            }
             Text(
                 text = user.username,
                 modifier = Modifier.padding(16.dp),
@@ -49,6 +61,8 @@ fun UserProfileScreen(user: User, posts: List<Post>) {
             PostList(posts = posts)
         }
     }
+}
+
 
 @Composable
 fun PostList(posts: List<Post>) {
