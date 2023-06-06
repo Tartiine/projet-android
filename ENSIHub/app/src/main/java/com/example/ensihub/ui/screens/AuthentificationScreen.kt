@@ -1,5 +1,6 @@
 package com.example.ensihub.ui.screens
 
+import android.annotation.SuppressLint
 import com.example.ensihub.R
 import android.os.Build
 import android.os.Bundle
@@ -21,6 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -59,7 +61,7 @@ class MainActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel? = null,
-                modifier: Modifier = Modifier,
+                @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
                 onNavToHomePage: () -> Unit,
                 onNavToSignUpPage: () -> Unit) {
     val loginUiState = loginViewModel?.loginUiState
@@ -77,7 +79,7 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
-            text = "???",
+            text = "Login",
             modifier = Modifier.padding(start = 8.dp),
             style = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
         )
@@ -86,7 +88,7 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
             Text(text = loginUiState?.loginError ?: "unknown error", color = Color.Red)
         }
 
-        TextField(
+        OutlinedTextField(
             value = loginUiState?.userName ?: "",
             onValueChange = {loginViewModel?.onPasswordChange(it)},
             leadingIcon = {
@@ -98,11 +100,11 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
             label = { Text("Enter your email") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(16.dp),
             isError = isError
         )
 
-        TextField(
+        OutlinedTextField(
             value = loginUiState?.password ?: "",
             onValueChange = { loginViewModel?.onPasswordChange(it)},
             leadingIcon = {
@@ -111,11 +113,11 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
                     contentDescription = null
                 )
             },
-            label = { Text("Enter your password") },
+            label = { Text(text = "Enter your password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(16.dp),
             isError = isError
         )
 
