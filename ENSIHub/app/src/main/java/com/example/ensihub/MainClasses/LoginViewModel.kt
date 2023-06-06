@@ -1,4 +1,4 @@
-package com.example.ensihub.login
+package com.example.ensihub.MainClasses
 
 import android.content.Context
 import android.widget.Toast
@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ensihub.data.AuthRepository
+import com.example.ensihub.MainClasses.AuthRepository
 import kotlinx.coroutines.launch
 
 class LoginViewModel(

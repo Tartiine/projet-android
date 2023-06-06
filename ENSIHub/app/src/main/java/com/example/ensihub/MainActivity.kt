@@ -12,15 +12,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ensihub.login.LoginViewModel
+import com.example.ensihub.MainClasses.Feed
+import com.example.ensihub.MainClasses.LoginViewModel
+import com.example.ensihub.MainClasses.Post
+import com.example.ensihub.ui.screens.MainFeed
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.screens.PostView
 import com.example.ensihub.ui.theme.ENSIHubTheme
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val feed = Feed()
+        setContent {
+            val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
+        }
 
         // Create a sample Post object
         val post = Post(
@@ -56,4 +65,12 @@ fun PostViewPreview() {
         likesCount = 5
     )
     PostView(post)
+}
+@Composable
+@RequiresApi(Build.VERSION_CODES.O)
+fun MyApp(feed : Feed, loginViewModel: LoginViewModel) {
+    MaterialTheme {
+        MainFeed(feed)
+        Navigation(loginViewModel = loginViewModel)
+    }
 }
