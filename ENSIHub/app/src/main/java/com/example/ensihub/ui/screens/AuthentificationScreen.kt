@@ -1,7 +1,6 @@
 package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
-import com.example.ensihub.R
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,19 +25,26 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ensihub.login.LoginViewModel
+import com.example.ensihub.MainClasses.LoginViewModel
+import com.example.ensihub.R
 import com.example.ensihub.ui.theme.ENSIHubTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,9 +54,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
             ENSIHubTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Navigation(loginViewModel = loginViewModel)
+                    var currentScreen by rememberSaveable { mutableStateOf("login") }
+                    when (currentScreen) {
+                        "login" -> LoginScreen(
+                            loginViewModel = loginViewModel,
+                            onNavToHomePage = { /* TODO navigate to home page */ },
+                            onNavToSignUpPage = { currentScreen = "signUp" }
+                        )
+                        "signUp" -> SignUpScreen(
+                            loginViewModel = loginViewModel,
+                            onNavToHomePage = { /* TODO navigate to home page */ },
+                            onNavToLoginPage = { currentScreen = "login" }
+                        )
+                    }
                 }
             }
         }
@@ -60,12 +77,14 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel? = null,
-                @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
-                onNavToHomePage: () -> Unit,
-                onNavToSignUpPage: () -> Unit) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel? = null,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    onNavToHomePage: () -> Unit,
+    onNavToSignUpPage: () -> Unit
+) {
     val loginUiState = loginViewModel?.loginUiState
-    val isError = loginUiState?.loginError != null
+    val isError = loginUiState?.value?.loginError != null
     val context = LocalContext.current
     Column(
         modifier = modifier
@@ -81,16 +100,16 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
         Text(
             text = "Login",
             modifier = Modifier.padding(start = 8.dp),
-            style = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp)
         )
 
-        if(isError){
-            Text(text = loginUiState?.loginError ?: "unknown error", color = Color.Red)
+        if (isError) {
+            Text(text = loginUiState?.value?.loginError ?: "unknown error", color = Color.Red)
         }
 
         OutlinedTextField(
-            value = loginUiState?.userName ?: "",
-            onValueChange = {loginViewModel?.onPasswordChange(it)},
+            value = loginUiState?.value?.userName ?: "",
+            onValueChange = { loginViewModel?.onUserNameChange(it) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -101,12 +120,19 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            isError = isError
+            isError = isError,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
         )
 
-        OutlinedTextField(
-            value = loginUiState?.password ?: "",
-            onValueChange = { loginViewModel?.onPasswordChange(it)},
+        TextField(
+            value = loginUiState?.value?.password ?: "",
+            onValueChange = { loginViewModel?.onPasswordChange(it) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
@@ -114,12 +140,21 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
                 )
             },
             label = { Text(text = "Enter your password") },
-            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            isError = isError
+            isError = isError,
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
         )
+
+
 
         Button(
             onClick = { loginViewModel?.loginUser(context) },
@@ -133,7 +168,7 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
         Text(
             text = "New Member?",
             modifier = Modifier.padding(start = 8.dp),
-            style = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp)
         )
 
         Button(
@@ -146,12 +181,12 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
         }
     }
 
-    if(loginUiState?.isLoading == true){
+    if (loginUiState?.value?.isLoading == true) {
         CircularProgressIndicator()
     }
 
-    LaunchedEffect(key1 = loginViewModel?.hasUser){
-        if(loginViewModel?.hasUser == true){
+    LaunchedEffect(key1 = loginViewModel?.hasUser) {
+        if (loginViewModel?.hasUser == true) {
             onNavToHomePage.invoke()
         }
     }
@@ -159,12 +194,14 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(loginViewModel: LoginViewModel? = null,
-                modifier: Modifier = Modifier,
-                onNavToHomePage: () -> Unit,
-                onNavToLoginPage: () -> Unit) {
+fun SignUpScreen(
+    loginViewModel: LoginViewModel? = null,
+    modifier: Modifier = Modifier,
+    onNavToHomePage: () -> Unit,
+    onNavToLoginPage: () -> Unit
+) {
     val loginUiState = loginViewModel?.loginUiState
-    val isError = loginUiState?.signUpError != null
+    val isError = loginUiState?.value?.signUpError != null
     val context = LocalContext.current
     Column(
         modifier = modifier
@@ -178,18 +215,18 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
-            text = "???",
+            text = "Sign Up",
             modifier = Modifier.padding(start = 8.dp),
-            style = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp)
         )
 
-        if(isError){
-            Text(text = loginUiState?.signUpError ?: "unknown error", color = Color.Red)
+        if (isError) {
+            Text(text = loginUiState?.value?.signUpError ?: "unknown error", color = Color.Red)
         }
 
         TextField(
-            value = loginUiState?.userNameSignUp ?: "",
-            onValueChange = {loginViewModel?.onPasswordSignUpChange(it)},
+            value = loginUiState?.value?.userNameSignUp ?: "",
+            onValueChange = { loginViewModel?.onUserNameSignUpChange(it) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -200,12 +237,13 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
-            isError = isError
+            isError = isError,
+            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = Color.Black)
         )
 
         TextField(
-            value = loginUiState?.passwordSignUp ?: "",
-            onValueChange = { loginViewModel?.onPasswordSignUpChange(it)},
+            value = loginUiState?.value?.passwordSignUp ?: "",
+            onValueChange = { loginViewModel?.onPasswordSignUpChange(it) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
@@ -217,12 +255,13 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            isError = isError
+            isError = isError,
+            colors = TextFieldDefaults.textFieldColors(textColor = Color.Black)
         )
 
         TextField(
-            value = loginUiState?.confirmPasswordSignUp ?: "",
-            onValueChange = { loginViewModel?.onConfirmPasswordSignUpChange(it)},
+            value = loginUiState?.value?.confirmPasswordSignUp ?: "",
+            onValueChange = { loginViewModel?.onConfirmPasswordSignUpChange(it) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
@@ -234,7 +273,8 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            isError = isError
+            isError = isError,
+            colors = TextFieldDefaults.textFieldColors(textColor = Color.Black)
         )
 
         Button(
@@ -249,7 +289,7 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
         Text(
             text = "Already have an Account?",
             modifier = Modifier.padding(start = 8.dp),
-            style = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp)
         )
 
         Button(
@@ -262,12 +302,12 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
         }
     }
 
-    if(loginUiState?.isLoading == true){
+    if (loginUiState?.value?.isLoading == true) {
         CircularProgressIndicator()
     }
 
-    LaunchedEffect(key1 = loginViewModel?.hasUser){
-        if(loginViewModel?.hasUser == true){
+    LaunchedEffect(key1 = loginViewModel?.hasUser) {
+        if (loginViewModel?.hasUser == true) {
             onNavToHomePage.invoke()
         }
     }
@@ -278,7 +318,7 @@ fun SignUpScreen(loginViewModel: LoginViewModel? = null,
 @Composable
 fun PrevLoginScreen() {
     ENSIHubTheme {
-        LoginScreen(onNavToHomePage = { /* TODO */}) {
+        LoginScreen(onNavToHomePage = { /* TODO */ }) {
 
         }
     }

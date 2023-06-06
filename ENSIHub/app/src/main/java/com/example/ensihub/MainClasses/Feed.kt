@@ -1,9 +1,8 @@
-package com.example.ensihub.back
+package com.example.ensihub.MainClasses
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.example.ensihub.Post
-import com.example.ensihub.login.LoginUiState
+import com.example.ensihub.MainClasses.Post
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -58,8 +57,8 @@ class Feed {
             }
     }
 
-    fun addPost(log: LoginUiState, post: Post) {
-        if (!log.isSuccessLogin) return
+    fun addPost(post: Post) {
+        //if (!log.isSuccessLogin) return
 
         db.collection("posts").add(post)
             .addOnSuccessListener {
