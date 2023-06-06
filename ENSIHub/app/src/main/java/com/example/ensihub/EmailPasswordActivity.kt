@@ -58,11 +58,10 @@ class EmailPasswordActivity : Activity() {
 
                                 //Update the database with the user
                                 val db = Firebase.firestore
-                                val userMap = hashMapOf("id" to user.id, "name" to user.username, "email" to user.email, "role" to user.role.name)
                                 db.collection("users")
                                     .document(user.id)
-                                    .set(userMap)
-                                    .addOnSuccessListener { Log.d(TAG, "User succesfully added") }
+                                    .set(user)
+                                    .addOnSuccessListener { Log.d(TAG, "User successfully added") }
                                     .addOnFailureListener { e -> Log.w(TAG, "Error, cannot add user")}
                             }
                         }
