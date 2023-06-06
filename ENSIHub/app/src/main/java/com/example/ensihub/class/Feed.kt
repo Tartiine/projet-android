@@ -3,7 +3,8 @@ package com.example.ensihub.back
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.ensihub.Post
-import com.google.firebase.firestore.Filter
+import com.example.ensihub.login.LoginUiState
+
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -57,7 +58,9 @@ class Feed {
             }
     }
 
-    fun addPost(post: Post) {
+    fun addPost(log: LoginUiState, post: Post) {
+        if (!log.isSuccessLogin) return
+
         db.collection("posts").add(post)
             .addOnSuccessListener {
                 Log.d(TAG, "Successfully sent post: $it")
@@ -67,12 +70,12 @@ class Feed {
             }
     }
 
-    fun getData(): MutableList<Post> {
+    fun getData(): List<Post> {
         return this.posts
     }
 
     fun search(key: String): List<Post> {
-        return this.posts.filter { p ->  p.id == key || p.text?.contains(key) == true }
+        return this.posts.filter { p ->  p.author.contains(key) || p.text.contains(key) }
     }
 
 }
