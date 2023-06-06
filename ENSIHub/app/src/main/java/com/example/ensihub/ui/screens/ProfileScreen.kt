@@ -54,13 +54,13 @@ fun UserProfileScreen(user: User, posts: List<Post>) {
 fun PostList(posts: List<Post>) {
     LazyColumn {
         items(posts) { post ->
-            PostItem(post = post)
+            PostItem2(post = post)
         }
     }
 }
 
 @Composable
-fun PostItem(post: Post) {
+fun PostItem2(post: Post) {
     Box(
         modifier = Modifier
             .padding(16.dp)
