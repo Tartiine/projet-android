@@ -13,7 +13,7 @@ class Feed {
     private var i: Long = 10
 
     init {
-        db.collection("posts").limit(10).get()
+        db.collection("posts").limit(10).orderBy("timestamp").get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -28,7 +28,7 @@ class Feed {
 
     fun loadMore() {
         i += 10
-        db.collection("posts").limit(i).whereNotIn("id", posts).get()
+        db.collection("posts").limit(i).whereNotIn("id", posts).orderBy("timestamp").get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -44,7 +44,7 @@ class Feed {
     fun reload() {
         i = 10
         posts.clear()
-        db.collection("posts").limit(i).get()
+        db.collection("posts").limit(i).orderBy("timestamp").get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
