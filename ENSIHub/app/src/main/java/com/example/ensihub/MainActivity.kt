@@ -12,8 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ensihub.back.Feed
-import com.example.ensihub.login.LoginViewModel
+import com.example.ensihub.MainClasses.Feed
+import com.example.ensihub.MainClasses.LoginViewModel
+import com.example.ensihub.MainClasses.Post
 import com.example.ensihub.ui.screens.MainFeed
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.screens.PostView

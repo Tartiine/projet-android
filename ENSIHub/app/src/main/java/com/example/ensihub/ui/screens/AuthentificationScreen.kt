@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ensihub.login.LoginViewModel
+import com.example.ensihub.MainClasses.LoginViewModel
 import com.example.ensihub.ui.theme.ENSIHubTheme
 
 class MainActivity : ComponentActivity() {
@@ -104,9 +104,9 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
             isError = isError
         )
 
-        OutlinedTextField(
+        TextField(
             value = loginUiState?.password ?: "",
-            onValueChange = { loginViewModel?.onPasswordChange(it)},
+            onValueChange = { loginViewModel?.onPasswordChange(it) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
@@ -114,12 +114,13 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null,
                 )
             },
             label = { Text(text = "Enter your password") },
-            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            isError = isError
+            isError = isError,
+            visualTransformation = PasswordVisualTransformation()
         )
+
 
         Button(
             onClick = { loginViewModel?.loginUser(context) },
