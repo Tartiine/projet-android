@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "230096343254",
+    "project_id": "ensihub",
+    "storage_bucket": "ensihub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230096343254:android:ec54d3cc53274e486b3977",
+        "android_client_info": {
+          "package_name": "com.example.ensihub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230096343254-l1ggm4flscssves2v57g6t8n9r7cci9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ensihub",
+            "certificate_hash": "fa467ed1fb63a363e01466c3f358a5e9b3464d69"
+          }
+        },
+        {
+          "client_id": "230096343254-nld47kv3est0d8ui41n9vsigict45cds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOVL7b2Dt4RikgHCpsZhF2t1KUTqBCG-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230096343254-icutau3e2pj06u5u6kvo86dqbh3srj45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
