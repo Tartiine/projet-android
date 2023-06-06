@@ -3,42 +3,39 @@ package com.example.ensihub
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.ensihub.ui.theme.ENSIHubTheme
+import com.example.ensihub.ui.screens.PostView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Create a sample Post object
+        val post = Post(
+            id = "123",
+            text = "Yo la street.",
+            timestamp = System.currentTimeMillis(),
+            author = "Marian chef eco-conception",
+            likesCount = 5
+        )
+
+        // Call the PostView function to display the Post preview
         setContent {
-            ENSIHubTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    AuthenticationScreen()
-                }
-            }
+            PostView(post)
         }
     }
 }
 
+@Preview
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    // Your greeting UI code here
-}
-
-@Composable
-fun AuthenticationScreen() {
-    Greeting("Android")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AuthenticationScreenPreview() {
-    ENSIHubTheme {
-        AuthenticationScreen()
-    }
+fun PostViewPreview() {
+    val post = Post(
+        id = "123",
+        text = "Yo la street.",
+        timestamp = System.currentTimeMillis(),
+        author = "Marian chef eco-conception",
+        likesCount = 5
+    )
+    PostView(post)
 }
