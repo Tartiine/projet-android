@@ -128,6 +128,20 @@ class Feed {
             }
     }
 
+
+    fun updateCommText(postId : String, comm: Comment, newText: String){
+        db.collection("posts").document(postId).collection("comments").document(comm.id)
+            .update(comm.text, newText)
+            .addOnSuccessListener {
+            println("Comment updated")
+             }
+            .addOnFailureListener{
+                println("error in updating the comment")
+
+            }
+    }
+
+
     fun deleteComment(postId : String, commentId : String) {
         val post = posts.find { it.id == postId}
         if (post != null) {
