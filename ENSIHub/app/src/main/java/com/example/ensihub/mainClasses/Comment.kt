@@ -1,6 +1,4 @@
-package com.example.ensihub.MainClasses
-
-import java.sql.Timestamp
+package com.example.ensihub.mainClasses
 
 data class Comment (
     val id : String,

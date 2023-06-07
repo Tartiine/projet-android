@@ -1,4 +1,4 @@
-package com.example.ensihub.MainClasses
+package com.example.ensihub.mainClasses
 
 enum class Role {
     ADMIN, MODERATOR, USER

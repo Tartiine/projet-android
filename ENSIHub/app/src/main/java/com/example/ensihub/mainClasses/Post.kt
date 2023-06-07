@@ -1,4 +1,4 @@
-package com.example.ensihub.MainClasses
+package com.example.ensihub.mainClasses
 
 data class Post (
     val id: String,

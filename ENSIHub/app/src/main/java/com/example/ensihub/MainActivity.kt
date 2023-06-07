@@ -10,28 +10,24 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.ensihub.MainClasses.Feed
-import com.example.ensihub.MainClasses.LoginViewModel
-import com.example.ensihub.MainClasses.Post
-import com.example.ensihub.ui.screens.MainFeed
+import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.screens.Navigation
-import com.example.ensihub.ui.screens.PostView
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import android.Manifest
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
@@ -134,10 +130,10 @@ class MainActivity : ComponentActivity() {
                     val storage = Firebase.storage
                     val storageRef = storage.reference.child("images/${selectedImageUri?.lastPathSegment}")
                     val uploadTask = storageRef.putFile(selectedImageUri!!)
-                    uploadTask.addOnFailureListener {
-
+                    uploadTask.addOnFailureListener { exception ->
+                        Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
-
+                        Log.d(TAG, "Upload successfully")
                     }
                 }
                 REQUEST_IMAGE_SELECTION -> {
@@ -148,10 +144,10 @@ class MainActivity : ComponentActivity() {
                     val storage = Firebase.storage
                     val storageRef = storage.reference.child("images/${UUID.randomUUID()}.jpg")
                     val uploadTask = storageRef.putBytes(data)
-                    uploadTask.addOnFailureListener {
-
+                    uploadTask.addOnFailureListener { exception ->
+                        Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
-
+                        Log.d(TAG, "Upload successfully")
                     }
                 }
             }
@@ -160,7 +156,7 @@ class MainActivity : ComponentActivity() {
 
 }
 
-
+/* Test Post
 @Preview
 @Composable
 fun PostViewPreview() {
@@ -173,6 +169,6 @@ fun PostViewPreview() {
     )
     PostView(post)
 }
-
+*/
 
 
