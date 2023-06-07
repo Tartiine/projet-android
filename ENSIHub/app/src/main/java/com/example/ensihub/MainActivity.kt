@@ -169,6 +169,12 @@ fun PostViewPreview() {
     )
     PostView(post)
 }
+
+Button(onClick = { yourViewModel.showImagePicker() }) {
+    Text("Import an image")
+}
+
 */
+
 
 
