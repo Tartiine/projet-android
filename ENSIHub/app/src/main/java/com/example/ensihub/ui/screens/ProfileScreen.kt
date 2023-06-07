@@ -35,6 +35,7 @@ fun UserProfileScreen(user: User, posts: List<Post>) {
             .fillMaxSize()
             .background(Color.Black)
     ) {
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
