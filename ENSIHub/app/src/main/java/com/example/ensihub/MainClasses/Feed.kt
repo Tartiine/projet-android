@@ -1,24 +1,28 @@
-package com.example.ensihub.MainClasses
+package com.example.ensihub.back
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.ensihub.MainClasses.Comment
 import com.example.ensihub.MainClasses.Post
-
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class Feed {
     private val posts = mutableListOf<Post>()
+    private val comments = mutableMapOf<String, MutableList<Comment>>()
     private val db = Firebase.firestore
     private var i: Long = 10
 
     init {
-        db.collection("posts").limit(10).orderBy("timestamp").get()
+        db.collection("posts").limit(10).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val data = document.data
-                    posts.add(Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int))
+                    val post = Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int)
+                    posts.add(post)
+                    loadComments(post)
                 }
             }
             .addOnFailureListener { exception ->
@@ -28,7 +32,7 @@ class Feed {
 
     fun loadMore() {
         i += 10
-        db.collection("posts").limit(i).whereNotIn("id", posts).orderBy("timestamp").get()
+        db.collection("posts").limit(i).whereNotIn("id", posts).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -41,15 +45,34 @@ class Feed {
             }
     }
 
+    fun loadComments(post : Post) {
+        db.collection("posts").document(post.id).collection("comments").limit(10).get()
+            .addOnSuccessListener { result ->
+                val postComments = mutableListOf<Comment>()
+                for (document in result) {
+                    val data = document.data
+                    val comment = Comment(data["id"] as String, data["text"] as String, data["author"] as String, data["timestamp"] as Long, data["likesCount"] as Int)
+                    postComments.add(comment)
+                }
+                comments[post.id] = postComments
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting comments.", exception)
+            }
+    }
+
     fun reload() {
         i = 10
         posts.clear()
-        db.collection("posts").limit(i).orderBy("timestamp").get()
+        comments.clear()
+        db.collection("posts").limit(i).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val data = document.data
-                    posts.add(Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int))
+                    val post = Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int)
+                    posts.add(post)
+                    loadComments(post)
                 }
             }
             .addOnFailureListener { exception ->
@@ -58,8 +81,6 @@ class Feed {
     }
 
     fun addPost(post: Post) {
-        //if (!log.isSuccessLogin) return
-
         db.collection("posts").add(post)
             .addOnSuccessListener {
                 Log.d(TAG, "Successfully sent post: $it")
@@ -69,7 +90,22 @@ class Feed {
             }
     }
 
-    fun deletePost(post: Post){
+    fun addComment(postId : String, comment : Comment) {
+        val post = posts.find {it.id == postId}
+        if(post != null) {
+            //Update the database with the commented post, if the post exist
+            db.collection("posts").document(postId).collection("comments").add(comment)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Success : $it")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error", e)
+                }
+        }
+    }
+
+
+    fun deletePost(post:Post){
         db.collection("posts").document(post.id)
             .delete()
             .addOnSuccessListener{
@@ -80,12 +116,30 @@ class Feed {
             }
     }
 
-    fun getData(): List<Post> {
+    fun deleteComment(postId : String, commentId : String) {
+        val post = posts.find { it.id == postId}
+        if (post != null) {
+            db.collection("posts").document(postId).collection("comments").document(commentId).delete()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Comment deleted")
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Cannot deleting the comment")
+                }
+        }
+    }
+
+    fun getData(): MutableList<Post> {
         return this.posts
     }
 
+    fun getComments(postId : String) : MutableList<Comment>? {
+        return comments[postId]
+    }
+
     fun search(key: String): List<Post> {
-        return this.posts.filter { p ->  p.author.contains(key) || p.text.contains(key) }
+        return this.posts.filter { p ->  p.id == key || p.text?.contains(key) == true }
     }
 
 }
+
