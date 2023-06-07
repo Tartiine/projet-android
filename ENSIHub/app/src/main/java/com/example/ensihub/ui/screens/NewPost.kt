@@ -11,9 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.ensihub.MainClasses.Post
+import com.example.ensihub.mainClasses.Post
 import java.util.UUID
-import com.example.ensihub.MainClasses.Feed
+import com.example.ensihub.mainClasses.Feed
 
 
 @Composable

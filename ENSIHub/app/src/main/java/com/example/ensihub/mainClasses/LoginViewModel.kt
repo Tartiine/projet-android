@@ -1,4 +1,4 @@
-package com.example.ensihub.MainClasses
+package com.example.ensihub.mainClasses
 
 import android.content.Context
 import android.util.Log
@@ -7,7 +7,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ensihub.MainClasses.AuthRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
@@ -17,6 +18,12 @@ class LoginViewModel(
     val currentUser = repository.currentUser
     val userName: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> = mutableStateOf("")
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> get() = _isLoggedIn
+    init {
+        _isLoggedIn.value = repository.hasUser()
+    }
+
     val hasUser:Boolean
         get() = repository.hasUser()
 
