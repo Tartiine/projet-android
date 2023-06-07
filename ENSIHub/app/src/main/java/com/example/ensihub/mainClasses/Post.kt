@@ -5,6 +5,6 @@ data class Post (
     val text: String,
     val timestamp: Long,
     val author: String,
-    val likesCount: Int,
+    var likesCount: Int,
 )
 

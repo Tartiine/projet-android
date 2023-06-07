@@ -2,6 +2,7 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.ensihub.MainClasses.Comment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -125,6 +126,19 @@ class Feed {
             }
     }
 
+    fun likePost(post: Post){
+        val postRef = db.collection("posts").document(post.id)
+        val updateData = hashMapOf<String, Any>(
+            "likesCount" to post.likesCount + 1)
+        postRef.update(updateData)
+            .addOnSuccessListener {
+                println("+1 like")
+            }
+            .addOnFailureListener { e ->
+                println("Error")
+            }
+    }
+
 
     fun updateCommText(postId : String, comm: Comment, newText: String){
         db.collection("posts").document(postId).collection("comments").document(comm.id)
@@ -163,6 +177,8 @@ class Feed {
     fun search(key: String): List<Post> {
         return this.posts.filter { p ->  p.id == key || p.text?.contains(key) == true }
     }
+
+
 
 }
 
