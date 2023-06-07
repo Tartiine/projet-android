@@ -25,10 +25,26 @@ import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.screens.PostView
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import android.Manifest
+import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
+import java.util.UUID
+
 
 
 class MainActivity : ComponentActivity() {
     private val PERMISSION_REQUEST_CODE = 1
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_IMAGE_SELECTION = 1
+
+
     @SuppressLint("UnrememberedMutableState")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +91,73 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    fun showImagePicker() {
+        val items = arrayOf<CharSequence>("Take photo", "Import from Gallery", "Cancel")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Post Photo")
+        builder.setItems(items) { dialog, item ->
+            when {
+                items[item] == "Take photo" -> {
+                    val takePhoto = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    try {
+                        startActivityForResult(takePhoto, REQUEST_IMAGE_CAPTURE)
+                    } catch(e : ActivityNotFoundException) {
+                        //Cannot access to the camera
+                    }
+                }
+                items[item] == "Import from Gallery" -> {
+                    val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    try {
+                        startActivityForResult(pickPhoto, REQUEST_IMAGE_SELECTION)
+                    } catch(e : ActivityNotFoundException) {
+                        //Cannot access to the gallery
+                    }
+                }
+                items[item] == "Cancel" -> dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
+    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK) {
+            when(requestCode) {
+                REQUEST_IMAGE_CAPTURE -> {
+                    val selectedImageUri : Uri? = data?.data
+                    val imageStream = contentResolver.openInputStream(selectedImageUri!!)
+                    val selectedImage = BitmapFactory.decodeStream(imageStream)
+                    val photoArray = ByteArrayOutputStream()
+                    selectedImage.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
+                    val data = photoArray.toByteArray()
+                    val storage = Firebase.storage
+                    val storageRef = storage.reference.child("images/${selectedImageUri?.lastPathSegment}")
+                    val uploadTask = storageRef.putFile(selectedImageUri!!)
+                    uploadTask.addOnFailureListener {
+
+                    }.addOnSuccessListener {
+
+                    }
+                }
+                REQUEST_IMAGE_SELECTION -> {
+                    val photo : Bitmap = data?.extras?.get("data") as Bitmap
+                    val photoArray = ByteArrayOutputStream()
+                    photo.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
+                    val data = photoArray.toByteArray()
+                    val storage = Firebase.storage
+                    val storageRef = storage.reference.child("images/${UUID.randomUUID()}.jpg")
+                    val uploadTask = storageRef.putBytes(data)
+                    uploadTask.addOnFailureListener {
+
+                    }.addOnSuccessListener {
+
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
