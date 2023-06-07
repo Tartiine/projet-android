@@ -65,14 +65,10 @@ fun Navigation(
             ) {
                 navController.navigate(LoginRoutes.SignIn.name)
             }
-
         }
 
         composable(route = HomeRoutes.Home.name) {
-            Home()
+            HomeScreen()
         }
-
     }
-
-
 }

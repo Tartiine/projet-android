@@ -29,7 +29,7 @@ val posts = listOf(
     Post("3", "wsh Sofia", System.currentTimeMillis(), user.id, 3)
 )
 @Composable
-fun UserProfileScreen(user: User, posts: List<Post>) {
+fun UserProfileScreen(user: User) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,12 +55,11 @@ fun UserProfileScreen(user: User, posts: List<Post>) {
                 )
             }
             Text(
-                text = user.username,
+                text = "jj",
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.h6,
                 color = Color.White
             )
-            PostList(posts = posts)
         }
     }
 }
@@ -113,8 +112,6 @@ fun getTimeSincePost(timestamp: Long): String{
 @Preview
 @Composable
 fun UserProfileScreenPreview(){
-    UserProfileScreen(user, posts)
-
-
+    UserProfileScreen(user)
 }
 
