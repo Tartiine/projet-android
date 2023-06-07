@@ -1,5 +1,7 @@
 package com.example.ensihub.ui.screens
 
+import android.content.Context
+import android.widget.NumberPicker
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +50,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SettingsView(user: User) {
-    var popupControl = remember {
+    val popupControl = remember {
         mutableStateOf(false)
     }
     Box(
@@ -69,6 +71,9 @@ fun SettingsView(user: User) {
             SettingsGroup(name = "About") {
                 SettingsTextComp(icon = Icons.Filled.Person, name = "test")
                 SettingsTextComp(icon = Icons.Filled.Build, name = "Build")
+                Row {
+
+                }
             }
             Button (
                 shape = RoundedCornerShape(10.dp),
@@ -100,7 +105,7 @@ fun SettingsView(user: User) {
                 color = Color(0xFF, 0x99, 0x02 )
             )
             Text(
-                text = "v1.0.0",
+                text = "v0.1.0",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(10.dp),
                 color = Color.White
