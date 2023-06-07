@@ -74,7 +74,7 @@ class LoginViewModel(
                 loginUiState.value.passwordSignUp
             ){ isSuccessful ->
                 if(isSuccessful){
-                    Toast.makeText(context, "Success Login", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Please verify your Email !", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = true)
 
                 }else{
