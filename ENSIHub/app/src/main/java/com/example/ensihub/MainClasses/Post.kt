@@ -7,3 +7,4 @@ data class Post (
     val author: String,
     val likesCount: Int,
 )
+
