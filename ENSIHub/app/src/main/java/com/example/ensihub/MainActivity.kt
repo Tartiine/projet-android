@@ -10,19 +10,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.ensihub.MainClasses.Feed
-import com.example.ensihub.MainClasses.LoginViewModel
-import com.example.ensihub.MainClasses.Post
-import com.example.ensihub.ui.screens.MainFeed
+import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.screens.Navigation
-import com.example.ensihub.ui.screens.PostView
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import android.Manifest
 import android.app.AlertDialog
@@ -162,7 +156,7 @@ class MainActivity : ComponentActivity() {
 
 }
 
-
+/* Test Post
 @Preview
 @Composable
 fun PostViewPreview() {
@@ -175,6 +169,6 @@ fun PostViewPreview() {
     )
     PostView(post)
 }
-
+*/
 
 
