@@ -30,38 +30,45 @@ fun Navigation(
 ){
     NavHost(navController = navController, startDestination = LoginRoutes.Signin.name){
         composable(route = LoginRoutes.Signin.name){
-            LoginScreen(onNavToHomePage = {
-                navController.navigate(HomeRoutes.Home.name){
-                    launchSingleTop = true
-                    popUpTo(LoginRoutes.Signin.name){
-                        inclusive = true
+            LoginScreen(
+                onNavToHomePage = {
+                    navController.navigate(HomeRoutes.Home.name){
+                        launchSingleTop = true
+                        popUpTo(LoginRoutes.Signin.name){
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavToSignUpPage = {
+                    navController.navigate(LoginRoutes.Signup.name){
+                        launchSingleTop = true
+                        popUpTo(LoginRoutes.Signin.name){
+                            inclusive = true
+                        }
                     }
                 }
-            }) {
-                navController.navigate(LoginRoutes.Signup.name){
-                    launchSingleTop = true
-                    popUpTo(LoginRoutes.Signin.name){
-                        inclusive = true
-                    }
-                }
-            }
-
+            )
         }
 
         composable(route = LoginRoutes.Signup.name) {
-            SignUpScreen(onNavToHomePage = {
-                navController.navigate(HomeRoutes.Home.name) {
-                    popUpTo(LoginRoutes.Signup.name) {
-                        inclusive = true
+            SignUpScreen(
+                onNavToHomePage = {
+                    navController.navigate(HomeRoutes.Home.name) {
+                        popUpTo(LoginRoutes.Signup.name) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavToLoginPage = {
+                    navController.navigate(LoginRoutes.Signin.name) {
+                        popUpTo(LoginRoutes.Signup.name) {
+                            inclusive = true
+                        }
                     }
                 }
-            }) {
-                navController.navigate(LoginRoutes.Signin.name) {
-                    popUpTo(LoginRoutes.Signup.name) {
-                    }
-                }
-            }
+            )
         }
+
 
         composable(route = HomeRoutes.Home.name){
             Home()

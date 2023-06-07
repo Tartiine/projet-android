@@ -1,7 +1,11 @@
 package com.example.ensihub.MainClasses
 
+import java.sql.Timestamp
+
 data class Comment (
     val id : String,
-    val authorId : String,
-    var content : String,
+    val text : String,
+    val author : String,
+    var timestamp: Long,
+    val likesCount: Int,
 )

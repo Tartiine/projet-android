@@ -10,20 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.MainClasses.Feed
 import com.example.ensihub.MainClasses.LoginViewModel
 import com.example.ensihub.MainClasses.Post
 import com.example.ensihub.ui.screens.MainFeed
 import com.example.ensihub.ui.screens.Navigation
-import com.example.ensihub.ui.screens.LoginScreen
 import com.example.ensihub.ui.screens.PostView
-import com.example.ensihub.ui.screens.SignUpScreen
 import com.example.ensihub.ui.theme.ENSIHubTheme
 
 
@@ -33,32 +29,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val feed = Feed()
-
         setContent {
             val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
+            val navController = rememberNavController()
+
             ENSIHubTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    var currentScreen by mutableStateOf("login")
-                    when (currentScreen) {
-                        "login" -> LoginScreen(
-                            loginViewModel = loginViewModel,
-                            onNavToHomePage = { currentScreen = "home" },
-                            onNavToSignUpPage = { currentScreen = "signUp" }
-                        )
-                        "signUp" -> SignUpScreen(
-                            loginViewModel = loginViewModel,
-                            onNavToHomePage = { currentScreen = "home" },
-                            onNavToLoginPage = { currentScreen = "login" }
-                        )
-                        "home" -> MyApp(feed = feed, loginViewModel = loginViewModel)
-                    }
+                    Navigation(navController = navController, loginViewModel = loginViewModel)
                 }
             }
         }
     }
 }
+
 
 @Preview
 @Composable

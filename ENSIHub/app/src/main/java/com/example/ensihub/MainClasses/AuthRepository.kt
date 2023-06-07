@@ -25,7 +25,10 @@ class AuthRepository {
             .createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{
                 if(it.isSuccessful){
-                    onComplete.invoke(true)
+                    currentUser?.sendEmailVerification()
+                        ?.addOnSuccessListener {
+                            onComplete.invoke(true)
+                        }
                 }else{
                     onComplete.invoke(false)
                 }
@@ -41,7 +44,8 @@ class AuthRepository {
             .signInWithEmailAndPassword(email,password)
             .addOnCompleteListener{
                 if(it.isSuccessful){
-                    onComplete.invoke(true)
+                    if(currentUser?.isEmailVerified == true)
+                        onComplete.invoke(true)
                 }else{
                     onComplete.invoke(false)
                 }
