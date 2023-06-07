@@ -1,4 +1,4 @@
-package com.example.ensihub.data
+package com.example.ensihub.MainClasses
 
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
