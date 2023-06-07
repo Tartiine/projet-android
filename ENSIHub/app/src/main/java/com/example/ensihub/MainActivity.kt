@@ -56,11 +56,5 @@ fun PostViewPreview() {
     PostView(post)
 }
 
-@Composable
-@RequiresApi(Build.VERSION_CODES.O)
-fun MyApp(feed: Feed, loginViewModel: LoginViewModel) {
-    MaterialTheme {
-        MainFeed(feed)
-        Navigation(loginViewModel = loginViewModel)
-    }
-}
+
+
