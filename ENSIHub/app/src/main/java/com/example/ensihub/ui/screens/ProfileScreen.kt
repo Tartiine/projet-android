@@ -91,12 +91,13 @@ fun PostItem2(post: Post) {
                 text = post.text,
                 color = Color.White,
                 fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(8.dp)
             )
             Text(
                 text = getTimeSincePost(post.timestamp),
                 color = Color.White,
-                fontSize = 12.sp)
+                fontSize = 12.sp,
+                modifier = Modifier.padding(8.dp))
         }
     }
 }
