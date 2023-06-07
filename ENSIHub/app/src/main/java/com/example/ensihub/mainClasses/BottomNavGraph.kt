@@ -1,4 +1,4 @@
-package com.example.ensihub.MainClasses
+package com.example.ensihub.mainClasses
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -18,7 +18,7 @@ fun BottomNavGraph(navController: NavHostController) {
         startDestination = BottomBarScreen.Home.route
     ) {
         composable(route = BottomBarScreen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(route = BottomBarScreen.Profile.route) {
             UserProfileScreen(user)

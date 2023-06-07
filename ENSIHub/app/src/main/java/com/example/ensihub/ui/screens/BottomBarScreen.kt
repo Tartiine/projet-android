@@ -1,5 +1,6 @@
 package com.example.ensihub.ui.screens
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
@@ -10,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -41,7 +43,9 @@ sealed class BottomBarScreen(
 
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
-        BottomNavigation {
+        BottomNavigation(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
@@ -75,12 +79,12 @@ sealed class BottomBarScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewBottomNavigationBar() {
     // Create a dummy NavHostController for preview
     val navController = rememberNavController()
 
-    // Call the BottomNavigationBar function with the dummy NavHostController
-    BottomBarScreen.Home.BottomNavigationBar(navController)
+    // Wrap the BottomNavigationBar with a container to position it at the bottom
+    BottomBarScreen.Home.BottomNavigationBar(navController = navController)
 }

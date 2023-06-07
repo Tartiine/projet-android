@@ -16,9 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.ensihub.MainClasses.Post
-import com.example.ensihub.MainClasses.Role
-import com.example.ensihub.MainClasses.User
+import com.example.ensihub.mainClasses.Post
+import com.example.ensihub.mainClasses.Role
+import com.example.ensihub.mainClasses.User
 import androidx.compose.ui.unit.sp
 
 
@@ -56,7 +56,7 @@ fun UserProfileScreen(user: User) {
                 )
             }
             Text(
-                text = "jj",
+                text = "coucou c mwa",
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.h6,
                 color = Color.White
