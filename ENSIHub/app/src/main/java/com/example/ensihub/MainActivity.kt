@@ -27,11 +27,13 @@ import com.example.ensihub.ui.theme.ENSIHubTheme
 import android.Manifest
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
@@ -134,10 +136,10 @@ class MainActivity : ComponentActivity() {
                     val storage = Firebase.storage
                     val storageRef = storage.reference.child("images/${selectedImageUri?.lastPathSegment}")
                     val uploadTask = storageRef.putFile(selectedImageUri!!)
-                    uploadTask.addOnFailureListener {
-
+                    uploadTask.addOnFailureListener { exception ->
+                        Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
-
+                        Log.d(TAG, "Upload successfully")
                     }
                 }
                 REQUEST_IMAGE_SELECTION -> {
@@ -148,10 +150,10 @@ class MainActivity : ComponentActivity() {
                     val storage = Firebase.storage
                     val storageRef = storage.reference.child("images/${UUID.randomUUID()}.jpg")
                     val uploadTask = storageRef.putBytes(data)
-                    uploadTask.addOnFailureListener {
-
+                    uploadTask.addOnFailureListener { exception ->
+                        Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
-
+                        Log.d(TAG, "Upload successfully")
                     }
                 }
             }
