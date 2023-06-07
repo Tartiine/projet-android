@@ -1,4 +1,4 @@
-package com.example.ensihub.back
+package com.example.ensihub.MainClasses
 
 import android.content.ContentValues.TAG
 import android.util.Log
