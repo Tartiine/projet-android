@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,32 +49,6 @@ import com.example.ensihub.MainClasses.LoginViewModel
 import com.example.ensihub.R
 import com.example.ensihub.ui.theme.ENSIHubTheme
 
-class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
-            ENSIHubTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    var currentScreen by rememberSaveable { mutableStateOf("login") }
-                    when (currentScreen) {
-                        "login" -> LoginScreen(
-                            loginViewModel = loginViewModel,
-                            onNavToHomePage = { /* TODO navigate to home page */ },
-                            onNavToSignUpPage = { currentScreen = "signUp" }
-                        )
-                        "signUp" -> SignUpScreen(
-                            loginViewModel = loginViewModel,
-                            onNavToHomePage = { /* TODO navigate to home page */ },
-                            onNavToLoginPage = { currentScreen = "login" }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -81,7 +57,8 @@ fun LoginScreen(
     loginViewModel: LoginViewModel? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     onNavToHomePage: () -> Unit,
-    onNavToSignUpPage: () -> Unit
+    onNavToSignUpPage: () -> Unit,
+//  onNavToForgotPasswordPage: () -> Unit
 ) {
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.value?.loginError != null
@@ -179,6 +156,12 @@ fun LoginScreen(
         ) {
             Text(text = "Sign Up")
         }
+
+//        ClickableText(
+//            text = AnnotatedString("Forgot Password?"),
+//            onClick = { onNavToForgotPasswordPage.invoke() },
+//            style = TextStyle(color = Color.White)
+//        )
     }
 
     if (loginUiState?.value?.isLoading == true) {
@@ -312,17 +295,89 @@ fun SignUpScreen(
         }
     }
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ForgotPasswordScreen(
+    loginViewModel: LoginViewModel? = null,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    onNavToLoginPage: () -> Unit,
+    onNavToForgotPasswordPage: () -> Unit
+) {
+    val loginUiState = loginViewModel?.loginUiState
+    val isError = loginUiState?.value?.loginError != null
+    val context = LocalContext.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = Color.DarkGray),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "APPLOGO",
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        Text(
+            text = "Forgot Password",
+            modifier = Modifier.padding(start = 8.dp),
+            style = TextStyle(fontSize = 16.sp)
+        )
+
+        if (isError) {
+            Text(text = loginUiState?.value?.loginError ?: "unknown error", color = Color.Red)
+        }
+
+        OutlinedTextField(
+            value = loginUiState?.value?.userName ?: "",
+            onValueChange = { loginViewModel?.onUserNameChange(it) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null
+                )
+            },
+            label = { Text("Enter your email") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            isError = isError,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
+        )
+
+
+        Button(
+            onClick = { loginViewModel?.loginUser(context) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Reset Password")
+        }
+
+    }
+
+    if (loginUiState?.value?.isLoading == true) {
+        CircularProgressIndicator()
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
 @Composable
 fun PrevLoginScreen() {
     ENSIHubTheme {
-        LoginScreen(onNavToHomePage = { /* TODO */ }) {
+        LoginScreen(onNavToHomePage = { /*TODO*/ }) {
+        }
 
         }
-    }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)

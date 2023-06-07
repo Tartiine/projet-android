@@ -12,8 +12,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.MainClasses.LoginViewModel
 
 enum class LoginRoutes{
-    Signup,
-    Signin
+    SignUp,
+    SignIn
 }
 
 enum class HomeRoutes{
@@ -26,53 +26,53 @@ enum class HomeRoutes{
 @Composable
 fun Navigation(
     navController: NavHostController = rememberNavController(),
-    loginViewModel: LoginViewModel
-){
-    NavHost(navController = navController, startDestination = LoginRoutes.Signin.name){
-        composable(route = LoginRoutes.Signin.name){
-            LoginScreen(
-                onNavToHomePage = {
-                    navController.navigate(HomeRoutes.Home.name){
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.Signin.name){
-                            inclusive = true
-                        }
-                    }
-                },
-                onNavToSignUpPage = {
-                    navController.navigate(LoginRoutes.Signup.name){
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.Signin.name){
-                            inclusive = true
-                        }
+    loginViewModel: LoginViewModel,
+) {
+    NavHost(
+        navController = navController,
+        startDestination = LoginRoutes.SignIn.name
+    ) {
+        composable(route = LoginRoutes.SignIn.name) {
+            LoginScreen(onNavToHomePage = {
+                navController.navigate(HomeRoutes.Home.name) {
+                    launchSingleTop = true
+                    popUpTo(route = LoginRoutes.SignIn.name) {
+                        inclusive = true
                     }
                 }
-            )
-        }
+            },
+                loginViewModel = loginViewModel
 
-        composable(route = LoginRoutes.Signup.name) {
-            SignUpScreen(
-                onNavToHomePage = {
-                    navController.navigate(HomeRoutes.Home.name) {
-                        popUpTo(LoginRoutes.Signup.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onNavToLoginPage = {
-                    navController.navigate(LoginRoutes.Signin.name) {
-                        popUpTo(LoginRoutes.Signup.name) {
-                            inclusive = true
-                        }
+            ) {
+                navController.navigate(LoginRoutes.SignUp.name) {
+                    launchSingleTop = true
+                    popUpTo(LoginRoutes.SignIn.name) {
+                        inclusive = true
                     }
                 }
-            )
+            }
         }
 
+        composable(route = LoginRoutes.SignUp.name) {
+            SignUpScreen(onNavToHomePage = {
+                navController.navigate(HomeRoutes.Home.name) {
+                    popUpTo(LoginRoutes.SignUp.name) {
+                        inclusive = true
+                    }
+                }
+            },
+                loginViewModel = loginViewModel
+            ) {
+                navController.navigate(LoginRoutes.SignIn.name)
+            }
 
-        composable(route = HomeRoutes.Home.name){
+        }
+
+        composable(route = HomeRoutes.Home.name) {
             Home()
         }
 
     }
+
+
 }
