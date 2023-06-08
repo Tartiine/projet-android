@@ -2,10 +2,13 @@ package com.example.ensihub.ui.screens
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,11 +34,13 @@ val posts = listOf(
     Post("3", "wsh Sofia", System.currentTimeMillis(), user.id, 3)
 )
 @Composable
-fun UserProfileScreen(user: User) {
+fun UserProfileScreen(user: User, posts: List<Post>) {
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
+
 
     ) {
 
@@ -49,13 +54,14 @@ fun UserProfileScreen(user: User) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Your profile",
+                    text = " Your profile",
                     style = MaterialTheme.typography.h4,
-                    color = Color(0xFFFFA500),
+                    color = Color.White,
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .size(width = 350.dp, height = 60.dp)
                         .fillMaxWidth()
+                        .background(Color(0xFFFFA500), shape = RoundedCornerShape(8.dp))
                 )
             }
             Text(
@@ -118,7 +124,7 @@ fun getTimeSincePost(timestamp: Long): String{
 @Preview
 @Composable
 fun UserProfileScreenPreview(){
-    UserProfileScreen(user)
+    UserProfileScreen(user, posts)
 
 
 }
