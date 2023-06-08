@@ -1,15 +1,18 @@
 package com.example.ensihub.mainClasses
 
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class Feed {
     private val posts = mutableListOf<Post>()
     private val comments = mutableMapOf<String, MutableList<Comment>>()
     private val db = Firebase.firestore
+    private val storage = Firebase.storage
     private var i: Long = 10
 
     init {
@@ -97,6 +100,18 @@ class Feed {
             }
             .addOnFailureListener {
                 Log.w(TAG, "Error while sending post: $it")
+            }
+    }
+
+    fun addImagePost(post : Post, imageUri : Uri) {
+        db.collection("posts").add(post)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "Successfully sent image: ${documentReference.id}")
+                val postId = documentReference.id
+                getImage(imageUri, post)
+            }
+            .addOnFailureListener {
+                Log.w(TAG, "Error while adding post: $it")
             }
     }
 
@@ -190,7 +205,16 @@ class Feed {
         return this.posts.filter { p ->  p.id == key || p.text?.contains(key) == true }
     }
 
-
+    fun getImage(imageUri : Uri, post : Post) {
+        val storageRef = storage.reference.child("image/${post.id}")
+        storageRef.downloadUrl.addOnSuccessListener { uri ->
+            post.imageUrl = uri.toString()
+            db.collection("posts").document(post.id).set(post)
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error while uploading image : $exception")
+                }
+    }
 
 }
 

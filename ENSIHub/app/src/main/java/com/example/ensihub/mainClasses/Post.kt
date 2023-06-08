@@ -6,5 +6,6 @@ data class Post (
     val timestamp: Long,
     val author: String,
     var likesCount: Int,
+    var imageUrl : String? = null
 )
 
