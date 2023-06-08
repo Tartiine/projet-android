@@ -42,8 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
-import com.example.ensihub.MainClasses.Role
-import com.example.ensihub.MainClasses.User
+import com.example.ensihub.mainClasses.Role
+import com.example.ensihub.mainClasses.User
 import com.example.ensihub.R
 import com.google.firebase.auth.FirebaseAuth
 

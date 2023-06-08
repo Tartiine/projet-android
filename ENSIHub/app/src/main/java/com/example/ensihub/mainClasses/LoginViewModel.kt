@@ -65,10 +65,31 @@ class LoginViewModel(
                 loginUiState.value.confirmPasswordSignUp.isBlank()
     }
 
+    private fun isEmailVerified():Boolean{
+        Log.d("LoginViewModel", "isEmailVerified called.")
+        return repository.currentUser?.isEmailVerified == true
+    }
+
+    fun resetPassword(context: Context) = viewModelScope.launch{
+        Log.d("LoginViewModel", "resetPassword called.")
+        try{
+            if(loginUiState.value.userName.isBlank()){
+                throw Exception("Please fill in your email")
+            }
+            loginUiState.value = loginUiState.value.copy(isLoading = true)
+            repository.resetPassword(loginUiState.value.userName)
+            Toast.makeText(context, "Please check your email !", Toast.LENGTH_SHORT).show()
+            loginUiState.value = loginUiState.value.copy(isLoading = false)
+        }catch (e:Exception){
+            loginUiState.value = loginUiState.value.copy(isLoading = false)
+            loginUiState.value = loginUiState.value.copy(resetPasswordError = e.message)
+        }
+    }
+
     fun createUser(context: Context) = viewModelScope.launch{
             Log.d("LoginViewModel", "createUser called.")
         try{
-            if(!validateSignUpForm()){
+            if(validateSignUpForm()){
                 throw Exception("Please fill in all the fields")
             }
             loginUiState.value = loginUiState.value.copy(isLoading = true)
@@ -81,9 +102,8 @@ class LoginViewModel(
                 loginUiState.value.passwordSignUp
             ){ isSuccessful ->
                 if(isSuccessful){
-                    Toast.makeText(context, "Please verify your Email !", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Success Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = true)
-
                 }else{
                     Toast.makeText(context, "Failed Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = false)
@@ -108,7 +128,7 @@ class LoginViewModel(
             repository.login(
                 loginUiState.value.userName,
                 loginUiState.value.password
-            ){ isSuccessful ->
+            ){ isSuccessful->
                 if(isSuccessful){
                     Toast.makeText(context, "Success Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = true)
@@ -131,7 +151,7 @@ class LoginViewModel(
 }
 
 data class LoginUiState(
-    val userName:String = "",
+    var userName:String = "",
     val password:String = "",
     val userNameSignUp:String = "",
     val passwordSignUp:String = "",
@@ -140,4 +160,5 @@ data class LoginUiState(
     val isSuccessLogin:Boolean = false,
     val signUpError:String? = null,
     val loginError:String? = null,
+    val resetPasswordError:String? = null
 )

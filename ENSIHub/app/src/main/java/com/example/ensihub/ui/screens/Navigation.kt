@@ -14,7 +14,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 enum class LoginRoutes{
     SignUp,
-    SignIn
+    SignIn,
+    ForgotPassword,
+    VerifyEmail
 }
 
 enum class HomeRoutes{
@@ -30,25 +32,22 @@ fun Navigation(
     navController: NavHostController = rememberNavController(),
     loginViewModel: LoginViewModel,
 ) {
-    val isLoggedIn by loginViewModel.isLoggedIn.collectAsState(initial = false)
-
     NavHost(
         navController = navController,
-        startDestination = if (isLoggedIn) HomeRoutes.Home.name else LoginRoutes.SignIn.name
+        startDestination = LoginRoutes.SignIn.name
     ) {
         composable(route = LoginRoutes.SignIn.name) {
-            if (isLoggedIn) {
-                LoginScreen(
-                    onNavToHomePage = {
-                        navController.navigate(HomeRoutes.Home.name) {
-                            launchSingleTop = true
-                            popUpTo(route = LoginRoutes.SignIn.name) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    loginViewModel = loginViewModel
-                ) {
+            LoginScreen(onNavToHomePage = {
+                navController.navigate(HomeRoutes.Home.name) {
+                    launchSingleTop = true
+                    popUpTo(route = LoginRoutes.SignIn.name) {
+                        inclusive = true
+                    }
+                }
+            },
+                loginViewModel = loginViewModel,
+
+                onNavToSignUpPage = {
                     navController.navigate(LoginRoutes.SignUp.name) {
                         launchSingleTop = true
                         popUpTo(LoginRoutes.SignIn.name) {
@@ -56,32 +55,53 @@ fun Navigation(
                         }
                     }
                 }
+
+                ) {
+                navController.navigate(LoginRoutes.ForgotPassword.name) {
+                    launchSingleTop = true
+                    popUpTo(LoginRoutes.SignIn.name) {
+                        inclusive = true
+                    }
+                }
+
+
             }
         }
 
         composable(route = LoginRoutes.SignUp.name) {
-            if (isLoggedIn) {
-                SignUpScreen(
-                    onNavToHomePage = {
-                        navController.navigate(HomeRoutes.Home.name) {
-                            popUpTo(LoginRoutes.SignUp.name) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    loginViewModel = loginViewModel
-                ) {
-                    navController.navigate(LoginRoutes.SignIn.name)
+            SignUpScreen(onNavToHomePage = {
+                navController.navigate(HomeRoutes.Home.name) {
+                    popUpTo(LoginRoutes.SignUp.name) {
+                        inclusive = true
+                    }
                 }
+            },
+                loginViewModel = loginViewModel
+            ) {
+                navController.navigate(LoginRoutes.SignIn.name)
             }
+
         }
 
         composable(route = HomeRoutes.Home.name) {
-            if (isLoggedIn) {
-                HomeScreen(navController)
-            } else {
-                navController.navigate(LoginRoutes.SignIn.name)
+            HomeScreen(navController = navController)
+        }
+
+        composable(route = LoginRoutes.ForgotPassword.name){
+            ForgotPasswordScreen(onNavToLoginPage = {
+                navController.navigate(LoginRoutes.SignIn.name) {
+                    launchSingleTop = true
+                    popUpTo(LoginRoutes.ForgotPassword.name) {
+                        inclusive = true
+                    }
+                }
+            },
+                loginViewModel = loginViewModel
+            )
             }
         }
+
     }
-}
+
+
+

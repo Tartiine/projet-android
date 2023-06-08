@@ -12,7 +12,10 @@ class AuthRepository {
 
     fun hasUser():Boolean = Firebase.auth.currentUser != null
 
-    fun getUserId():String? = Firebase.auth.currentUser?.uid.orEmpty()
+    fun getUserId():String = Firebase.auth.currentUser?.uid.orEmpty()
+
+    fun resetPassword(email: String) = Firebase.auth.sendPasswordResetEmail(email)
+
 
     suspend fun createUser(
         email:String,
