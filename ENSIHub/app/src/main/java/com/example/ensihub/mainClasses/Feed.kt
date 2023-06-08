@@ -1,12 +1,14 @@
 package com.example.ensihub.mainClasses
 
 import android.content.ContentValues.TAG
+import android.media.Image
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.io.File
 
 class Feed {
     private val posts = mutableListOf<Post>()
@@ -108,7 +110,7 @@ class Feed {
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "Successfully sent image: ${documentReference.id}")
                 val postId = documentReference.id
-                getImage(imageUri, post)
+                getImage(post)
             }
             .addOnFailureListener {
                 Log.w(TAG, "Error while adding post: $it")
@@ -214,18 +216,20 @@ class Feed {
     }
 
     fun search(key: String): List<Post> {
-        return this.posts.filter { p ->  p.id == key || p.text?.contains(key) == true }
+        return this.posts.filter { p -> p.id == key || p.text.contains(key) }
     }
 
-    fun getImage(imageUri : Uri, post : Post) {
+    fun getImage(post : Post) {
         val storageRef = storage.reference.child("image/${post.id}")
+        storageRef.getFile(File("image/${post.id}"))
         storageRef.downloadUrl.addOnSuccessListener { uri ->
-            post.imageUrl = uri.toString()
-            db.collection("posts").document(post.id).set(post)
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error while uploading image : $exception")
-                }
+                post.imageUrl = uri.toString()
+                db.collection("posts").document(post.id).set(post)
+            }
+
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error while uploading image : $exception")
+            }
     }
 
     fun sendUser(user: User) {
