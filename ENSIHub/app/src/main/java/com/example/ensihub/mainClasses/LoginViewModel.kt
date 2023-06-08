@@ -27,9 +27,9 @@ class LoginViewModel(
     val hasUser:Boolean
         get() = repository.hasUser()
 
-    fun onUserNameChange(newUserName: String) {
+    fun onEmailChange(newUserName: String) {
         Log.d("LoginViewModel", "onUserNameChange called with: $newUserName")
-        loginUiState.value = loginUiState.value.copy(userName = newUserName)
+        loginUiState.value = loginUiState.value.copy(eMail = newUserName)
     }
 
     fun onPasswordChange(password:String){
@@ -37,9 +37,9 @@ class LoginViewModel(
         loginUiState.value = loginUiState.value.copy(password = password)
     }
 
-    fun onUserNameSignUpChange(userNameSignUp:String){
+    fun onEmailSignUpChange(userNameSignUp:String){
         Log.d("LoginViewModel", "onUserNameSignUpChange called with: $userNameSignUp")
-        loginUiState.value = loginUiState.value.copy(userNameSignUp = userNameSignUp)
+        loginUiState.value = loginUiState.value.copy(eMailSignUp = userNameSignUp)
     }
 
     fun onPasswordSignUpChange(passwordSignUp:String){
@@ -52,15 +52,20 @@ class LoginViewModel(
         loginUiState.value = loginUiState.value.copy(confirmPasswordSignUp = confirmPasswordSignUp)
     }
 
+    fun onUserNameChange(newUserName: String) {
+        Log.d("LoginViewModel", "onUserNameChange called with: $newUserName")
+        loginUiState.value = loginUiState.value.copy(userName = newUserName)
+    }
+
     private fun validateLoginForm(): Boolean {
         Log.d("LoginViewModel", "validateLoginForm called.")
-        return loginUiState.value.userName.isNotBlank() &&
+        return loginUiState.value.eMail.isNotBlank() &&
                 loginUiState.value.password.isNotBlank()
     }
 
     private fun validateSignUpForm(): Boolean {
         Log.d("LoginViewModel", "validateSignUpForm called.")
-        return loginUiState.value.userNameSignUp.isBlank() &&
+        return loginUiState.value.eMailSignUp.isBlank() &&
                 loginUiState.value.passwordSignUp.isBlank() &&
                 loginUiState.value.confirmPasswordSignUp.isBlank()
     }
@@ -69,11 +74,11 @@ class LoginViewModel(
     fun resetPassword(context: Context) = viewModelScope.launch{
         Log.d("LoginViewModel", "resetPassword called.")
         try{
-            if(loginUiState.value.userName.isBlank()){
+            if(loginUiState.value.eMail.isBlank()){
                 throw Exception("Please fill in your email")
             }
             loginUiState.value = loginUiState.value.copy(isLoading = true)
-            repository.resetPassword(loginUiState.value.userName)
+            repository.resetPassword(loginUiState.value.eMail)
             Toast.makeText(context, "Please check your email !", Toast.LENGTH_SHORT).show()
             loginUiState.value = loginUiState.value.copy(isLoading = false)
         }catch (e:Exception){
@@ -94,7 +99,7 @@ class LoginViewModel(
             }
             loginUiState.value = loginUiState.value.copy(signUpError = null)
             repository.createUser(
-                loginUiState.value.userNameSignUp,
+                loginUiState.value.eMailSignUp,
                 loginUiState.value.passwordSignUp
             ){ isSuccessful ->
                 if(isSuccessful){
@@ -122,7 +127,7 @@ class LoginViewModel(
             loginUiState.value = loginUiState.value.copy(isLoading = true)
             loginUiState.value = loginUiState.value.copy(loginError = null)
             repository.login(
-                loginUiState.value.userName,
+                loginUiState.value.eMail,
                 loginUiState.value.password
             ){ isSuccessful->
                 if(isSuccessful){
@@ -149,8 +154,9 @@ class LoginViewModel(
 
 data class LoginUiState(
     var userName:String = "",
+    var eMail:String = "",
     val password:String = "",
-    var userNameSignUp:String = "",
+    var eMailSignUp:String = "",
     val passwordSignUp:String = "",
     val confirmPasswordSignUp:String = "",
     val isLoading:Boolean = false,
