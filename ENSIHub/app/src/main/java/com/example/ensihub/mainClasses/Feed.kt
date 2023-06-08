@@ -2,7 +2,7 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.example.ensihub.MainClasses.Comment
+import com.example.ensihub.mainClasses.Comment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

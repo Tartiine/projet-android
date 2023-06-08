@@ -78,14 +78,11 @@ fun Navigation(
 
         composable(route = HomeRoutes.Home.name) {
             if (true) {
-                HomeScreen(navController)
+                HomeScreen()
             } else {
                 navController.navigate(LoginRoutes.SignIn.name)
             }
         }
-        composable(route = BottomBarScreen.Home.route) { /* Home screen UI goes here */ }
-        composable(route = BottomBarScreen.Profile.route) { /* Profile screen UI goes here */ }
-        composable(route = BottomBarScreen.Settings.route) { /* Settings screen UI goes here */ }
     }
 
 }
