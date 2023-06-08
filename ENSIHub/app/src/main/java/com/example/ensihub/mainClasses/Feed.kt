@@ -228,5 +228,15 @@ class Feed {
                 }
     }
 
+    fun sendUser(user: User) {
+        db.collection("users").add(user)
+            .addOnSuccessListener {
+                Log.d(TAG, "User sent: $it")
+            }
+            .addOnFailureListener {
+                Log.w(TAG, "Error sending the user: $it")
+            }
+    }
+
 }
 

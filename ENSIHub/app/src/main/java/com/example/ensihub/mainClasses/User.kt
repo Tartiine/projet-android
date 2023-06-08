@@ -9,18 +9,8 @@ enum class Role {
     ADMIN, MODERATOR, USER
 }
 
-data class User(val id: String, val username: String, val email: String, val role: Role) {
-    private val db = Firebase.firestore
+data class User(val id: String, val username: String, val email: String, val role: Role)
 
-    fun sendToBase() {
-        db.collection("users").add(this)
-            .addOnSuccessListener {
-                Log.d(ContentValues.TAG, "Successfully sent user: $it")
-            }
-            .addOnFailureListener {
-                Log.w(ContentValues.TAG, "Error while sending user: $it")
-            }
-    }
-}
+
 
 
