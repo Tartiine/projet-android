@@ -1,0 +1,552 @@
+{
+  "name": "settings",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "LX8fjYXxomyptVeNFCqrnX",
+    "node": "27:236",
+    "version": "3623247933",
+    "component-id": "0567d6be60a3f54798368ea66d9bfde4a8d071f2"
+  },
+  "default": "Settings",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 7"
+      },
+      {
+        "type": "text",
+        "id": "Settings"
+      },
+      {
+        "type": "text",
+        "id": "Sign out"
+      },
+      {
+        "type": "text",
+        "id": "My Profile"
+      },
+      {
+        "type": "text",
+        "id": "Terms & conditions"
+      },
+      {
+        "type": "text",
+        "id": "General Info"
+      },
+      {
+        "type": "text",
+        "id": "Contact Us"
+      },
+      {
+        "type": "group",
+        "id": "arrow-right"
+      },
+      {
+        "type": "group",
+        "id": "arrow-right1"
+      },
+      {
+        "type": "group",
+        "id": "arrow-right2"
+      },
+      {
+        "type": "group",
+        "id": "arrow-right3"
+      },
+      {
+        "type": "vector",
+        "id": "Line 3"
+      },
+      {
+        "type": "vector",
+        "id": "Vector"
+      },
+      {
+        "type": "vector",
+        "id": "Vector1"
+      },
+      {
+        "type": "vector",
+        "id": "Vector2"
+      },
+      {
+        "type": "vector",
+        "id": "Vector3"
+      }
+    ],
+    "modes": {
+      "Settings": {
+        "rules": [
+          {
+            "id": "top_level",
+            "border-radius": "48.0",
+            "is-structured": "false",
+            "children": [
+              "Rectangle 7",
+              "Settings",
+              "Sign out",
+              "My Profile",
+              "Terms & conditions",
+              "General Info",
+              "Contact Us",
+              "arrow-right",
+              "arrow-right1",
+              "arrow-right2",
+              "arrow-right3",
+              "Line 3"
+            ],
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.21176470588235294"
+            }
+          },
+          {
+            "id": "Rectangle 7",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "428.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "142.0"
+              }
+            },
+            "vector-content": "rectangle_7.svg"
+          },
+          {
+            "id": "Settings",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "122.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "42.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "34.55357142857142",
+              "saturation": "0.9068825910931174",
+              "value": "0.9686274509803922"
+            },
+            "text-content": "Settings",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "50.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Sign out",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "42.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "584.0"
+              }
+            },
+            "tap-handler": "$Out_Button",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "108.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "31.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "34.55357142857142",
+              "saturation": "0.9068825910931174",
+              "value": "0.9686274509803922"
+            },
+            "text-content": "Sign out",
+            "overflow": "visible",
+            "max-lines": "-1",
+            "text-align": "left",
+            "text-size": "25.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "My Profile",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "42.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "239.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$My Profile text content",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "20.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Terms & conditions",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "42.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "308.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$Terms & conditions text content",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "20.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "General Info",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "42.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "377.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$General Info text content",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "20.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Contact Us",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "42.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "446.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$Contact Us text content",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "20.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "arrow-right",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "357.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "240.0"
+              }
+            },
+            "tap-handler": "$Profile_Button",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "45.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "35.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Vector"
+            ]
+          },
+          {
+            "id": "arrow-right1",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "357.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "302.0"
+              }
+            },
+            "tap-handler": "$Terms_Button",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "45.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "35.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Vector1"
+            ]
+          },
+          {
+            "id": "arrow-right2",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "357.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "371.0"
+              }
+            },
+            "tap-handler": "$Info_Button",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "45.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "35.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Vector2"
+            ]
+          },
+          {
+            "id": "arrow-right3",
+            "margin": {
+              "left": "357.0",
+              "top": "440.0",
+              "right": "26.0",
+              "bottom": "451.0"
+            },
+            "tap-handler": "$Contact_Button",
+            "is-structured": "false",
+            "children": [
+              "Vector3"
+            ]
+          },
+          {
+            "id": "Line 3",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "162.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "428.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "0.0"
+              }
+            }
+          },
+          {
+            "id": "Vector",
+            "margin": {
+              "left": "16.8748779296875",
+              "top": "7.29168701171875",
+              "right": "15.0001220703125",
+              "bottom": "7.291648864746094"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector.svg"
+          },
+          {
+            "id": "Vector1",
+            "margin": {
+              "left": "16.8748779296875",
+              "top": "7.291683197021484",
+              "right": "15.0001220703125",
+              "bottom": "7.291650772094727"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector1.svg"
+          },
+          {
+            "id": "Vector2",
+            "margin": {
+              "left": "16.8748779296875",
+              "top": "7.291683197021484",
+              "right": "15.0001220703125",
+              "bottom": "7.291648864746094"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector2.svg"
+          },
+          {
+            "id": "Vector3",
+            "margin": {
+              "left": "16.8748779296875",
+              "top": "7.29168701171875",
+              "right": "15.0001220703125",
+              "bottom": "7.2916412353515625"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "vector3.svg"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "Out_Button": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    },
+    "My Profile text content": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "Terms & conditions text content": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "General Info text content": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "Contact Us text content": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "Profile_Button": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    },
+    "Terms_Button": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    },
+    "Info_Button": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    },
+    "Contact_Button": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "Settings",
+      "size": {
+        "width": 428.0,
+        "height": 926.0
+      },
+      "parameters": {
+        "My Profile text content": "My Profile",
+        "Terms & conditions text content": "Terms & conditions",
+        "General Info text content": "General Info",
+        "Contact Us text content": "Contact Us"
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}
