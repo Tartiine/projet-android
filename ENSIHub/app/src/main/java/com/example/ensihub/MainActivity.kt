@@ -162,7 +162,7 @@ class MainActivity : ComponentActivity() {
                     lightPhoto.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
                     val data = photoArray.toByteArray()
                     val storage = Firebase.storage
-                    val storageRef = storage.reference.child("images/${UUID.randomUUID()}.jpg")
+                    val storageRef = storage.reference.child("Images/${UUID.randomUUID()}.jpg")
                     val uploadTask = storageRef.putBytes(data)
                     uploadTask.addOnFailureListener { exception ->
                         Log.e(TAG, "Upload failed", exception)
@@ -180,7 +180,7 @@ class MainActivity : ComponentActivity() {
                     lightImage.compress(Bitmap.CompressFormat.JPEG, 50, imageArray)
                     val data = imageArray.toByteArray()
                     val storage = Firebase.storage
-                    val storageRef = storage.reference.child("images/${selectedImageUri?.lastPathSegment}")
+                    val storageRef = storage.reference.child("Images/${selectedImageUri?.lastPathSegment}")
                     val uploadTask = storageRef.putBytes(data)
                     uploadTask.addOnFailureListener { exception ->
                         Log.e(TAG, "Upload failed", exception)
