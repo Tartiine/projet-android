@@ -1,23 +1,14 @@
 package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
-import android.graphics.fonts.FontFamily
-import android.graphics.fonts.FontStyle
 import android.os.Build
-import android.os.Bundle
-import android.util.Log
-import android.webkit.WebSettings.TextSize
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,22 +25,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,13 +44,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.R
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.theme.ENSIHubTheme
-import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -119,8 +99,8 @@ fun LoginScreen(
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
-                value = loginUiState?.value?.userName ?: "",
-                onValueChange = { loginViewModel?.onUserNameChange(it)},
+                value = loginUiState?.value?.eMail ?: "",
+                onValueChange = { loginViewModel?.onEmailChange(it)},
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -180,7 +160,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                loginUiState?.value?.userName += "@uha.fr"
+                loginUiState?.value?.eMail += "@uha.fr"
                 loginViewModel?.loginUser(context) },
                 modifier = Modifier
                     .width(200.dp)
@@ -290,8 +270,8 @@ fun SignUpScreen(
             Text(text = loginUiState?.value?.signUpError ?: "unknown error", color = Color.Red)
         }
         TextField(
-            value = loginUiState?.value?.passwordSignUp ?: "",
-            onValueChange = { loginViewModel?.onPasswordSignUpChange(it) },
+            value = loginUiState?.value?.userName ?: "",
+            onValueChange = { loginViewModel?.onUserNameChange(it)  },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -317,8 +297,8 @@ fun SignUpScreen(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
-                value = loginUiState?.value?.userNameSignUp ?: "",
-                onValueChange = { loginViewModel?.onUserNameSignUpChange(it)},
+                value = loginUiState?.value?.eMailSignUp ?: "",
+                onValueChange = { loginViewModel?.onEmailSignUpChange(it)},
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -400,8 +380,8 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                loginUiState?.value?.userNameSignUp += "@uha.fr"
-                loginViewModel?.createUser(context)},
+                loginUiState?.value?.eMailSignUp += "@uha.fr"
+                loginViewModel?.createUser(context) },
             modifier = Modifier
                 .width(200.dp)
                 .padding(vertical = 16.dp),
@@ -498,8 +478,8 @@ fun ForgotPasswordScreen(
         }
 
         TextField(
-            value = loginUiState?.value?.userName ?: "",
-            onValueChange = { loginViewModel?.onUserNameChange(it)},
+            value = loginUiState?.value?.eMail ?: "",
+            onValueChange = { loginViewModel?.onEmailChange(it)},
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
