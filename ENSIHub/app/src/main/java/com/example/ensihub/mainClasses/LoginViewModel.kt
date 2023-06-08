@@ -148,6 +148,16 @@ class LoginViewModel(
         }
     }
 
+    fun sendUser(context: Context) = viewModelScope.launch{
+        Log.d("sendUser", "User sent to repository.")
+        User(
+            id = repository.getUserId(),
+            username = loginUiState.value.userName,
+            email = loginUiState.value.eMail,
+            role = Role.USER
+        )
+    }
+
 
 
 }
