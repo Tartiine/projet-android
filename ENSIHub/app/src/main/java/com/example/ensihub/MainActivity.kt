@@ -31,6 +31,7 @@ import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.ensihub.mainClasses.BottomNavGraph
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 //import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream

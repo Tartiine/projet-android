@@ -3,7 +3,7 @@ package com.example.ensihub.mainClasses
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
-import com.example.ensihub.mainClasses.Comment
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -82,6 +82,18 @@ class Feed {
     }
 
     fun addPost(post: Post) {
+        db.collection("posts").orderBy("id", Query.Direction.DESCENDING).limit(1).get()
+            .addOnSuccessListener {
+                Log.d(TAG, "Success : $it")
+                for (document in it) {
+                    post.id = (document.data["id"] as Int + 1).toString()
+                }
+            }
+            .addOnFailureListener {
+                Log.w(TAG, "Error", it)
+                return@addOnFailureListener
+            }
+
         db.collection("posts").add(post)
             .addOnSuccessListener {
                 Log.d(TAG, "Successfully sent post: $it")
@@ -106,6 +118,18 @@ class Feed {
     fun addComment(postId : String, comment : Comment) {
         val post = posts.find {it.id == postId}
         if(post != null) {
+            db.collection("posts").document(postId).collection("comments").orderBy("id", Query.Direction.DESCENDING).limit(1).get()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Success : $it")
+                    for (document in it) {
+                        comment.id = (document.data["id"] as Int + 1).toString()
+                    }
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error", it)
+                    return@addOnFailureListener
+                }
+
             //Update the database with the commented post, if the post exist
             db.collection("posts").document(postId).collection("comments").add(comment)
                 .addOnSuccessListener {
