@@ -2,6 +2,7 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -78,6 +79,18 @@ class Feed {
     }
 
     fun addPost(post: Post) {
+        db.collection("posts").orderBy("id", Query.Direction.DESCENDING).limit(1).get()
+            .addOnSuccessListener {
+                Log.d(TAG, "Success : $it")
+                for (document in it) {
+                    post.id = (document.data["id"] as Int + 1).toString()
+                }
+            }
+            .addOnFailureListener {
+                Log.w(TAG, "Error", it)
+                return@addOnFailureListener
+            }
+
         db.collection("posts").add(post)
             .addOnSuccessListener {
                 Log.d(TAG, "Successfully sent post: $it")

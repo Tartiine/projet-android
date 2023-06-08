@@ -1,5 +1,9 @@
 package com.example.ensihub.ui.screens
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,10 +40,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.Fragment
 import com.example.ensihub.mainClasses.Role
 import com.example.ensihub.mainClasses.User
 import com.google.firebase.auth.FirebaseAuth
-
 
 @Composable
 fun SettingsView(user: User) {
