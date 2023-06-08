@@ -1,18 +1,17 @@
 package com.example.ensihub.ui.screens
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.ensihub.mainClasses.BottomNavGraph
 import com.example.ensihub.mainClasses.LoginViewModel
-import com.example.ensihub.ui.screens.login.Email
-import com.google.firebase.auth.FirebaseAuth
+import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 
 enum class LoginRoutes{
     SignUp,
@@ -26,94 +25,59 @@ enum class HomeRoutes{
     Settings
 }
 
-
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
-    navController: NavHostController = rememberNavController(),
-    loginViewModel: LoginViewModel,
+    navController: NavHostController,
+    loginViewModel: LoginViewModel
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = LoginRoutes.SignIn.name
+    val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
+
+    Scaffold(
+        bottomBar = {
+                BottomNavigationBar(navController = navController)
+        }
     ) {
-        composable(route = LoginRoutes.SignIn.name) {
-            LoginScreen(onNavToHomePage = {
-                navController.navigate(HomeRoutes.Home.name) {
-                    launchSingleTop = true
-                    popUpTo(route = LoginRoutes.SignIn.name) {
-                        inclusive = true
-                    }
+        NavHost(
+            navController = navController,
+            startDestination = if (isLoggedIn) BottomBarScreen.Home.route else LoginRoutes.SignIn.name
+        ) {
+                composable(route = BottomBarScreen.Home.route) {
+                    HomeScreen()
                 }
-            },
-                loginViewModel = loginViewModel,
-
-                onNavToSignUpPage = {
-                    navController.navigate(LoginRoutes.SignUp.name) {
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.SignIn.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onNavToForgotPasswordPage = {
-                    navController.navigate(LoginRoutes.ForgotPassword.name) {
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.SignIn.name) {
-                            inclusive = true
-                        }
-                    }
+                composable(route = BottomBarScreen.Profile.route) {
+                    UserProfileScreen(user)
                 }
-            )
-        }
-
-        composable(route = LoginRoutes.SignUp.name) {
-            SignUpScreen(
-                onNavToHomePage = {
-                    navController.navigate(HomeRoutes.Home.name) {
-                        popUpTo(LoginRoutes.SignUp.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                loginViewModel = loginViewModel,
-
-                onNavToLoginPage = {
-                    navController.navigate(LoginRoutes.SignIn.name) {
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.SignUp.name) {
-                            inclusive = true
-                        }
-                    }
+                composable(route = BottomBarScreen.Settings.route) {
+                    SettingsView(user)
                 }
-            )
+                composable(route = LoginRoutes.SignIn.name) {
+                    LoginScreen(
+                        onNavToHomePage = { navController.navigate(BottomBarScreen.Home.route) },
+                        loginViewModel = loginViewModel,
+                        onNavToSignUpPage = { navController.navigate(LoginRoutes.SignUp.name) },
+                        onNavToForgotPasswordPage = { navController.navigate(LoginRoutes.ForgotPassword.name) }
+                    )
+                }
 
+                composable(route = LoginRoutes.SignUp.name) {
+                    SignUpScreen(
+                        onNavToHomePage = { navController.navigate(BottomBarScreen.Home.route) },
+                        loginViewModel = loginViewModel,
+                        onNavToLoginPage = { navController.navigate(LoginRoutes.SignIn.name) }
+                    )
+                }
 
-        }
-
-        composable(route = HomeRoutes.Home.name) {
-            if (true) {
-                BottomNavGraph(navController = navController)
-            } else {
-                navController.navigate(LoginRoutes.SignIn.name)
+                composable(route = LoginRoutes.ForgotPassword.name) {
+                    ForgotPasswordScreen(
+                        onNavToLoginPage = { navController.navigate(LoginRoutes.SignIn.name) },
+                        loginViewModel = loginViewModel
+                    )
+                }
             }
         }
-
-        composable(route = LoginRoutes.ForgotPassword.name) {
-            ForgotPasswordScreen(
-                onNavToLoginPage = {
-                    navController.navigate(LoginRoutes.SignIn.name) {
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.ForgotPassword.name) {
-                            inclusive = true
-                        }
-                    }
-                },
-                loginViewModel = loginViewModel
-            )
-        }
-
     }
-}
+
 
 
