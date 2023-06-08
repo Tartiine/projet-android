@@ -32,7 +32,6 @@ fun BottomNavGraph(navController: NavHostController) {
                 UserProfileScreen(user)
             }
             composable(route = BottomBarScreen.Settings.route) {
-                // Replace with your actual SettingsScreen here
                 SettingsView(user)
             }
         }
