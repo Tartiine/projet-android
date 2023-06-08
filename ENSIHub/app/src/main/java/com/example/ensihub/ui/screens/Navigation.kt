@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.ensihub.mainClasses.BottomNavGraph
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -56,7 +57,7 @@ fun Navigation(
                     }
                 }
 
-                ) {
+            ) {
                 navController.navigate(LoginRoutes.ForgotPassword.name) {
                     launchSingleTop = true
                     popUpTo(LoginRoutes.SignIn.name) {
@@ -69,13 +70,14 @@ fun Navigation(
         }
 
         composable(route = LoginRoutes.SignUp.name) {
-            SignUpScreen(onNavToHomePage = {
-                navController.navigate(HomeRoutes.Home.name) {
-                    popUpTo(LoginRoutes.SignUp.name) {
-                        inclusive = true
+            SignUpScreen(
+                onNavToHomePage = {
+                    navController.navigate(HomeRoutes.Home.name) {
+                        popUpTo(LoginRoutes.SignUp.name) {
+                            inclusive = true
+                        }
                     }
-                }
-            },
+                },
                 loginViewModel = loginViewModel
             ) {
                 navController.navigate(LoginRoutes.SignIn.name)
@@ -85,12 +87,13 @@ fun Navigation(
 
         composable(route = HomeRoutes.Home.name) {
             if (true) {
-                HomeScreen()
+                BottomNavGraph(navController = navController)
             } else {
                 navController.navigate(LoginRoutes.SignIn.name)
             }
         }
     }
+}
 
 
 
