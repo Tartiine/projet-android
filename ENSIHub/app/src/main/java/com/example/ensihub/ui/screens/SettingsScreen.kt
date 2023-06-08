@@ -1,9 +1,5 @@
 package com.example.ensihub.ui.screens
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +16,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -40,7 +39,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
 import com.example.ensihub.mainClasses.Role
 import com.example.ensihub.mainClasses.User
 import com.google.firebase.auth.FirebaseAuth
@@ -53,7 +51,7 @@ fun SettingsView(user: User) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.DarkGray)
+            .background(Color.Black)
     ) {
         Column(
             modifier = Modifier
@@ -65,33 +63,46 @@ fun SettingsView(user: User) {
 
         ) {
 
+            SettingsGroup(name = "Application Settings") {
+                SettingsElement(icon = Icons.Filled.Edit, name = "Number of posts loaded")
+            }
+
+            SettingsGroup(name = "Account Settings") {
+                SettingsElement(icon = Icons.Filled.AccountCircle, name = "Change username")
+                SettingsElement(icon = Icons.Filled.Lock, name = "Change password")
+            }
+
             SettingsGroup(name = "About") {
-                SettingsTextComp(icon = Icons.Filled.Person, name = "test")
-                SettingsTextComp(icon = Icons.Filled.Build, name = "Build")
+                SettingsElement(icon = Icons.Filled.Person, name = "Contact")
+                SettingsElement(icon = Icons.Filled.Build, name = "Info & Build")
                 Row {
 
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
             Button (
                 shape = RoundedCornerShape(10.dp),
                 onClick = { popupControl.value = true },
-                colors = ButtonDefaults.buttonColors(Color.Red)
+                colors = ButtonDefaults.buttonColors(Color.Red),
             ) {
-                Text(text = "Logout", Modifier.padding(start = 10.dp), style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Logout", style = MaterialTheme.typography.bodyLarge)
             }
             if (popupControl.value) {
                 AlertDialog(shape = RoundedCornerShape(8.dp),
                     onDismissRequest = {
                         popupControl.value = false
                     }, confirmButton = {
-                        Button(onClick = { disconnect() }) {
+                        Button(onClick = {
+                            disconnect()
+                            popupControl.value = false
+                        }) {
                             Text("Confirm", color = Color.Red)
                         }
                     }, title = {
                         Text(text = "Are you sure you want to disconnect?")
                     }, dismissButton = {
                         Button(onClick = { popupControl.value = false }) {
-                            Text("Cancel", color = Color.Red)
+                            Text("Cancel")
                         }
                     })
             }
@@ -108,10 +119,12 @@ fun SettingsView(user: User) {
                 color = Color.White
             )
             Text(
-                text = "Developed by Ensisoft"
+                text = "Developed by Ensisoft",
+                color = Color.DarkGray
             )
             Text(
-                text = "MIT License"
+                text = "MIT License",
+                color = Color.DarkGray
             )
         }
     }
@@ -128,7 +141,6 @@ fun SettingsViewPreview() {
 
 fun disconnect() {
     FirebaseAuth.getInstance().signOut()
-
 }
 
 @Composable
@@ -153,7 +165,7 @@ fun SettingsGroup(
 
 
 @Composable
-fun SettingsTextComp(
+fun SettingsElement(
     icon: ImageVector,
     name: String,
 ) {
@@ -180,6 +192,9 @@ fun SettingsTextComp(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
+                Spacer(Modifier.fillMaxWidth())
+
+
             }
             Divider()
         }
