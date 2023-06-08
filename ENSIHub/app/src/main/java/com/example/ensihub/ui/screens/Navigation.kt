@@ -10,11 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
-import com.example.ensihub.ui.screens.login.Email
-import com.google.firebase.auth.FirebaseAuth
 
 enum class LoginRoutes{
     SignUp,
