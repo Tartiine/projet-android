@@ -2,8 +2,6 @@ package com.example.ensihub.ui.screens
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,7 +31,7 @@ val posts = listOf(
     Post("3", "wsh Sofia", System.currentTimeMillis(), user.id, 3)
 )
 @Composable
-fun UserProfileScreen(user: User, posts: List<Post>) {
+fun UserProfileScreen(user: User) {
 
     Box(
         modifier = Modifier
@@ -120,7 +118,7 @@ fun getTimeSincePost(timestamp: Long): String{
 @Preview
 @Composable
 fun UserProfileScreenPreview(){
-    UserProfileScreen(user, posts)
+    UserProfileScreen(user)
 
 
 }
