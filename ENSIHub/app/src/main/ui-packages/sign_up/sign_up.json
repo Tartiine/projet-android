@@ -1,0 +1,797 @@
+{
+  "name": "sign_up",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "LX8fjYXxomyptVeNFCqrnX",
+    "node": "16:166",
+    "version": "3620579762",
+    "component-id": "3b36b33454fbbc97452e872b0b38e0003e0c6e9b"
+  },
+  "default": "Sign up",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "image",
+        "id": "image 2"
+      },
+      {
+        "type": "vector",
+        "id": "Line 1"
+      },
+      {
+        "type": "group",
+        "id": "Login form"
+      },
+      {
+        "type": "group",
+        "id": "Input"
+      },
+      {
+        "type": "group",
+        "id": "Input1"
+      },
+      {
+        "type": "text",
+        "id": "Sign Up"
+      },
+      {
+        "type": "group",
+        "id": "Input2"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 1"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 5"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 6"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 2"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 3"
+      },
+      {
+        "type": "text",
+        "id": "Nickname"
+      },
+      {
+        "type": "text",
+        "id": "Email"
+      },
+      {
+        "type": "text",
+        "id": "Confirm Password"
+      },
+      {
+        "type": "text",
+        "id": "Get Started"
+      },
+      {
+        "type": "text",
+        "id": "Password"
+      },
+      {
+        "type": "group",
+        "id": "Input3"
+      },
+      {
+        "type": "text",
+        "id": "text"
+      },
+      {
+        "type": "image",
+        "id": "cursor"
+      },
+      {
+        "type": "text",
+        "id": "text1"
+      },
+      {
+        "type": "image",
+        "id": "cursor1"
+      },
+      {
+        "type": "text",
+        "id": "text2"
+      },
+      {
+        "type": "image",
+        "id": "cursor2"
+      },
+      {
+        "type": "text",
+        "id": "text3"
+      },
+      {
+        "type": "image",
+        "id": "cursor3"
+      }
+    ],
+    "modes": {
+      "Sign up": {
+        "rules": [
+          {
+            "id": "top_level",
+            "border-radius": "48.0",
+            "is-structured": "false",
+            "children": [
+              "image 2",
+              "Line 1",
+              "Login form",
+              "Input",
+              "Input1",
+              "Sign Up",
+              "Input2"
+            ],
+            "background-color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.21176470588235294"
+            }
+          },
+          {
+            "id": "image 2",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "-11.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "656.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "450.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "270.0"
+              }
+            },
+            "image-content": "$Logo_image",
+            "scale": "cover"
+          },
+          {
+            "id": "Line 1",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "646.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "428.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "0.0"
+              }
+            }
+          },
+          {
+            "id": "Login form",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "64.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "215.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "299.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "367.0"
+              }
+            },
+            "is-structured": "false",
+            "children": [
+              "Rectangle 1",
+              "Rectangle 5",
+              "Rectangle 6",
+              "Rectangle 2",
+              "Rectangle 3",
+              "Nickname",
+              "Email",
+              "Confirm Password",
+              "Get Started",
+              "Password",
+              "Input3"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Input",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "73.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "387.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "shrink"
+              },
+              "height-constraints": {
+                "sizing-mode": "shrink"
+              }
+            },
+            "arrangement": "row",
+            "main-axis-align": "start",
+            "children": [
+              "text1",
+              "cursor1"
+            ]
+          },
+          {
+            "id": "Input1",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "73.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "464.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "shrink"
+              },
+              "height-constraints": {
+                "sizing-mode": "shrink"
+              }
+            },
+            "arrangement": "row",
+            "main-axis-align": "start",
+            "children": [
+              "text2",
+              "cursor2"
+            ]
+          },
+          {
+            "id": "Sign Up",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "64.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "82.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "34.55357142857142",
+              "saturation": "0.9068825910931174",
+              "value": "0.9686274509803922"
+            },
+            "text-content": "$SignUpTitle",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "50.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Input2",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "76.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "318.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "shrink"
+              },
+              "height-constraints": {
+                "sizing-mode": "shrink"
+              }
+            },
+            "arrangement": "row",
+            "main-axis-align": "start",
+            "children": [
+              "text3",
+              "cursor3"
+            ]
+          },
+          {
+            "id": "Rectangle 1",
+            "border-radius": "5.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "1.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "164.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "297.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "42.0"
+              }
+            },
+            "vector-content": "rectangle_1.svg"
+          },
+          {
+            "id": "Rectangle 5",
+            "border-radius": "5.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "90.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "297.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "42.0"
+              }
+            },
+            "vector-content": "rectangle_5.svg"
+          },
+          {
+            "id": "Rectangle 6",
+            "border-radius": "5.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "0.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "21.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "297.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "42.0"
+              }
+            },
+            "vector-content": "rectangle_6.svg"
+          },
+          {
+            "id": "Rectangle 2",
+            "border-radius": "5.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "1.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "239.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "297.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "42.0"
+              }
+            },
+            "vector-content": "rectangle_2.svg"
+          },
+          {
+            "id": "Rectangle 3",
+            "border-radius": "25.0",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "2.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "325.0"
+              }
+            },
+            "tap-handler": "$SignUp_Button",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "297.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "42.0"
+              }
+            },
+            "vector-content": "rectangle_3.svg"
+          },
+          {
+            "id": "Nickname",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "2.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "0.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$Nickname_text",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "12.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Email",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "2.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "69.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$Email_text",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "12.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Confirm Password",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "1.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "219.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$Confirm_Text",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "12.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Get Started",
+            "alignment": {
+              "horizontal": {
+                "attachment": "center",
+                "offset": "-1.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "337.0"
+              }
+            },
+            "font-weight": "700.0",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "Get Started",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "15.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Password",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "2.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "143.0"
+              }
+            },
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$Password_text",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "12.0",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Input3",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": "9.0"
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": "28.0"
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "shrink"
+              },
+              "height-constraints": {
+                "sizing-mode": "shrink"
+              }
+            },
+            "arrangement": "row",
+            "main-axis-align": "start",
+            "children": [
+              "text",
+              "cursor"
+            ]
+          },
+          {
+            "id": "text",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.0"
+            },
+            "text-content": " ",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "18.0",
+            "letter-spacing": "-0.36",
+            "line-height": "1.2102272245619032",
+            "typeface": "Inter"
+          },
+          {
+            "id": "cursor",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "9.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              }
+            },
+            "image-content": "cursor.png",
+            "scale": "cover"
+          },
+          {
+            "id": "text1",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.0"
+            },
+            "text-content": " ",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "18.0",
+            "letter-spacing": "-0.36",
+            "line-height": "1.2102272245619032",
+            "typeface": "Inter"
+          },
+          {
+            "id": "cursor1",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "9.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              }
+            },
+            "image-content": "cursor.png",
+            "scale": "cover"
+          },
+          {
+            "id": "text2",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.0"
+            },
+            "text-content": " ",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "18.0",
+            "letter-spacing": "-0.36",
+            "line-height": "1.2102272245619032",
+            "typeface": "Inter"
+          },
+          {
+            "id": "cursor2",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "9.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.0"
+              }
+            },
+            "image-content": "cursor.png",
+            "scale": "cover"
+          },
+          {
+            "id": "text3",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.0"
+            },
+            "text-content": " ",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "18.0",
+            "letter-spacing": "-0.36",
+            "line-height": "1.2102272245619032",
+            "typeface": "Inter"
+          },
+          {
+            "id": "cursor3",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": "9.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": "24.000001907348633"
+              }
+            },
+            "image-content": "cursor.png",
+            "scale": "cover"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "Logo_image": {
+      "data-type": "image",
+      "required": false,
+      "description": ""
+    },
+    "SignUpTitle": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "SignUp_Button": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    },
+    "Nickname_text": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "Email_text": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "Confirm_Text": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "Password_text": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "Sign up",
+      "size": {
+        "width": 428.0,
+        "height": 926.0
+      },
+      "parameters": {
+        "Logo_image": "image_2.png",
+        "SignUpTitle": "Sign Up",
+        "Nickname_text": "Nickname",
+        "Email_text": "Email",
+        "Confirm_Text": "Confirm Password",
+        "Password_text": "Password"
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}
