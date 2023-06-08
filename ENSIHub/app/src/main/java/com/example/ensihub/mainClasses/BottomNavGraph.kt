@@ -13,7 +13,6 @@ import com.example.ensihub.ui.screens.SettingsView
 import com.example.ensihub.ui.screens.UserProfileScreen
 import com.example.ensihub.ui.screens.user
 
-
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
