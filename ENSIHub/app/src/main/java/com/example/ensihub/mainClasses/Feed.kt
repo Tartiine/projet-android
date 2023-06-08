@@ -118,6 +118,18 @@ class Feed {
     fun addComment(postId : String, comment : Comment) {
         val post = posts.find {it.id == postId}
         if(post != null) {
+            db.collection("posts").document(postId).collection("comments").orderBy("id", Query.Direction.DESCENDING).limit(1).get()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Success : $it")
+                    for (document in it) {
+                        comment.id = (document.data["id"] as Int + 1).toString()
+                    }
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error", it)
+                    return@addOnFailureListener
+                }
+
             //Update the database with the commented post, if the post exist
             db.collection("posts").document(postId).collection("comments").add(comment)
                 .addOnSuccessListener {

@@ -1,7 +1,7 @@
 package com.example.ensihub.mainClasses
 
 data class Comment (
-    val id : String,
+    var id : String,
     val text : String,
     val author : String,
     var timestamp: Long,
