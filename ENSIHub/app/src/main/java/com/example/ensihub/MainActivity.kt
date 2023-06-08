@@ -43,8 +43,8 @@ import java.util.UUID
 
 class MainActivity : ComponentActivity() {
     private val PERMISSION_REQUEST_CODE = 1
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private val REQUEST_IMAGE_SELECTION = 1
+    private val REQUEST_IMAGE_CAPTURE = 2
+    private val REQUEST_IMAGE_SELECTION = 3
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,16 +156,14 @@ class MainActivity : ComponentActivity() {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> {
-                    val selectedImageUri: Uri? = data?.data
-                    val imageStream = contentResolver.openInputStream(selectedImageUri!!)
-                    val selectedImage = BitmapFactory.decodeStream(imageStream)
+                    val photo: Bitmap = data?.extras?.get("data") as Bitmap
+                    val lightPhoto = Bitmap.createScaledBitmap(photo, photo.width / 2, photo.height / 2, true)
                     val photoArray = ByteArrayOutputStream()
-                    selectedImage.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
+                    lightPhoto.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
                     val data = photoArray.toByteArray()
                     val storage = Firebase.storage
-                    val storageRef =
-                        storage.reference.child("images/${selectedImageUri?.lastPathSegment}")
-                    val uploadTask = storageRef.putFile(selectedImageUri!!)
+                    val storageRef = storage.reference.child("images/${UUID.randomUUID()}.jpg")
+                    val uploadTask = storageRef.putBytes(data)
                     uploadTask.addOnFailureListener { exception ->
                         Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
@@ -174,12 +172,15 @@ class MainActivity : ComponentActivity() {
                 }
 
                 REQUEST_IMAGE_SELECTION -> {
-                    val photo: Bitmap = data?.extras?.get("data") as Bitmap
-                    val photoArray = ByteArrayOutputStream()
-                    photo.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
-                    val data = photoArray.toByteArray()
+                    val selectedImageUri : Uri? = data?.data
+                    val imageStream = contentResolver.openInputStream(selectedImageUri!!)
+                    val selectedImage = BitmapFactory.decodeStream(imageStream)
+                    val lightImage = Bitmap.createScaledBitmap(selectedImage, selectedImage.width / 2, selectedImage.height / 2, true)
+                    val imageArray = ByteArrayOutputStream()
+                    lightImage.compress(Bitmap.CompressFormat.JPEG, 50, imageArray)
+                    val data = imageArray.toByteArray()
                     val storage = Firebase.storage
-                    val storageRef = storage.reference.child("images/${UUID.randomUUID()}.jpg")
+                    val storageRef = storage.reference.child("images/${selectedImageUri?.lastPathSegment}")
                     val uploadTask = storageRef.putBytes(data)
                     uploadTask.addOnFailureListener { exception ->
                         Log.e(TAG, "Upload failed", exception)
