@@ -1,5 +1,6 @@
 package com.example.ensihub.mainClasses
 
+import android.annotation.SuppressLint
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -12,6 +13,8 @@ import com.example.ensihub.ui.screens.SettingsView
 import com.example.ensihub.ui.screens.UserProfileScreen
 import com.example.ensihub.ui.screens.user
 
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
     Scaffold(

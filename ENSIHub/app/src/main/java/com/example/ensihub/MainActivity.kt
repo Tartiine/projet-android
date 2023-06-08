@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
@@ -59,6 +60,15 @@ class MainActivity : ComponentActivity() {
 
         if(!permissionsCheck()) {
             requestPermissions()
+        }
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = Firebase.auth.currentUser
+        if (currentUser != null) {
+            Firebase.auth.signOut()
         }
     }
 
