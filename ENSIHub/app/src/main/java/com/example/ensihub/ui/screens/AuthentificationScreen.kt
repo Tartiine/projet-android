@@ -223,22 +223,25 @@ fun SignUpScreen(
             Text(text = loginUiState?.value?.signUpError ?: "unknown error", color = Color.Red)
         }
 
-        TextField(
-            value = loginUiState?.value?.userNameSignUp ?: "",
-            onValueChange = { loginViewModel?.onUserNameSignUpChange(it) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null
-                )
-            },
-            label = { Text("Enter your email") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            isError = isError,
-            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = Color.Black)
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextField(
+                value = loginUiState?.value?.userNameSignUp ?: "",
+                onValueChange = { loginViewModel?.onUserNameSignUpChange(it) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null
+                    )
+                },
+                label = { Text("Enter your email") },
+                modifier = Modifier
+                    .padding(vertical = 16.dp),
+                isError = isError,
+                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = Color.Black)
+            )
+
+            Text(text = "@uha.fr")
+        }
 
         TextField(
             value = loginUiState?.value?.passwordSignUp ?: "",
@@ -354,8 +357,7 @@ fun ForgotPasswordScreen(
             },
             label = { Text("Enter your email") },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 8.dp, vertical = 16.dp),
             isError = isError,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.White, // Set the text color to white
