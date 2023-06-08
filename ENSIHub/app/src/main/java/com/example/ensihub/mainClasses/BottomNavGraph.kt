@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.ensihub.ui.screens.BottomBarScreen
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 import com.example.ensihub.ui.screens.HomeScreen
-import com.example.ensihub.ui.screens.SettingsScreen
+import com.example.ensihub.ui.screens.SettingsView
 import com.example.ensihub.ui.screens.UserProfileScreen
 import com.example.ensihub.ui.screens.user
 
@@ -24,7 +24,7 @@ fun BottomNavGraph(navController: NavHostController) {
             UserProfileScreen(user)
         }
         composable(route = BottomBarScreen.Settings.route) {
-            SettingsScreen()
+            SettingsView(user)
         }
     }
 
