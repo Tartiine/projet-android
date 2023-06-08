@@ -28,13 +28,15 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.example.ensihub.mainClasses.BottomNavGraph
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import com.example.ensihub.ui.screens.BottomBarScreen
+import com.example.ensihub.ui.screens.LoginRoutes
 import com.google.firebase.auth.ktx.auth
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import com.example.ensihub.mainClasses.BottomNavGraph
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
@@ -53,23 +55,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
             val navController = rememberNavController()
-            val navController1 = rememberNavController()
-
-            // Collect the login state
-            val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
 
             ENSIHubTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (isLoggedIn) {
-                        // User is logged in, show the BottomNavGraph
-                        BottomNavGraph(navController = navController)
-                    } else {
-                        // User is not logged in, show the Login/SignUp screens
-                        Navigation(navController = navController1, loginViewModel = loginViewModel)
-                    }
+                    Navigation(navController = navController, loginViewModel = loginViewModel)
                 }
             }
         }
@@ -79,6 +71,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
@@ -87,7 +80,6 @@ class MainActivity : ComponentActivity() {
             Firebase.auth.signOut()
         }
     }
-
 
     private fun permissionsCheck(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
