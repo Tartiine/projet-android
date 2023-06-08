@@ -96,8 +96,10 @@ fun LoginScreen(
             contentDescription = "APPLOGO",
             modifier = Modifier
                 .requiredWidth(450.0.dp)
-                .requiredHeight(270.0.dp)
+                .requiredHeight(180.0.dp)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+
         Text(
             text = "Login",
             modifier = Modifier
@@ -121,7 +123,7 @@ fun LoginScreen(
                 onValueChange = { loginViewModel?.onUserNameChange(it)},
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Person,
+                        imageVector = Icons.Default.Email,
                         contentDescription = null,
                         tint = Color.LightGray
                     )
@@ -142,7 +144,7 @@ fun LoginScreen(
             Text(
                 text = "@uha.fr",
                 color = Color.White,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
             )
 
         }
@@ -266,8 +268,10 @@ fun SignUpScreen(
             contentDescription = "APPLOGO",
             modifier = Modifier
                 .requiredWidth(450.0.dp)
-                .requiredHeight(270.0.dp)
+                .requiredHeight(180.0.dp)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+
         Text(
             text = "Sign Up",
             modifier = Modifier
@@ -285,6 +289,31 @@ fun SignUpScreen(
         if (isError) {
             Text(text = loginUiState?.value?.signUpError ?: "unknown error", color = Color.Red)
         }
+        TextField(
+            value = loginUiState?.value?.passwordSignUp ?: "",
+            onValueChange = { loginViewModel?.onPasswordSignUpChange(it) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = Color.LightGray
+
+                )
+            },
+            label = { Text(text = "Enter your username") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            isError = isError,
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
+        )
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
@@ -292,7 +321,7 @@ fun SignUpScreen(
                 onValueChange = { loginViewModel?.onUserNameSignUpChange(it)},
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Person,
+                        imageVector = Icons.Default.Email,
                         contentDescription = null,
                         tint = Color.LightGray
                     )
@@ -313,7 +342,7 @@ fun SignUpScreen(
             Text(
                 text = "@uha.fr",
                 color = Color.White,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
             )
 
         }
@@ -446,8 +475,10 @@ fun ForgotPasswordScreen(
             contentDescription = "APPLOGO",
             modifier = Modifier
                 .requiredWidth(450.0.dp)
-                .requiredHeight(270.0.dp)
+                .requiredHeight(180.0.dp)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+
         Text(
             text = "Forgot Password",
             modifier = Modifier
@@ -471,7 +502,7 @@ fun ForgotPasswordScreen(
             onValueChange = { loginViewModel?.onUserNameChange(it)},
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Default.Email,
                     contentDescription = null,
                     tint = Color.LightGray
                 )
