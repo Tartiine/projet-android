@@ -11,13 +11,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.BottomNavGraph
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.example.ensihub.ui.screens.login.Email
 import com.google.firebase.auth.FirebaseAuth
 
 enum class LoginRoutes{
     SignUp,
     SignIn,
-    ForgotPassword,
-    VerifyEmail
+    ForgotPassword
 }
 
 enum class HomeRoutes{
@@ -55,18 +55,16 @@ fun Navigation(
                             inclusive = true
                         }
                     }
-                }
-
-            ) {
-                navController.navigate(LoginRoutes.ForgotPassword.name) {
-                    launchSingleTop = true
-                    popUpTo(LoginRoutes.SignIn.name) {
-                        inclusive = true
+                },
+                onNavToForgotPasswordPage = {
+                    navController.navigate(LoginRoutes.ForgotPassword.name) {
+                        launchSingleTop = true
+                        popUpTo(LoginRoutes.SignIn.name) {
+                            inclusive = true
+                        }
                     }
                 }
-
-
-            }
+            )
         }
 
         composable(route = LoginRoutes.SignUp.name) {
@@ -78,10 +76,18 @@ fun Navigation(
                         }
                     }
                 },
-                loginViewModel = loginViewModel
-            ) {
-                navController.navigate(LoginRoutes.SignIn.name)
-            }
+                loginViewModel = loginViewModel,
+
+                onNavToLoginPage = {
+                    navController.navigate(LoginRoutes.SignIn.name) {
+                        launchSingleTop = true
+                        popUpTo(LoginRoutes.SignUp.name) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+
 
         }
 
@@ -92,6 +98,21 @@ fun Navigation(
                 navController.navigate(LoginRoutes.SignIn.name)
             }
         }
+
+        composable(route = LoginRoutes.ForgotPassword.name) {
+            ForgotPasswordScreen(
+                onNavToLoginPage = {
+                    navController.navigate(LoginRoutes.SignIn.name) {
+                        launchSingleTop = true
+                        popUpTo(LoginRoutes.ForgotPassword.name) {
+                            inclusive = true
+                        }
+                    }
+                },
+                loginViewModel = loginViewModel
+            )
+        }
+
     }
 }
 

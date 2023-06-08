@@ -1,9 +1,12 @@
 package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
+import android.graphics.fonts.FontFamily
+import android.graphics.fonts.FontStyle
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.webkit.WebSettings.TextSize
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -13,16 +16,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,11 +49,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,31 +86,44 @@ fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = Color.DarkGray),
+            .fillMaxHeight()
+            .background(color = Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.login_image_1),
+            contentScale = ContentScale.Crop,
             contentDescription = "APPLOGO",
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier
+                .requiredWidth(450.0.dp)
+                .requiredHeight(270.0.dp)
         )
         Text(
             text = "Login",
-            modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(fontSize = 16.sp)
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
         )
 
         if (isError) {
             Text(text = loginUiState?.value?.loginError ?: "unknown error", color = Color.Red)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(
+            TextField(
                 value = loginUiState?.value?.userName ?: "",
                 onValueChange = { loginViewModel?.onUserNameChange(it)},
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = Color.LightGray
                     )
                 },
                 label = { Text("Enter your email") },
@@ -114,7 +139,12 @@ fun LoginScreen(
                 textStyle = TextStyle(color = Color.White) // Set the text color to white
             )
 
-            Text(text = "@uha.fr")
+            Text(
+                text = "@uha.fr",
+                color = Color.White,
+                fontSize = 20.sp,
+            )
+
         }
 
 
@@ -125,7 +155,8 @@ fun LoginScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color.LightGray
                 )
             },
             label = { Text(text = "Enter your password") },
@@ -147,13 +178,19 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                Log.d("LoginScreen", "LoginScreen: ${loginUiState?.value?.userName}")
                 loginUiState?.value?.userName += "@uha.fr"
-                Log.d("LoginScreen", "LoginScreen: ${loginUiState?.value?.userName}")
                 loginViewModel?.loginUser(context) },
                 modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                    .width(200.dp)
+                    .padding(vertical = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                     Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
         ) {
             Text(text = "Login")
         }
@@ -161,14 +198,21 @@ fun LoginScreen(
         Text(
             text = "New Member?",
             modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(fontSize = 16.sp)
-        )
+            style = TextStyle(fontSize = 16.sp, color = Color.White))
 
         Button(
             onClick = { onNavToSignUpPage.invoke() },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .width(200.dp)
+                .padding(vertical = 8.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
         ) {
             Text(text = "Sign Up")
         }
@@ -176,6 +220,13 @@ fun LoginScreen(
         ClickableText(
             text = AnnotatedString("Forgot Password?"),
             onClick = { onNavToForgotPasswordPage.invoke() },
+            modifier = Modifier
+                .padding(20.dp),
+            style = TextStyle(
+                fontSize = 14.sp,
+                textDecoration = TextDecoration.Underline,
+                color = Color.White
+            )
         )
 
     }
@@ -205,18 +256,30 @@ fun SignUpScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = Color.DarkGray),
+            .fillMaxHeight()
+            .background(color = Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.login_image_1),
+            contentScale = ContentScale.Crop,
             contentDescription = "APPLOGO",
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier
+                .requiredWidth(450.0.dp)
+                .requiredHeight(270.0.dp)
         )
         Text(
             text = "Sign Up",
-            modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(fontSize = 16.sp)
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
         )
 
         if (isError) {
@@ -226,21 +289,33 @@ fun SignUpScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = loginUiState?.value?.userNameSignUp ?: "",
-                onValueChange = { loginViewModel?.onUserNameSignUpChange(it) },
+                onValueChange = { loginViewModel?.onUserNameSignUpChange(it)},
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = Color.LightGray
                     )
                 },
                 label = { Text("Enter your email") },
                 modifier = Modifier
-                    .padding(vertical = 16.dp),
+                    .padding(16.dp),
                 isError = isError,
-                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = Color.Black)
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = Color.White, // Set the text color to white
+                    cursorColor = Color.White, // Set the cursor color to white
+                    focusedBorderColor = Color.White, // Set the focused border color to white
+                    unfocusedBorderColor = Color.White // Set the unfocused border color to white
+                ),
+                textStyle = TextStyle(color = Color.White) // Set the text color to white
             )
 
-            Text(text = "@uha.fr")
+            Text(
+                text = "@uha.fr",
+                color = Color.White,
+                fontSize = 20.sp,
+            )
+
         }
 
         TextField(
@@ -249,16 +324,24 @@ fun SignUpScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color.LightGray
+
                 )
             },
-            label = { Text("Enter your password") },
-            visualTransformation = PasswordVisualTransformation(),
+            label = { Text(text = "Enter your password") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(16.dp),
             isError = isError,
-            colors = TextFieldDefaults.textFieldColors(textColor = Color.Black)
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
         )
 
         TextField(
@@ -267,38 +350,63 @@ fun SignUpScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = null
+                    contentDescription = null ,
+                    tint = Color.LightGray
                 )
             },
-            label = { Text("Confirm Password") },
-            visualTransformation = PasswordVisualTransformation(),
+            label = { Text(text = "Confirm your password") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(16.dp),
             isError = isError,
-            colors = TextFieldDefaults.textFieldColors(textColor = Color.Black)
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
         )
 
         Button(
-            onClick = { loginViewModel?.createUser(context) },
+            onClick = {
+                loginUiState?.value?.userNameSignUp += "@uha.fr"
+                loginViewModel?.createUser(context)},
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
         ) {
-            Text(text = "Sign In")
+            Text(text = "Sign Up")
         }
 
         Text(
             text = "Already have an Account?",
             modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp, color = Color.White)
         )
 
         Button(
             onClick = { onNavToLoginPage.invoke() },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
         ) {
             Text(text = "Login")
         }
@@ -328,36 +436,49 @@ fun ForgotPasswordScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = Color.DarkGray),
+            .fillMaxHeight()
+            .background(color = Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.login_image_1),
+            contentScale = ContentScale.Crop,
             contentDescription = "APPLOGO",
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier
+                .requiredWidth(450.0.dp)
+                .requiredHeight(270.0.dp)
         )
         Text(
             text = "Forgot Password",
-            modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle(fontSize = 16.sp)
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
         )
 
         if (isError) {
             Text(text = loginUiState?.value?.loginError ?: "unknown error", color = Color.Red)
         }
 
-        OutlinedTextField(
+        TextField(
             value = loginUiState?.value?.userName ?: "",
-            onValueChange = { loginViewModel?.onUserNameChange(it) },
+            onValueChange = { loginViewModel?.onUserNameChange(it)},
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = Color.LightGray
                 )
             },
             label = { Text("Enter your email") },
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 16.dp),
+                .padding(16.dp),
             isError = isError,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.White, // Set the text color to white
@@ -373,8 +494,16 @@ fun ForgotPasswordScreen(
             onClick = { loginViewModel?.resetPassword(context)
                       onNavToLoginPage.invoke()},
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
         ) {
             Text(text = "Reset Password")
         }
@@ -385,41 +514,6 @@ fun ForgotPasswordScreen(
         CircularProgressIndicator()
     }
 }
-
-@Composable
-fun EmailVerificationScreen(onNavToHomePage: () -> Unit) {
-    val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Please verify your email",
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(onClick = {
-            auth.currentUser?.let { user ->
-                user.reload().addOnSuccessListener {
-                    if (user.isEmailVerified) {
-                        // Navigate to the main activity
-                        onNavToHomePage.invoke()
-                    } else {
-                        // Show snackbar or some form of feedback
-                    }
-                }
-            }
-        }) {
-            Text("Check Verification Status")
-        }
-    }
-}
-
 
 
 
@@ -439,9 +533,9 @@ fun PrevLoginScreen() {
 @Composable
 fun PrevSignUpScreen() {
     ENSIHubTheme {
-        SignUpScreen(onNavToHomePage = { /*TODO*/ }) {
-
-        }
+        SignUpScreen(onNavToHomePage = { /*TODO*/ },
+            onNavToLoginPage = { /*TODO*/ }
+        )
     }
 }
 
@@ -455,13 +549,3 @@ fun PrevForgotPasswordScreen() {
 
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showSystemUi = true)
-@Composable
-fun PrevVerifyEmailScreen() {
-    val navController = rememberNavController()
-    ENSIHubTheme {
-        EmailVerificationScreen(onNavToHomePage = { /*TODO*/ })
-    }
-
-}
