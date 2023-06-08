@@ -45,8 +45,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.example.ensihub.MainActivity                   //DO NOT DELETE THIS LINE(here for testing)
 import com.example.ensihub.R
+import com.example.ensihub.mainClasses.AuthRepository
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.example.ensihub.mainClasses.User
 import com.example.ensihub.ui.theme.ENSIHubTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,6 +180,15 @@ fun LoginScreen(
             Text(text = "Login")
         }
 
+        Button(                                                          //DO NOT DELETE THIS BUTTON(here for testing)
+            onClick = { (context as MainActivity).showImagePicker() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Select Image")
+        }
+
         Text(
             text = "New Member?",
             modifier = Modifier.padding(start = 8.dp),
@@ -285,7 +297,6 @@ fun SignUpScreen(
                 .fillMaxWidth()
                 .padding(16.dp),
             isError = isError,
-            visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.White, // Set the text color to white
                 cursorColor = Color.White, // Set the cursor color to white
@@ -381,7 +392,9 @@ fun SignUpScreen(
         Button(
             onClick = {
                 loginUiState?.value?.eMailSignUp += "@uha.fr"
-                loginViewModel?.createUser(context) },
+                loginViewModel?.createUser(context)
+                loginViewModel?.sendUser(context)
+                      },
             modifier = Modifier
                 .width(200.dp)
                 .padding(vertical = 16.dp),

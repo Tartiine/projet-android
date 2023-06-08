@@ -2,6 +2,7 @@ package com.example.ensihub.ui.screens
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ensihub.mainClasses.Post
@@ -29,11 +33,12 @@ val posts = listOf(
     Post("3", "wsh Sofia", System.currentTimeMillis(), user.id, 3)
 )
 @Composable
-fun UserProfileScreen(user: User) {
+fun UserProfileScreen(user: User, posts: List<Post>) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+
     ) {
 
         Column(
@@ -42,7 +47,7 @@ fun UserProfileScreen(user: User) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(50.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -56,14 +61,16 @@ fun UserProfileScreen(user: User) {
                 )
             }
             Text(
-                text = "coucou c mwa",
+                text = user.username,
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.h6,
                 color = Color.White
             )
+            PostList(posts = posts)
         }
     }
 }
+
 
 
 @Composable
@@ -113,6 +120,7 @@ fun getTimeSincePost(timestamp: Long): String{
 @Preview
 @Composable
 fun UserProfileScreenPreview(){
-    UserProfileScreen(user)
-}
+    UserProfileScreen(user, posts)
 
+
+}
