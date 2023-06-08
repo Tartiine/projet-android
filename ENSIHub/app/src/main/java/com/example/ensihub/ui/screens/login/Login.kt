@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +39,7 @@ import com.google.relay.compose.tappable
 @Composable
 fun Login(
     modifier: Modifier = Modifier,
+    onNavToForgotPasswordPage: () -> Unit = {},
     loginText: String = "",
     logoImage: Painter = EmptyPainter(),
     forgotText: String = "",
@@ -72,16 +75,6 @@ fun Login(
                     offset = DpOffset(
                         x = 0.0.dp,
                         y = 94.0.dp
-                    )
-                )
-            )
-            Rectangle3(
-                loginButton = loginButton,
-                modifier = Modifier.boxAlign(
-                    alignment = Alignment.TopStart,
-                    offset = DpOffset(
-                        x = 0.0.dp,
-                        y = 153.0.dp
                     )
                 )
             )
@@ -226,7 +219,9 @@ private fun LoginPreview() {
                 emailText = "Email",
                 passwordText = "Password",
                 newText = "New member?",
-                modifier = Modifier.rowWeight(1.0f).columnWeight(1.0f)
+                modifier = Modifier
+                    .rowWeight(1.0f)
+                    .columnWeight(1.0f)
             )
         }
     }
@@ -236,7 +231,9 @@ private fun LoginPreview() {
 fun Rectangle1(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.login_rectangle_1),
-        modifier = modifier.requiredWidth(297.0.dp).requiredHeight(42.0.dp)
+        modifier = modifier
+            .requiredWidth(297.0.dp)
+            .requiredHeight(42.0.dp)
     )
 }
 
@@ -244,7 +241,9 @@ fun Rectangle1(modifier: Modifier = Modifier) {
 fun Rectangle2(modifier: Modifier = Modifier) {
     RelayVector(
         vector = painterResource(R.drawable.login_rectangle_2),
-        modifier = modifier.requiredWidth(297.0.dp).requiredHeight(42.0.dp)
+        modifier = modifier
+            .requiredWidth(297.0.dp)
+            .requiredHeight(42.0.dp)
     )
 }
 
@@ -255,7 +254,10 @@ fun Rectangle3(
 ) {
     RelayVector(
         vector = painterResource(R.drawable.login_rectangle_3),
-        modifier = modifier.tappable(onTap = loginButton).requiredWidth(297.0.dp).requiredHeight(42.0.dp)
+        modifier = modifier
+            .tappable(onTap = loginButton)
+            .requiredWidth(297.0.dp)
+            .requiredHeight(42.0.dp)
     )
 }
 
@@ -266,7 +268,10 @@ fun Rectangle4(
 ) {
     RelayVector(
         vector = painterResource(R.drawable.login_rectangle_4),
-        modifier = modifier.tappable(onTap = signUpButton).requiredWidth(297.0.dp).requiredHeight(42.0.dp)
+        modifier = modifier
+            .tappable(onTap = signUpButton)
+            .requiredWidth(297.0.dp)
+            .requiredHeight(42.0.dp)
     )
 }
 
@@ -390,7 +395,9 @@ fun Cursor(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.login_cursor),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(9.0.dp).requiredHeight(24.0.dp)
+        modifier = modifier
+            .requiredWidth(9.0.dp)
+            .requiredHeight(24.0.dp)
     )
 }
 
@@ -416,7 +423,9 @@ fun LoginForm(
         isStructured = false,
         clipToParent = false,
         content = content,
-        modifier = modifier.requiredWidth(297.0.dp).requiredHeight(296.0.dp)
+        modifier = modifier
+            .requiredWidth(297.0.dp)
+            .requiredHeight(296.0.dp)
     )
 }
 
@@ -444,7 +453,9 @@ fun Cursor1(modifier: Modifier = Modifier) {
     RelayImage(
         image = painterResource(R.drawable.login_cursor),
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(9.0.dp).requiredHeight(24.0.dp)
+        modifier = modifier
+            .requiredWidth(9.0.dp)
+            .requiredHeight(24.0.dp)
     )
 }
 
@@ -489,13 +500,17 @@ fun Image1(
     RelayImage(
         image = logoImage,
         contentScale = ContentScale.Crop,
-        modifier = modifier.requiredWidth(450.0.dp).requiredHeight(270.0.dp)
+        modifier = modifier
+            .requiredWidth(450.0.dp)
+            .requiredHeight(270.0.dp)
     )
 }
 
 @Composable
 fun Line2(modifier: Modifier = Modifier) {
-    RelayVector(modifier = modifier.requiredWidth(428.0.dp).requiredHeight(0.0.dp))
+    RelayVector(modifier = modifier
+        .requiredWidth(428.0.dp)
+        .requiredHeight(0.0.dp))
 }
 
 @Composable
@@ -503,21 +518,8 @@ fun ForgottenPassword(
     forgotButton: () -> Unit,
     forgotText: String,
     modifier: Modifier = Modifier
-) {
-    RelayText(
-        content = forgotText,
-        fontSize = 18.0.sp,
-        color = Color(
-            alpha = 255,
-            red = 255,
-            green = 255,
-            blue = 255
-        ),
-        height = 1.171875.em,
-        textAlign = TextAlign.Left,
-        underline = true,
-        modifier = modifier.tappable(onTap = forgotButton)
-    )
+){
+    
 }
 
 @Composable
@@ -535,6 +537,8 @@ fun TopLevel(
         isStructured = false,
         radius = 48.0,
         content = content,
-        modifier = modifier.fillMaxWidth(1.0f).fillMaxHeight(1.0f)
+        modifier = modifier
+            .fillMaxWidth(1.0f)
+            .fillMaxHeight(1.0f)
     )
 }

@@ -1,5 +1,6 @@
 package com.example.ensihub.mainClasses
 
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -17,6 +18,7 @@ class AuthRepository {
     fun resetPassword(email: String) = Firebase.auth.sendPasswordResetEmail(email)
 
 
+
     suspend fun createUser(
         email:String,
         password:String,
@@ -26,10 +28,7 @@ class AuthRepository {
             .createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{
                 if(it.isSuccessful){
-                    currentUser?.sendEmailVerification()
-                        ?.addOnSuccessListener {
-                            onComplete.invoke(true)
-                        }
+                    onComplete.invoke(true)
                 }else{
                     onComplete.invoke(false)
                 }

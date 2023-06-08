@@ -65,10 +65,6 @@ class LoginViewModel(
                 loginUiState.value.confirmPasswordSignUp.isBlank()
     }
 
-    private fun isEmailVerified():Boolean{
-        Log.d("LoginViewModel", "isEmailVerified called.")
-        return repository.currentUser?.isEmailVerified == true
-    }
 
     fun resetPassword(context: Context) = viewModelScope.launch{
         Log.d("LoginViewModel", "resetPassword called.")
@@ -154,7 +150,7 @@ class LoginViewModel(
 data class LoginUiState(
     var userName:String = "",
     val password:String = "",
-    val userNameSignUp:String = "",
+    var userNameSignUp:String = "",
     val passwordSignUp:String = "",
     val confirmPasswordSignUp:String = "",
     val isLoading:Boolean = false,
