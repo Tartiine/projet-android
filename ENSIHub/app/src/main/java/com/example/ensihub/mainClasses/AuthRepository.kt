@@ -36,20 +36,29 @@ class AuthRepository {
     }
 
     suspend fun login(
-        email:String,
-        password:String,
-        onComplete:(Boolean) -> Unit
-    ) = withContext(Dispatchers.IO){
+        email: String,
+        password: String,
+        onComplete: (Boolean) -> Unit
+    ) = withContext(Dispatchers.IO) {
         Firebase.auth
-            .signInWithEmailAndPassword(email,password)
-            .addOnCompleteListener{
-                if(it.isSuccessful){
-                    if(currentUser?.isEmailVerified == true)
+            .signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = Firebase.auth.currentUser
+                    val isEmailVerified = user?.isEmailVerified ?: false
+
+                    if (isEmailVerified) {
                         onComplete.invoke(true)
-                }else{
+                    } else {
+                        onComplete.invoke(true) //Pour le moment il y pas de verification d'email
+                        //donc faut le laisser a true sinon la variable de connection
+                        // ne s'actualise pas
+                    }
+                } else {
                     onComplete.invoke(false)
                 }
             }.await()
     }
+
 
 }

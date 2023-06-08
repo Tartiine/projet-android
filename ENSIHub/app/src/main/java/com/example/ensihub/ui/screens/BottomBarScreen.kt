@@ -71,7 +71,7 @@ sealed class BottomBarScreen(
                             imageVector = screen.icon,
                             contentDescription = screen.title,
                             tint = if (currentRoute == screen.route) {
-                                Color(0xFF6200EE)
+                                Color(0xFFF79817)
                             } else {
                                 Color(0xFFBDBDBD)
                             }
