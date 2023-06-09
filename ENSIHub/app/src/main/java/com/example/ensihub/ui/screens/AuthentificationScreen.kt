@@ -180,6 +180,7 @@ fun LoginScreen(
             Text(text = "Login")
         }
 
+        /*
         Button(                                                          //DO NOT DELETE THIS BUTTON(here for testing)
             onClick = { (context as MainActivity).showImagePicker() },
             modifier = Modifier
@@ -188,6 +189,7 @@ fun LoginScreen(
         ) {
             Text(text = "Post media content")
         }
+        */
 
         Text(
             text = "New Member?",
