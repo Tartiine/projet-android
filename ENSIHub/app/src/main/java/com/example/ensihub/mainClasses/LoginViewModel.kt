@@ -24,6 +24,10 @@ class LoginViewModel(
         _isLoggedIn.value = repository.hasUser()
     }
 
+    fun updateStatusLogin(isLoggedIn: Boolean) {
+        _isLoggedIn.value = isLoggedIn
+    }
+
     val hasUser:Boolean
         get() = repository.hasUser()
 

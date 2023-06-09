@@ -1,9 +1,9 @@
 package com.example.ensihub.mainClasses
 
 import android.content.ContentValues.TAG
-import android.media.Image
 import android.net.Uri
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,12 +18,14 @@ class Feed {
     private var i: Long = 10
 
     init {
-        db.collection("posts").limit(10).get()
+        db.collection("posts").limit(i).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
+                    if (document == null) continue
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val data = document.data
-                    val post = Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int)
+                    val post = Post(data["id"] as Long, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long, data["imageUrl"] as String?
+                    )
                     posts.add(post)
                     loadComments(post)
                 }
@@ -40,7 +42,7 @@ class Feed {
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val data = document.data
-                    posts.add(Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int))
+                    posts.add(Post(data["id"] as Long, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long))
                 }
             }
             .addOnFailureListener { exception ->
@@ -49,7 +51,7 @@ class Feed {
     }
 
     fun loadComments(post : Post) {
-        db.collection("posts").document(post.id).collection("comments").limit(10).get()
+        db.collection("posts").document(post.id.toString()).collection("comments").limit(10).get()
             .addOnSuccessListener { result ->
                 val postComments = mutableListOf<Comment>()
                 for (document in result) {
@@ -57,7 +59,7 @@ class Feed {
                     val comment = Comment(data["id"] as String, data["text"] as String, data["author"] as String, data["timestamp"] as Long, data["likesCount"] as Int)
                     postComments.add(comment)
                 }
-                comments[post.id] = postComments
+                comments[post.id.toString()] = postComments
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting comments.", exception)
@@ -73,7 +75,7 @@ class Feed {
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val data = document.data
-                    val post = Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Int)
+                    val post = Post(data["id"] as Long, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long)
                     posts.add(post)
                     loadComments(post)
                 }
@@ -88,21 +90,23 @@ class Feed {
             .addOnSuccessListener {
                 Log.d(TAG, "Success : $it")
                 for (document in it) {
-                    post.id = (document.data["id"] as Int + 1).toString()
+                    post.id = document.data["id"] as Long + 1
                 }
+                db.collection("posts").add(post)
+                    .addOnSuccessListener {
+                        Log.d(TAG, post.toString())
+                        Log.d(TAG, "Successfully sent post: $it")
+                    }
+                    .addOnFailureListener {
+                        Log.w(TAG, "Error while sending post: $it")
+                    }
             }
             .addOnFailureListener {
                 Log.w(TAG, "Error", it)
                 return@addOnFailureListener
             }
 
-        db.collection("posts").add(post)
-            .addOnSuccessListener {
-                Log.d(TAG, "Successfully sent post: $it")
-            }
-            .addOnFailureListener {
-                Log.w(TAG, "Error while sending post: $it")
-            }
+
     }
 
     fun addImagePost(post : Post, imageUri : Uri) {
@@ -130,7 +134,7 @@ class Feed {
     }
 
     fun addComment(postId : String, comment : Comment) {
-        val post = posts.find {it.id == postId}
+        val post = posts.find {it.id.toString() == postId}
         if(post != null) {
             db.collection("posts").document(postId).collection("comments").orderBy("id", Query.Direction.DESCENDING).limit(1).get()
                 .addOnSuccessListener {
@@ -157,7 +161,7 @@ class Feed {
 
 
     fun deletePost(post:Post){
-        db.collection("posts").document(post.id)
+        db.collection("posts").document(post.id.toString())
             .delete()
             .addOnSuccessListener{
                 Log.d(TAG, "Post deleted")
@@ -168,7 +172,7 @@ class Feed {
     }
 
     fun updatePostText(post: Post, newText: String){
-        db.collection("posts").document(post.id)
+        db.collection("posts").document(post.id.toString())
             .update(post.text, newText)
             .addOnSuccessListener {
                 println("Post updated")
@@ -180,7 +184,7 @@ class Feed {
     }
 
     fun likePost(post: Post){
-        val postRef = db.collection("posts").document(post.id)
+        val postRef = db.collection("posts").document(post.id.toString())
         val updateData = hashMapOf<String, Any>(
             "likesCount" to post.likesCount + 1)
         postRef.update(updateData)
@@ -207,7 +211,7 @@ class Feed {
 
 
     fun deleteComment(postId : String, commentId : String) {
-        val post = posts.find { it.id == postId}
+        val post = posts.find { it.id.toString() == postId}
         if (post != null) {
             db.collection("posts").document(postId).collection("comments").document(commentId).delete()
                 .addOnSuccessListener {
@@ -228,7 +232,7 @@ class Feed {
     }
 
     fun search(key: String): List<Post> {
-        return this.posts.filter { p -> p.id == key || p.text.contains(key) }
+        return this.posts.filter { p -> p.id.toString() == key || p.text.contains(key) }
     }
 
     fun getImage(post : Post) {
@@ -236,7 +240,7 @@ class Feed {
         storageRef.getFile(File("image/${post.id}"))
         storageRef.downloadUrl.addOnSuccessListener { uri ->
                 post.imageUrl = uri.toString()
-                db.collection("posts").document(post.id).set(post)
+                db.collection("posts").document(post.id.toString()).set(post)
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error while downloading image : $exception")

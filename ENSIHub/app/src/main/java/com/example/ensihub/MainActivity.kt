@@ -1,6 +1,5 @@
 package com.example.ensihub
 
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -29,14 +28,9 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import com.example.ensihub.ui.screens.BottomBarScreen
-import com.example.ensihub.ui.screens.LoginRoutes
+import com.example.ensihub.mainClasses.Feed
+import com.example.ensihub.mainClasses.Post
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -49,11 +43,12 @@ class MainActivity : ComponentActivity() {
     private val REQUEST_IMAGE_CAPTURE = 2
     private val REQUEST_IMAGE_SELECTION = 3
     private val REQUEST_VIDEO_SELECTION = 4
-
+    val feed = Feed()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        feed.addPost(Post(0, "body", 1000, "titi\n difdc,", 0, "https://macollectiondepoupees.files.wordpress.com/2019/05/dsc_0023-1.jpg"))
+        feed.reload()
         setContent {
             val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
             val navController = rememberNavController()

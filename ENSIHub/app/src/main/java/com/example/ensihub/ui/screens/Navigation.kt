@@ -52,7 +52,7 @@ fun Navigation(
                     UserProfileScreen(user)
                 }
                 composable(route = BottomBarScreen.Settings.route) {
-                    SettingsView(user)
+                    SettingsView(user, navController, loginViewModel)
                 }
                 composable(route = LoginRoutes.SignIn.name) {
                     LoginScreen(

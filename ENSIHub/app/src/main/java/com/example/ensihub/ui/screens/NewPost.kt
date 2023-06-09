@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ensihub.mainClasses.Post
 import java.util.UUID
@@ -40,7 +39,7 @@ fun NewPostView() {
         Button(
             onClick = {
                 val newPost = Post(
-                    id = UUID.randomUUID().toString(),
+                    id = 0,
                     text = messageState.value,
                     timestamp = System.currentTimeMillis(),
                     author = "John Doe",  // Replace with the actual author's name or fetch from user information
