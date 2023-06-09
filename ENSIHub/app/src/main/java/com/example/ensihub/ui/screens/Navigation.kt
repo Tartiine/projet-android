@@ -36,7 +36,9 @@ fun Navigation(
 
     Scaffold(
         bottomBar = {
+            if (isLoggedIn) {
                 BottomNavigationBar(navController = navController)
+            }
         }
     ) {
         NavHost(

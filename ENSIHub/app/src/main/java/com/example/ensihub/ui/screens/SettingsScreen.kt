@@ -131,8 +131,6 @@ fun SettingsView(user: User) {
 
 }
 
-
-
 @Preview
 @Composable
 fun SettingsViewPreview() {
