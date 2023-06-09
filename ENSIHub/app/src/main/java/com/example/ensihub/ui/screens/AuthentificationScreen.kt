@@ -186,7 +186,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
-            Text(text = "Select Image")
+            Text(text = "Post media content")
         }
 
         Text(

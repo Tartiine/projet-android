@@ -30,7 +30,7 @@ import com.example.ensihub.R
 
 val user = User("1", "joel_dion", "joel.dion@uha.fr", Role.USER)
 val posts = listOf(
-    Post("1", "Merci Jacquie et Michel", System.currentTimeMillis(), user.id, 10),
+    Post("1", "L'application est incroyable !", System.currentTimeMillis(), user.id, 10),
     Post("2", "Quelle matinée incroyable ! J'ai eu la chance de rencontrer @manuelferrara, une véritable légende de l'industrie cinématographique. Non seulement nous avons partagé un délicieux petit-déjeuner, mais nous avons également échangé sur notre passion commune pour le cinéma. Merci pour cette expérience inoubliable, Manuel ! #RencontreDeRêve #Cinéma", System.currentTimeMillis(), user.id, 5),
     Post("3", "wsh Sofia", System.currentTimeMillis(), user.id, 3),
     Post("4", "Un autre texte textetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetexte", System.currentTimeMillis(), user.id, 3),
