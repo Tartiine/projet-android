@@ -153,10 +153,10 @@ class MainActivity : ComponentActivity() {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> {
-                    val photo: Bitmap = data?.extras?.get("data") as Bitmap
-                    val lightPhoto = Bitmap.createScaledBitmap(photo, photo.width / 2, photo.height / 2, true)
+                    val photo : Bitmap = data?.extras?.get("data") as Bitmap
+                    val lightPhoto = lightImage(photo)
                     val photoArray = ByteArrayOutputStream()
-                    lightPhoto.compress(Bitmap.CompressFormat.JPEG, 50, photoArray)
+                    lightPhoto.compress(Bitmap.CompressFormat.JPEG, 75, photoArray)
                     val data = photoArray.toByteArray()
                     val storage = Firebase.storage
                     val storageRef = storage.reference.child("Images/${UUID.randomUUID()}.jpg")
@@ -172,9 +172,9 @@ class MainActivity : ComponentActivity() {
                     val selectedImageUri : Uri? = data?.data
                     val imageStream = contentResolver.openInputStream(selectedImageUri!!)
                     val selectedImage = BitmapFactory.decodeStream(imageStream)
-                    val lightImage = Bitmap.createScaledBitmap(selectedImage, selectedImage.width / 2, selectedImage.height / 2, true)
+                    val lightImage = lightImage(selectedImage)
                     val imageArray = ByteArrayOutputStream()
-                    lightImage.compress(Bitmap.CompressFormat.JPEG, 50, imageArray)
+                    lightImage.compress(Bitmap.CompressFormat.JPEG, 75, imageArray)
                     val data = imageArray.toByteArray()
                     val storage = Firebase.storage
                     val storageRef = storage.reference.child("Images/${selectedImageUri?.lastPathSegment}")
@@ -205,6 +205,24 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun lightImage(image : Bitmap) : Bitmap {
+        val width = image.width
+        val height = image.height
+        if(width <= 1280 && height <= 720) {
+            return image
+        }
+        val ratio : Float
+        if(width > height) {
+            ratio = 1280.toFloat() / width
+        }
+        else {
+            ratio = 720.toFloat() / height
+        }
+        val sizedWidth : Int = (width * ratio).toInt()
+        val sizedHeight : Int = (height * ratio).toInt()
+        return Bitmap.createScaledBitmap(image, sizedWidth, sizedHeight, true)
     }
 }
 
