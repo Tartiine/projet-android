@@ -33,12 +33,15 @@ val posts = listOf(
     Post("1", "Merci Jacquie et Michel", System.currentTimeMillis(), user.id, 10),
     Post("2", "Quelle matinée incroyable ! J'ai eu la chance de rencontrer @manuelferrara, une véritable légende de l'industrie cinématographique. Non seulement nous avons partagé un délicieux petit-déjeuner, mais nous avons également échangé sur notre passion commune pour le cinéma. Merci pour cette expérience inoubliable, Manuel ! #RencontreDeRêve #Cinéma", System.currentTimeMillis(), user.id, 5),
     Post("3", "wsh Sofia", System.currentTimeMillis(), user.id, 3),
-    Post("4", "Un autre texte textetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetexte", System.currentTimeMillis(), user.id, 3)
+    Post("4", "Un autre texte textetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetexte", System.currentTimeMillis(), user.id, 3),
+    Post("5", "JSP", System.currentTimeMillis(), user.id, 3)
 )
 @Composable
 fun UserProfileScreen(user: User) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF2D2F31))
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -100,11 +103,14 @@ fun UserProfileScreen(user: User) {
 
 @Composable
 fun PostList(posts: List<Post>) {
-    LazyColumn {
-        items(posts) { post ->
-            PostItem2(post = post)
+    Box(modifier = Modifier.fillMaxSize().padding(bottom = 50.dp)) {
+        LazyColumn {
+            items(posts) { post ->
+                PostItem2(post = post)
+            }
         }
     }
+
 }
 
 @Composable
@@ -113,7 +119,7 @@ fun PostItem2(post: Post) {
         modifier = Modifier
             .padding(10.dp)
             .clip(shape = MaterialTheme.shapes.medium)
-            .background(color = Color(0xFFBDBDBD ))
+            .background(color = Color(0xFFBDBDBD))
             .border(
                 border = BorderStroke(1.dp, Color.White),
                 shape = MaterialTheme.shapes.medium
