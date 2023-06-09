@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
     private val PERMISSION_REQUEST_CODE = 1
     private val REQUEST_IMAGE_CAPTURE = 2
     private val REQUEST_IMAGE_SELECTION = 3
+    private val REQUEST_VIDEO_SELECTION = 4
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,9 +115,9 @@ class MainActivity : ComponentActivity() {
     }
 
     fun showImagePicker() {
-        val items = arrayOf<CharSequence>("Take photo", "Import from Gallery", "Cancel")
+        val items = arrayOf<CharSequence>("Take photo", "Import from Gallery", "Select video", "Cancel")
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Post Photo")
+        builder.setTitle("Post media content")
         builder.setItems(items) { dialog, item ->
             when {
                 items[item] == "Take photo" -> {
@@ -128,11 +130,19 @@ class MainActivity : ComponentActivity() {
                 }
 
                 items[item] == "Import from Gallery" -> {
-                    val pickPhoto =
-                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     try {
                         startActivityForResult(pickPhoto, REQUEST_IMAGE_SELECTION)
                     } catch (e: ActivityNotFoundException) {
+                        //Cannot access to the gallery
+                    }
+                }
+
+                items[item] == "Select video" -> {
+                    val pickVideo = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+                    try {
+                        startActivityForResult(pickVideo, REQUEST_VIDEO_SELECTION)
+                    } catch (e : ActivityNotFoundException) {
                         //Cannot access to the gallery
                     }
                 }
@@ -178,6 +188,24 @@ class MainActivity : ComponentActivity() {
                         Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
                         Log.d(TAG, "Upload successfully")
+                    }
+                }
+
+                REQUEST_VIDEO_SELECTION -> {
+                    val selectedVideoUri : Uri? = data?.data
+                    val videoSize = contentResolver.openFileDescriptor(selectedVideoUri!!, "r")?.statSize
+                    if (videoSize != null && videoSize > (10 * 1024 * 1024)) {
+                        Toast.makeText(this, "You are trying to import a heavier video than 10 Mb, please import a lighter video", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        val storage = Firebase.storage
+                        val storageRef = storage.reference.child("Videos/${selectedVideoUri?.lastPathSegment}")
+                        val uploadTask = storageRef.putFile(selectedVideoUri)
+                        uploadTask.addOnFailureListener { exception ->
+                            Log.e(TAG, "Upload failed", exception)
+                        }.addOnSuccessListener {
+                            Log.d(TAG, "Upload successfully")
+                        }
                     }
                 }
             }

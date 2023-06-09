@@ -117,6 +117,18 @@ class Feed {
             }
     }
 
+    fun addVideoPost(post : Post, videoUri : Uri) {
+        db.collection("posts").add(post)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "Successfully sent video : ${documentReference.id}")
+                val postId = documentReference.id
+                getVideo(post)
+            }
+            .addOnFailureListener {
+                Log.w(TAG, "Error while adding post: $it")
+            }
+    }
+
     fun addComment(postId : String, comment : Comment) {
         val post = posts.find {it.id == postId}
         if(post != null) {
@@ -220,16 +232,27 @@ class Feed {
     }
 
     fun getImage(post : Post) {
-        val storageRef = storage.reference.child("image/${post.id}")
+        val storageRef = storage.reference.child("Images/${post.id}")
         storageRef.getFile(File("image/${post.id}"))
         storageRef.downloadUrl.addOnSuccessListener { uri ->
                 post.imageUrl = uri.toString()
                 db.collection("posts").document(post.id).set(post)
             }
-
             .addOnFailureListener { exception ->
-                Log.w(TAG, "Error while uploading image : $exception")
+                Log.w(TAG, "Error while downloading image : $exception")
             }
+    }
+
+    fun getVideo(post : Post) {
+        val storageRef = storage.reference.child("Videos/${post.id}")
+        storageRef.getFile(File("Videos/${post.id}"))
+        storageRef.downloadUrl.addOnSuccessListener { uri ->
+            post.videoUrl = uri.toString()
+            db.collection("posts").document(post.id).set(post)
+        }.
+        addOnFailureListener { exception ->
+            Log.w(TAG, "Error while downloading video : $exception")
+        }
     }
 
     fun sendUser(user: User) {
