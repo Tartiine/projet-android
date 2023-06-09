@@ -47,18 +47,15 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        feed.addPost(Post(0, "body", 1000, "titi\n difdc,", 0, "https://macollectiondepoupees.files.wordpress.com/2019/05/dsc_0023-1.jpg"))
-        feed.reload()
         setContent {
             val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
             val navController = rememberNavController()
-
             ENSIHubTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation(navController = navController, loginViewModel = loginViewModel)
+                    Navigation(navController = navController, loginViewModel = loginViewModel, feed)
                 }
             }
         }

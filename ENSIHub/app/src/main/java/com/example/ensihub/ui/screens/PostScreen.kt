@@ -1,6 +1,8 @@
 package com.example.ensihub.ui.screens
 
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -28,14 +30,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import com.example.ensihub.R
 import com.example.ensihub.mainClasses.Post
 
 @Composable
 fun PostView(post: Post) {
-    val showImage = remember { mutableStateOf(true) }
+    val showImage = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -80,6 +85,7 @@ fun PostView(post: Post) {
             }
         }
         Divider()
+
 
         if (showImage.value) {
             AsyncImage(post.imageUrl, null)

@@ -46,6 +46,7 @@ fun NewPostView() {
                     likesCount = 0  // Set the initial likes count as needed
                 )
                 feed.addPost(newPost)
+
             },
             modifier = Modifier.align(Alignment.End)
         ) {
