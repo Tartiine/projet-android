@@ -1,36 +1,37 @@
 package com.example.ensihub
 
-import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
-import com.example.ensihub.mainClasses.LoginViewModel
-import com.example.ensihub.ui.screens.Navigation
-import com.example.ensihub.ui.theme.ENSIHubTheme
 import android.Manifest
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import com.example.ensihub.mainClasses.Feed
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.ensihub.mainClasses.FeedViewModel
+import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.Post
-import com.google.firebase.Timestamp
+import com.example.ensihub.ui.screens.Navigation
+import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -43,28 +44,47 @@ class MainActivity : ComponentActivity() {
     private val REQUEST_IMAGE_CAPTURE = 2
     private val REQUEST_IMAGE_SELECTION = 3
     private val REQUEST_VIDEO_SELECTION = 4
-    val feed = Feed()
+    private val viewModel: FeedViewModel by viewModels()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
-            val navController = rememberNavController()
-            ENSIHubTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Navigation(navController = navController, loginViewModel = loginViewModel, feed)
-                }
-            }
-        }
+
+        viewModel.addPost(
+            Post(
+                id = 0,
+                text = "Post post post post post post",
+                timestamp = 1000,
+                author = "Tartine",
+                likesCount = 0
+            )
+        )
+        viewModel.loadInitialData()
 
         if (!permissionsCheck()) {
             requestPermissions()
         }
+
+        setContent {
+            MainActivityContent(viewModel = viewModel)
+        }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Composable
+    fun MainActivityContent(viewModel: FeedViewModel) {
+        val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
+        val navController = rememberNavController()
+
+        ENSIHubTheme {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Navigation(navController = navController, loginViewModel = loginViewModel)
+            }
+        }
+    }
 
     public override fun onStart() {
         super.onStart()
@@ -222,27 +242,6 @@ class MainActivity : ComponentActivity() {
         return Bitmap.createScaledBitmap(image, sizedWidth, sizedHeight, true)
     }
 }
-
-/*
-Test Post
-@Preview
-@Composable
-fun PostViewPreview() {
-val post = Post(
-id = "123",
-text = "Yo la street.",
-timestamp = System.currentTimeMillis(),
-author = "Marian chef eco-conception",
-likesCount = 5
-)
-PostView(post)
-}
-
-Button(onClick = { yourViewModel.showImagePicker() }) {
-Text("Import an image")
-}
-
-*/
 
 
 

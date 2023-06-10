@@ -11,15 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ensihub.mainClasses.Post
-import java.util.UUID
-import com.example.ensihub.mainClasses.Feed
+import com.example.ensihub.mainClasses.FeedViewModel
 
 
 @Composable
 fun NewPostView() {
     val messageState = remember { mutableStateOf("") }
-    val feed = Feed()
+    val viewModel: FeedViewModel = viewModel()
 
     Column(
         modifier = Modifier
@@ -45,8 +45,8 @@ fun NewPostView() {
                     author = "John Doe",  // Replace with the actual author's name or fetch from user information
                     likesCount = 0  // Set the initial likes count as needed
                 )
-                feed.addPost(newPost)
-
+                viewModel.addPost(newPost)
+                messageState.value = ""
             },
             modifier = Modifier.align(Alignment.End)
         ) {

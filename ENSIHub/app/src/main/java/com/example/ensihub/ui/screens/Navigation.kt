@@ -32,7 +32,6 @@ enum class HomeRoutes{
 fun Navigation(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    feed: Feed
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
 
@@ -48,7 +47,7 @@ fun Navigation(
             startDestination = if (isLoggedIn) BottomBarScreen.Home.route else LoginRoutes.SignIn.name
         ) {
                 composable(route = BottomBarScreen.Home.route) {
-                    HomeScreen(feed)
+                    HomeScreen()
                 }
                 composable(route = BottomBarScreen.Profile.route) {
                     UserProfileScreen(user)

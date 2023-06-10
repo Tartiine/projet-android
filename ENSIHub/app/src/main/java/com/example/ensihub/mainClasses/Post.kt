@@ -2,7 +2,7 @@ package com.example.ensihub.mainClasses
 
 data class Post (
     var id: Long,
-    val text: String,
+    var text: String,
     val timestamp: Long,
     val author: String,
     var likesCount: Long,
