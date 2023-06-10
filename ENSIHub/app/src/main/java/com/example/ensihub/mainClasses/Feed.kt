@@ -18,7 +18,7 @@ class Feed {
     private var i: Long = 10
 
     init {
-        db.collection("posts").limit(i).get()
+        db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     if (document == null) continue
@@ -37,7 +37,7 @@ class Feed {
 
     fun loadMore() {
         i += 10
-        db.collection("posts").limit(i).whereNotIn("id", posts).get()
+        db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).whereNotIn("id", posts).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -252,7 +252,7 @@ class Feed {
         storageRef.getFile(File("Videos/${post.id}"))
         storageRef.downloadUrl.addOnSuccessListener { uri ->
             post.videoUrl = uri.toString()
-            db.collection("posts").document(post.id).set(post)
+            db.collection("posts").document(post.id.toString()).set(post)
         }.
         addOnFailureListener { exception ->
             Log.w(TAG, "Error while downloading video : $exception")
