@@ -9,7 +9,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.File
-
+/*
 class Feed {
     private val posts = mutableListOf<Post>()
     private val comments = mutableMapOf<String, MutableList<Comment>>()
@@ -271,3 +271,4 @@ class Feed {
 
 }
 
+*/

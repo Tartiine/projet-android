@@ -14,12 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.FeedViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
 fun NewPostView() {
     val messageState = remember { mutableStateOf("") }
     val viewModel: FeedViewModel = viewModel()
+    val currentUser = FirebaseAuth.getInstance().currentUser // Get the current user
 
     Column(
         modifier = Modifier
@@ -38,15 +40,16 @@ fun NewPostView() {
 
         Button(
             onClick = {
-                val newPost = Post(
-                    id = 0,
-                    text = messageState.value,
-                    timestamp = System.currentTimeMillis(),
-                    author = "John Doe",  // Replace with the actual author's name or fetch from user information
-                    likesCount = 0  // Set the initial likes count as needed
-                )
-                viewModel.addPost(newPost)
-                messageState.value = ""
+                if (currentUser != null) {
+                    val newPost = Post(
+                        text = messageState.value,
+                        timestamp = System.currentTimeMillis(),
+                        author = currentUser.displayName ?: "",  // Use the current user's display name
+                        likesCount = 0  // Set the initial likes count as needed
+                    )
+                    viewModel.addPost(newPost)
+                    messageState.value = ""
+                }
             },
             modifier = Modifier.align(Alignment.End)
         ) {

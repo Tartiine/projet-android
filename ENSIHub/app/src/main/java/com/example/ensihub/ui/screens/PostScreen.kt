@@ -45,6 +45,8 @@ fun PostView(
     viewModel: FeedViewModel
 ) {
 
+    val isLiked = remember { mutableStateOf(false) }  // Remember the liked state
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,16 +68,25 @@ fun PostView(
         }
         Divider()
 
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Button(
                 modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                onClick = { viewModel.likePost(post)
-                    Log.d("PostView", "likePost clicked for postId = ${post.id}")},
+                colors = ButtonDefaults.buttonColors(backgroundColor = if (isLiked.value) Color.Red else Color.Transparent),
+                onClick = {
+                    isLiked.value = !isLiked.value
+                    if (isLiked.value) {
+                        viewModel.likePost(post)
+                        Log.d("PostView", "likePost clicked for postId = ${post.id}")
+                    } else {
+                        viewModel.unlikePost(post)
+                        Log.d("PostView", "unlikePost clicked for postId = ${post.id}")
+                    }
+                },
                 elevation = null
             ) {
-                Text("Like")
+                Text(if (isLiked.value) "Unlike" else "Like")
             }
 
             Text(
@@ -121,7 +132,6 @@ fun PostViewPreview() {
     val showImage = remember { mutableStateOf(true) }
     PostView(
         post = Post(
-            id = 0,
             text = "body",
             timestamp = 1000,
             author = "titi\n difdc,",
