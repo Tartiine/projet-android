@@ -224,17 +224,26 @@ class FeedViewModel : ViewModel() {
     fun likePost(post: Post) {
         viewModelScope.launch {
             val postRef = db.collection("posts").document(post.id.toString())
-            post.likesCount = post.likesCount.plus(1)
-            postRef.update("likesCount", post.likesCount)
+            val updatedLikesCount = post.likesCount + 1
+            postRef.update("likesCount", updatedLikesCount)
                 .addOnSuccessListener {
                     Log.d(TAG, "+1 like")
-                    _posts.value = _posts.value?.map { if (it.id == post.id) post else it }
+                    val updatedPosts = _posts.value?.toMutableList()
+                    val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                    if (updatedPostIndex != null && updatedPostIndex != -1) {
+                        val updatedPost = post.copy(likesCount = updatedLikesCount)
+                        updatedPosts[updatedPostIndex] = updatedPost
+                        _posts.value = updatedPosts
+                    }
                 }
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error in liking the post: $e")
                 }
         }
     }
+
+
+
 
 
     fun updateCommText(postId: String, comment: Comment, newText: String) {
