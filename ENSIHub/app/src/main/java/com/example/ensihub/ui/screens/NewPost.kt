@@ -20,6 +20,7 @@ import com.example.ensihub.mainClasses.FeedViewModel
 @Composable
 fun NewPostView(navController: NavController) {
     val messageState = remember { mutableStateOf("") }
+    val imageUrlState = remember { mutableStateOf("") }
     val viewModel: FeedViewModel = viewModel()
     val currentUser = viewModel.currentUser.collectAsState().value
 
@@ -38,15 +39,27 @@ fun NewPostView(navController: NavController) {
             textStyle = MaterialTheme.typography.body1
         )
 
+        TextField(
+            value = imageUrlState.value,
+            onValueChange = { imageUrlState.value = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            label = { Text("Enter image URL") },
+            textStyle = MaterialTheme.typography.body1
+        )
+
         Button(
             onClick = {
                 if (currentUser != null) {
                     val newPost = Post(
                         text = messageState.value,
-                        author = currentUser.username
+                        author = currentUser.username,
+                        imageUrl = imageUrlState.value
                     )
                     viewModel.addPost(newPost)
                     messageState.value = ""
+                    imageUrlState.value = ""
                     navController.navigateUp()
                 }
             },
@@ -56,4 +69,5 @@ fun NewPostView(navController: NavController) {
         }
     }
 }
+
 
