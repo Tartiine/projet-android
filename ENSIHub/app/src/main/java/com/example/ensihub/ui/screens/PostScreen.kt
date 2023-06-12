@@ -2,6 +2,7 @@ package com.example.ensihub.ui.screens
 
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,17 +55,19 @@ fun PostView(
             .fillMaxWidth()
             .padding(20.dp)
             .clip(shape = RoundedCornerShape(10.dp))
-            .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(10.dp))
+            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(10.dp))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = post.author,
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle1,
+                color = Color.White
             )
 
             Text(
                 text = post.text,
                 style = MaterialTheme.typography.body1,
+                color = Color.White,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -71,9 +76,8 @@ fun PostView(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Button(
-                modifier = Modifier.size(80.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = if (isLiked.value) Color.Red else Color.Transparent),
+                modifier = Modifier.size(60.dp),
+                colors = ButtonDefaults.buttonColors(contentColor = if (isLiked.value) Color(247, 152,23) else Color.White, backgroundColor = Color.Transparent),
                 onClick = {
                     isLiked.value = !isLiked.value
                     if (isLiked.value) {
@@ -86,13 +90,14 @@ fun PostView(
                 },
                 elevation = null
             ) {
-                Text(if (isLiked.value) "Unlike" else "Like")
+                Icon(if (isLiked.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
             }
 
             Text(
-                text = "${post.likesCount}",
+                text = "Likes: ${post.likesCount}",
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(start = 8.dp)
+                color = Color.White,
+                modifier = Modifier.padding(start = 8.dp, end = 20.dp)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -100,6 +105,7 @@ fun PostView(
                 Row(modifier = Modifier.clickable { onToggleShowImage() }) {
                     Text(
                         text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                        color = Color.White,
                         modifier = Modifier
                             .weight(1f)
                             .wrapContentWidth(Alignment.Start)
@@ -108,8 +114,10 @@ fun PostView(
                     Icon(
                         imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
                 }
             }
         }
