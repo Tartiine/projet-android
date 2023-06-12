@@ -63,8 +63,8 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("newPost") }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Post")
+            FloatingActionButton(onClick = { navController.navigate("newPost") }, backgroundColor = Color.White) {
+                Icon(Icons.Default.Add, contentDescription = "Add Post", tint = Color(0xFFFF8C00))
             }
         }
     ) {

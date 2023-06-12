@@ -130,12 +130,11 @@ fun PostView(
         if(user.role==Role.USER){
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                modifier = Modifier.width(80.dp),
+                modifier = Modifier.width(100.dp),
                 onClick = {
                     /* On click function */
                     Log.d("PostView", "reportPost clicked for postId = ${post.id}")
                 },
-                shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
                 elevation = null
             ) {
@@ -143,24 +142,22 @@ fun PostView(
             }
         }else{
             Button(
-                modifier = Modifier.width(80.dp),
+                modifier = Modifier.width(100.dp),
                 onClick = {
 
                     Log.d("PostView", "validatePost clicked for postId = ${post.id}")
                 },
-                shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
                 elevation = null
             ) {
-                Text("Validate")
+                Text("Validate",color = Color.White)
             }
             Button(
-                modifier = Modifier.width(80.dp),
+                modifier = Modifier.width(100.dp),
                 onClick = {
 
                     Log.d("PostView", "deletePost clicked for postId = ${post.id}")
                 },
-                shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
                 elevation = null
             ) {
