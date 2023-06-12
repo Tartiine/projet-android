@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.ensihub.mainClasses.Feed
+import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 
@@ -32,6 +32,7 @@ enum class HomeRoutes{
 fun Navigation(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    viewModel: FeedViewModel
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
 
@@ -47,7 +48,7 @@ fun Navigation(
             startDestination = if (isLoggedIn) BottomBarScreen.Home.route else LoginRoutes.SignIn.name
         ) {
                 composable(route = BottomBarScreen.Home.route) {
-                    HomeScreen()
+                    HomeScreen(viewModel = viewModel)
                 }
                 composable(route = BottomBarScreen.Profile.route) {
                     UserProfileScreen(user)

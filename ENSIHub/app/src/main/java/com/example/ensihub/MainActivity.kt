@@ -29,7 +29,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
-import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.firebase.auth.ktx.auth
@@ -50,15 +49,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.addPost(
-            Post(
-                id = 0,
-                text = "Post post post post post post",
-                timestamp = 1000,
-                author = "Tartine",
-                likesCount = 0
-            )
+        /*viewModel.addPost(
+        Post(
+            id = 0,
+            text = "Post post post post post post",
+            timestamp = 1000,
+            author = "Tartine",
+            likesCount = 0
         )
+    )*/
         viewModel.loadInitialData()
 
         if (!permissionsCheck()) {
@@ -81,7 +80,11 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                Navigation(navController = navController, loginViewModel = loginViewModel)
+                Navigation(
+                    navController = navController,
+                    loginViewModel = loginViewModel,
+                    viewModel = viewModel
+                )
             }
         }
     }

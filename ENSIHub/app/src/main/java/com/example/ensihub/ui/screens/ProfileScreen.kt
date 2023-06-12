@@ -23,13 +23,13 @@ import com.example.ensihub.mainClasses.User
 import androidx.compose.ui.unit.sp
 
 
-val user = User("1", "joel_dion", "joel.dion@uha.fr", Role.USER)
+val user = User("1", "random_user", "random@uha.fr", Role.USER)
 val posts = listOf(
-    Post(1, "L'application est incroyable !", System.currentTimeMillis(), user.id, 10),
-    Post(2, "Quelle matinée incroyable ! J'ai eu la chance de rencontrer @manuelferrara, une véritable légende de l'industrie cinématographique. Non seulement nous avons partagé un délicieux petit-déjeuner, mais nous avons également échangé sur notre passion commune pour le cinéma. Merci pour cette expérience inoubliable, Manuel ! #RencontreDeRêve #Cinéma", System.currentTimeMillis(), user.id, 5),
-    Post(3, "wsh Sofia", System.currentTimeMillis(), user.id, 3),
-    Post(4, "Un autre texte textetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetexte", System.currentTimeMillis(), user.id, 3),
-    Post(5, "JSP", System.currentTimeMillis(), user.id, 3)
+    Post(id="0", "L'application est incroyable !", System.currentTimeMillis(), user.id, 10),
+    Post(id="1","Quelle matinée incroyable ! J'ai eu la chance de rencontrer, une véritable légende de l'industrie cinématographique. Non seulement nous avons partagé un délicieux petit-déjeuner, mais nous avons également échangé sur notre passion commune pour le cinéma. Merci pour cette expérience inoubliable, Manuel ! #RencontreDeRêve #Cinéma", System.currentTimeMillis(), user.id, 5),
+    Post(id="2","wsh ", System.currentTimeMillis(), user.id, 3),
+    Post(id="3","Un autre texte textetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetexte", System.currentTimeMillis(), user.id, 3),
+    Post(id="4","JSP", System.currentTimeMillis(), user.id, 3)
 )
 @Composable
 fun UserProfileScreen(user: User) {

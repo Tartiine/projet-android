@@ -40,7 +40,7 @@ class FeedViewModel : ViewModel() {
                     for (document in result) {
                         val data = document.data
                         val post = Post(
-                            id = document.id.toLongOrNull() ?: 0L,
+                            id = document.id,
                             text = data["text"] as? String ?: "",
                             timestamp = data["timestamp"] as? Long ?: 0,
                             author = data["author"] as? String ?: "",
@@ -59,25 +59,29 @@ class FeedViewModel : ViewModel() {
     }
 
 
+
+
     private fun loadComments(post: Post) {
-        viewModelScope.launch {
-            db.collection("posts")
-                .document(post.id.toString())
-                .collection("comments")
-                .get()
-                .addOnSuccessListener { result ->
-                    val commentList = mutableListOf<Comment>()
-                    for (document in result) {
-                        val comment = document.toObject(Comment::class.java)
-                        commentList.add(comment)
+        post.id?.let { postId ->  // Let block will execute only if postId is not null
+            viewModelScope.launch {
+                db.collection("posts")
+                    .document(postId)
+                    .collection("comments")
+                    .get()
+                    .addOnSuccessListener { result ->
+                        val commentList = mutableListOf<Comment>()
+                        for (document in result) {
+                            val comment = document.toObject(Comment::class.java)
+                            commentList.add(comment)
+                        }
+                        val updatedComments = _comments.value?.toMutableMap() ?: mutableMapOf()
+                        updatedComments[postId] = commentList
+                        _comments.value = updatedComments
                     }
-                    val updatedComments = _comments.value?.toMutableMap() ?: mutableMapOf()
-                    updatedComments[post.id.toString()] = commentList
-                    _comments.value = updatedComments
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting comments.", exception)
-                }
+                    .addOnFailureListener { exception ->
+                        Log.w(TAG, "Error getting comments.", exception)
+                    }
+            }
         }
     }
 
@@ -128,34 +132,22 @@ class FeedViewModel : ViewModel() {
     fun addPost(post: Post) {
         viewModelScope.launch {
             val postsRef = db.collection("posts")
-            val lastPostRef = postsRef.orderBy("id", Query.Direction.DESCENDING).limit(1)
 
-            lastPostRef.get()
-                .addOnSuccessListener { snapshot ->
-                    Log.d(TAG, "Success : $snapshot")
-                    var postId = 1L
-                    for (document in snapshot) {
-                        postId = (document.data["id"] as Long) + 1
-                    }
-                    post.id = postId
+            postsRef.add(post)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "Successfully sent post: $documentReference")
+                    post.id = documentReference.id  // Set the Firestore document's ID to the post's ID field
 
-                    postsRef.add(post)
-                        .addOnSuccessListener {
-                            Log.d(TAG, "Successfully sent post: $it")
-                            val updatedPosts = _posts.value?.toMutableList()
-                            updatedPosts?.add(post)
-                            _posts.value = updatedPosts
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(TAG, "Error while sending post: $e")
-                        }
+                    val updatedPosts = _posts.value?.toMutableList()
+                    updatedPosts?.add(post)
+                    _posts.value = updatedPosts
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "Error", e)
-                    return@addOnFailureListener
+                    Log.w(TAG, "Error while sending post: $e")
                 }
         }
     }
+
 
 
     fun addComment(postId: String, comment: Comment) {
@@ -224,11 +216,17 @@ class FeedViewModel : ViewModel() {
     fun likePost(post: Post) {
         viewModelScope.launch {
             val postRef = db.collection("posts").document(post.id.toString())
-            post.likesCount = post.likesCount.plus(1)
-            postRef.update("likesCount", post.likesCount)
+            val updatedLikesCount = post.likesCount + 1
+            postRef.update("likesCount", updatedLikesCount)
                 .addOnSuccessListener {
                     Log.d(TAG, "+1 like")
-                    _posts.value = _posts.value?.map { if (it.id == post.id) post else it }
+                    val updatedPosts = _posts.value?.toMutableList()
+                    val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                    if (updatedPostIndex != null && updatedPostIndex != -1) {
+                        val updatedPost = post.copy(likesCount = updatedLikesCount)
+                        updatedPosts[updatedPostIndex] = updatedPost
+                        _posts.value = updatedPosts
+                    }
                 }
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error in liking the post: $e")
@@ -236,6 +234,26 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun unlikePost(post: Post) {
+        viewModelScope.launch {
+            val postRef = db.collection("posts").document(post.id.toString())
+            val updatedLikesCount = if (post.likesCount > 0) post.likesCount - 1 else 0  // Ensure that likesCount never goes below 0
+            postRef.update("likesCount", updatedLikesCount)
+                .addOnSuccessListener {
+                    Log.d(TAG, "-1 like")
+                    val updatedPosts = _posts.value?.toMutableList()
+                    val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                    if (updatedPostIndex != null && updatedPostIndex != -1) {
+                        val updatedPost = post.copy(likesCount = updatedLikesCount)
+                        updatedPosts[updatedPostIndex] = updatedPost
+                        _posts.value = updatedPosts
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error in unliking the post: $e")
+                }
+        }
+    }
 
     fun updateCommText(postId: String, comment: Comment, newText: String) {
         viewModelScope.launch {
@@ -293,15 +311,11 @@ class FeedViewModel : ViewModel() {
     fun search(key: String) {
         viewModelScope.launch {
             _posts.value = _posts.value?.filter { p ->
-                val keyAsLong = key.toLongOrNull()
-                if (keyAsLong != null) {
-                    p.id == keyAsLong
-                } else {
-                    p.text.contains(key)
-                }
+                p.id == key || p.text.contains(key)
             }
         }
     }
+
 
 
     fun getImage(post: Post) {

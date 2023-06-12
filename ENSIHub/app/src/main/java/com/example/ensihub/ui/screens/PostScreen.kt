@@ -1,13 +1,18 @@
 package com.example.ensihub.ui.screens
 
 
+import android.util.Log
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -21,6 +26,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,9 +38,14 @@ import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 
 @Composable
-fun PostView(post: Post) {
-    val viewModel: FeedViewModel = viewModel()
-    val showImage = remember { mutableStateOf(true) }
+fun PostView(
+    post: Post,
+    showImage: Boolean,
+    onToggleShowImage: () -> Unit,
+    viewModel: FeedViewModel
+) {
+
+    val isLiked = remember { mutableStateOf(false) }  // Remember the liked state
 
     Column(
         modifier = Modifier
@@ -48,6 +59,7 @@ fun PostView(post: Post) {
                 text = post.author,
                 style = MaterialTheme.typography.subtitle1
             )
+
             Text(
                 text = post.text,
                 style = MaterialTheme.typography.body1,
@@ -56,52 +68,79 @@ fun PostView(post: Post) {
         }
         Divider()
 
-        Row(horizontalArrangement = Arrangement.End) {
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                colors = ButtonDefaults.buttonColors(backgroundColor = if (isLiked.value) Color.Red else Color.Transparent),
                 onClick = {
-                    showImage.value = !showImage.value
+                    isLiked.value = !isLiked.value
+                    if (isLiked.value) {
+                        viewModel.likePost(post)
+                        Log.d("PostView", "likePost clicked for postId = ${post.id}")
+                    } else {
+                        viewModel.unlikePost(post)
+                        Log.d("PostView", "unlikePost clicked for postId = ${post.id}")
+                    }
                 },
-                elevation = null,
-                ) {
+                elevation = null
+            ) {
+                Text(if (isLiked.value) "Unlike" else "Like")
+            }
 
-                    // Call the likePost function in the FeedViewModel
-                    viewModel.likePost(post)
-                }
+            Text(
+                text = "${post.likesCount}",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(start = 8.dp)
+            )
 
-                Spacer(modifier = Modifier.fillMaxWidth(0.9f))
-                if (showImage.value) {
-                    Text("Reduce to hide image")
-                    Spacer(modifier = Modifier.fillMaxWidth(0.9f))
-                    Icon(imageVector = Icons.Filled.KeyboardArrowDown, null)
-                } else {
-                    Text("Extend to see image")
-                    Spacer(modifier = Modifier.fillMaxWidth(0.9f))
-                    Icon(imageVector = Icons.Filled.KeyboardArrowRight, null)
+            Spacer(modifier = Modifier.width(8.dp))
+            if (post.imageUrl?.isNotEmpty() == true) {
+                Row(modifier = Modifier.clickable { onToggleShowImage() }) {
+                    Text(
+                        text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                        modifier = Modifier
+                            .weight(1f)
+                            .wrapContentWidth(Alignment.Start)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             }
         }
         Divider()
 
-
-        if (showImage.value) {
+        if (showImage && post.imageUrl != null) {
+            // Display the image only if showImage is true and imageUrl is not null
             AsyncImage(post.imageUrl, null)
         }
     }
+}
+
+
+
 
 @Preview
 @Composable
 fun PostViewPreview() {
+    val viewModel: FeedViewModel = viewModel()
+    val showImage = remember { mutableStateOf(true) }
     PostView(
         post = Post(
-            0,
-            "body",
-            1000,
-            "titi\n difdc,",
-            0,
-            "https://www.google.com/url?sa=i&url=https%3A%2F%2Fmacollectiondepoupees.fr%2F2019%2F05%2F05%2Fhistorique-kiki-sekiguchi-ajena-monchhichi%2F&psig=AOvVaw3jXWSqFvxRp2mjB5uxrn7u&ust=1686322016766000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCPDCh5n1s_8CFQAAAAAdAAAAABAD"
-        )
+            text = "body",
+            timestamp = 1000,
+            author = "titi\n difdc,",
+            likesCount = 0,
+            imageUrl = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fmacollectiondepoupees.fr%2F2019%2F05%2F05%2Fhistorique-kiki-sekiguchi-ajena-monchhichi%2F&psig=AOvVaw3jXWSqFvxRp2mjB5uxrn7u&ust=1686322016766000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCPDCh5n1s_8CFQAAAAAdAAAAABAD"
+        ),
+        showImage = showImage.value,
+        onToggleShowImage = { showImage.value = !showImage.value },
+        viewModel = viewModel
     )
 }
+
