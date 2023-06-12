@@ -27,6 +27,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -53,6 +54,8 @@ import com.example.ensihub.mainClasses.AuthRepository
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.User
 import com.example.ensihub.ui.theme.ENSIHubTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -67,6 +70,10 @@ fun LoginScreen(
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.value?.loginError != null
     val context = LocalContext.current
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Black
+    )
 
     Column(
         modifier = modifier
@@ -105,7 +112,11 @@ fun LoginScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = loginUiState?.value?.eMail ?: "",
-                onValueChange = { loginViewModel?.onEmailChange(it)},
+                onValueChange = { newValue ->
+                    if(!newValue.contains(" ")){
+                        loginViewModel?.onEmailChange(newValue)
+                    }
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -251,6 +262,10 @@ fun SignUpScreen(
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.value?.signUpError != null
     val context = LocalContext.current
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Black
+    )
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -287,7 +302,11 @@ fun SignUpScreen(
         }
         TextField(
             value = loginUiState?.value?.userName ?: "",
-            onValueChange = { loginViewModel?.onUserNameChange(it)  },
+            onValueChange = { newValue ->
+                if(!newValue.contains(" ")){
+                    loginViewModel?.onUserNameChange(newValue)
+                }
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -313,7 +332,11 @@ fun SignUpScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = loginUiState?.value?.eMailSignUp ?: "",
-                onValueChange = { loginViewModel?.onEmailSignUpChange(it)},
+                onValueChange = { newValue ->
+                    if(!newValue.contains(" ")){
+                        loginViewModel?.onEmailSignUpChange(newValue)
+                    }
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -395,7 +418,6 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                loginUiState?.value?.eMailSignUp += "@uha.fr"
                 loginViewModel?.createUser(context)
                 loginViewModel?.sendUser(context)
                       },
@@ -459,6 +481,10 @@ fun ForgotPasswordScreen(
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.value?.loginError != null
     val context = LocalContext.current
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Black
+    )
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -496,7 +522,11 @@ fun ForgotPasswordScreen(
 
         TextField(
             value = loginUiState?.value?.eMail ?: "",
-            onValueChange = { loginViewModel?.onEmailChange(it)},
+            onValueChange = { newValue ->
+                if(!newValue.contains(" ")){
+                    loginViewModel?.onEmailChange(newValue)
+                }
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,

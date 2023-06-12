@@ -31,6 +31,7 @@ import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.theme.ENSIHubTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage

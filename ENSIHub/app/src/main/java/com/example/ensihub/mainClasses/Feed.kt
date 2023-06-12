@@ -18,7 +18,7 @@ class Feed {
     private var i: Long = 10
 
     init {
-        db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get()
+        db.collection("posts").whereEqualTo("status", PostStatus.APPROVED.name).orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     if (document == null) continue
@@ -37,7 +37,7 @@ class Feed {
 
     fun loadMore() {
         i += 10
-        db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).whereNotIn("id", posts).get()
+        db.collection("posts").whereEqualTo("status", PostStatus.APPROVED.name).orderBy("timestamp", Query.Direction.DESCENDING).limit(i).whereNotIn("id", posts).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -70,7 +70,7 @@ class Feed {
         i = 10
         posts.clear()
         comments.clear()
-        db.collection("posts").limit(i).get()
+        db.collection("posts").whereEqualTo("status", PostStatus.APPROVED.name).limit(i).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -86,6 +86,7 @@ class Feed {
     }
 
     fun addPost(post: Post) {
+        post.status = PostStatus.PENDING
         db.collection("posts").orderBy("id", Query.Direction.DESCENDING).limit(1).get()
             .addOnSuccessListener {
                 Log.d(TAG, "Success : $it")
@@ -110,6 +111,7 @@ class Feed {
     }
 
     fun addImagePost(post : Post, imageUri : Uri) {
+        post.status = PostStatus.PENDING
         db.collection("posts").add(post)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "Successfully sent image: ${documentReference.id}")
@@ -122,6 +124,7 @@ class Feed {
     }
 
     fun addVideoPost(post : Post, videoUri : Uri) {
+        post.status = PostStatus.PENDING
         db.collection("posts").add(post)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "Successfully sent video : ${documentReference.id}")
@@ -224,6 +227,15 @@ class Feed {
     }
 
     fun getData(): MutableList<Post> {
+        db.collection("posts").whereEqualTo("status", PostStatus.PENDING.name).get()
+            .addOnSuccessListener { result ->
+                for(document in result) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    val data = document.data
+                    val post = Post(data["id"] as Long, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long)
+                    posts.add(post)
+                }
+            }
         return this.posts
     }
 

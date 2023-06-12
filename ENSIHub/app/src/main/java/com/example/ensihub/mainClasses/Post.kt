@@ -7,8 +7,13 @@ data class Post(
     val author: String,
     var likesCount: Long,
     var imageUrl: String? = null,
-    var videoUrl: String? = null
+    var videoUrl: String? = null,
+    var status : PostStatus = PostStatus.PENDING
 )
+
+enum class PostStatus {
+    PENDING, APPROVED
+}
 
 
 

@@ -103,7 +103,7 @@ class LoginViewModel(
             }
             loginUiState.value = loginUiState.value.copy(signUpError = null)
             repository.createUser(
-                loginUiState.value.eMailSignUp,
+                loginUiState.value.eMailSignUp + "@uha.fr",
                 loginUiState.value.passwordSignUp
             ){ isSuccessful ->
                 if(isSuccessful){

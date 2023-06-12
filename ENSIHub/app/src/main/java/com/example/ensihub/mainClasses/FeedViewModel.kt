@@ -46,7 +46,9 @@ class FeedViewModel : ViewModel() {
                             timestamp = data["timestamp"] as? Long ?: 0,
                             author = data["author"] as? String ?: "",
                             likesCount = data["likesCount"] as? Long ?: 0,
-                            imageUrl = data["imageUrl"] as? String ?: ""
+                            imageUrl = data["imageUrl"] as? String ?: "",
+                            videoUrl = data["videoUrl"] as? String ?: "",
+                            status = PostStatus.PENDING
                         )
                         postList.add(post)
                         loadComments(post)
@@ -91,6 +93,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch {
             i += 10
             db.collection("posts")
+                .whereEqualTo("status", PostStatus.APPROVED.name)
                 .limit(i)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
@@ -114,6 +117,7 @@ class FeedViewModel : ViewModel() {
             _posts.value = mutableListOf()
             _comments.value = mutableMapOf()
             db.collection("posts")
+                .whereEqualTo("status", PostStatus.APPROVED.name)
                 .limit(i)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
@@ -134,6 +138,7 @@ class FeedViewModel : ViewModel() {
 
     fun addPost(post: Post) {
         viewModelScope.launch {
+            post.status = PostStatus.PENDING
             val postsRef = db.collection("posts")
 
             postsRef.add(post)
