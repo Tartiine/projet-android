@@ -1,5 +1,6 @@
 package com.example.ensihub.ui.screens
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,48 +29,54 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(viewModel: FeedViewModel) {
+fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     val posts: List<Post> by viewModel.posts.observeAsState(initial = emptyList())
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
 
-    Column(modifier = Modifier.background(Color.Black).fillMaxSize()) {
-        SwipeRefresh(state = swipeRefreshState, onRefresh = {
-            swipeRefreshState.isRefreshing = true
-            viewModel.reload()
-            swipeRefreshState.isRefreshing = false
-        }) {
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-                items(posts) { post ->
-                    Log.d("HomeScreen", "Post ID: ${post.id}")
-                    val showImage = remember { mutableStateOf(false) }
-                    PostView(
-                        post = post,
-                        showImage = showImage.value,
-                        onToggleShowImage = { showImage.value = !showImage.value },
-                        viewModel = viewModel
-                    )
-                }
-                item {
-                    Button(onClick = { viewModel.loadMore() }, modifier = Modifier.padding(20.dp)) {
-                        Text("Load More")
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { navController.navigate("newPost") }) {
+                Icon(Icons.Default.Add, contentDescription = "Add Post")
+            }
+        }
+    ) {
+        Column(modifier = Modifier.background(Color.Black).fillMaxSize()) {
+            SwipeRefresh(state = swipeRefreshState, onRefresh = {
+                swipeRefreshState.isRefreshing = true
+                viewModel.reload()
+                swipeRefreshState.isRefreshing = false
+            }) {
+                LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+                    items(posts) { post ->
+                        Log.d("HomeScreen", "Post ID: ${post.id}")
+                        val showImage = remember { mutableStateOf(false) }
+                        PostView(
+                            post = post,
+                            showImage = showImage.value,
+                            onToggleShowImage = { showImage.value = !showImage.value },
+                            viewModel = viewModel
+                        )
+                    }
+                    item {
+                        Button(onClick = { viewModel.loadMore() }, modifier = Modifier.padding(20.dp)) {
+                            Text("Load More")
+                        }
                     }
                 }
             }
         }
-
-
     }
 }
-
-
-
 
 @Preview(showBackground = true)
 @Composable

@@ -12,13 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
-fun NewPostView() {
+fun NewPostView(navController: NavController) {
     val messageState = remember { mutableStateOf("") }
     val viewModel: FeedViewModel = viewModel()
     val currentUser = FirebaseAuth.getInstance().currentUser // Get the current user
@@ -47,6 +48,7 @@ fun NewPostView() {
                     )
                     viewModel.addPost(newPost)
                     messageState.value = ""
+                    navController.navigateUp() // Navigate back to the previous screen
                 }
             },
             modifier = Modifier.align(Alignment.End)
@@ -55,3 +57,4 @@ fun NewPostView() {
         }
     }
 }
+

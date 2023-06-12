@@ -364,7 +364,6 @@ class FeedViewModel : ViewModel() {
     companion object {
         private const val TAG = "FeedViewModel"
     }
-
 }
 
 

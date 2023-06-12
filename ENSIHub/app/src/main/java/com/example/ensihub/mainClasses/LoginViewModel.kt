@@ -7,6 +7,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ensihub.ui.screens.user
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,6 +22,9 @@ class LoginViewModel(
     val userName: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> = mutableStateOf("")
     private val _isLoggedIn = MutableStateFlow(false)
+
+    private val db = Firebase.firestore
+
     val isLoggedIn: StateFlow<Boolean> get() = _isLoggedIn
     init {
         _isLoggedIn.value = repository.hasUser()
@@ -103,6 +109,7 @@ class LoginViewModel(
             }
             loginUiState.value = loginUiState.value.copy(signUpError = null)
             repository.createUser(
+                loginUiState.value.userName,
                 loginUiState.value.eMailSignUp + "@uha.fr",
                 loginUiState.value.passwordSignUp
             ){ isSuccessful ->
@@ -161,6 +168,8 @@ class LoginViewModel(
             role = Role.USER
         )
     }
+
+
 
 
 

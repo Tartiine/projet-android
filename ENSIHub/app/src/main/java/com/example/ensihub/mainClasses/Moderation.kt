@@ -9,22 +9,32 @@ class Moderation {
     private val db = Firebase.firestore
 
     fun approvePost(post : Post) {
-        db.collection("posts").document(post.id.toString()).update("status", PostStatus.APPROVED.name)
+        db.collection("posts").document(post.id).update("status", PostStatus.APPROVED.name)
             .addOnSuccessListener {
                 Log.d(TAG, "Post approved and can be load in the feed")
             }
             .addOnFailureListener{ exception ->
-                Log.w(TAG, "Error approving post", exception)
+                Log.w(TAG, "Error by approving post", exception)
             }
     }
 
     fun rejectPost(post : Post) {
-        db.collection("posts").document(post.id.toString()).delete()
+        db.collection("posts").document(post.id).delete()
             .addOnSuccessListener {
                 Log.d(TAG, "Post rejected and deleted from the database")
             }
             .addOnFailureListener{ exception ->
-                Log.w(TAG, "Error rejecting post", exception)
+                Log.w(TAG, "Error by rejecting post", exception)
+            }
+    }
+
+    fun reportPost(post : Post) {
+        db.collection("posts").document(post.id).update("status", PostStatus.PENDING.name)
+            .addOnSuccessListener {
+                Log.d(TAG, "Post reported and queued for a new manual review")
+            }
+            .addOnFailureListener{ exception ->
+                Log.w(TAG, "Error by reporting post", exception)
             }
     }
 
