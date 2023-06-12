@@ -2,11 +2,14 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
 import android.util.Log
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -30,7 +33,11 @@ class FeedViewModel : ViewModel() {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> get() = _currentUser
 
+    private val _userPosts = MutableLiveData<List<Post>>()
+    val userPosts: LiveData<List<Post>> = _userPosts
+
     private var i: Long = 10
+
 
     init {
         loadInitialData()
@@ -56,12 +63,13 @@ class FeedViewModel : ViewModel() {
 
     fun loadInitialData() {
         viewModelScope.launch {
+            val currentUser = FirebaseAuth.getInstance().currentUser
             db.collection("posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(10)
                 .get()
                 .addOnSuccessListener { result ->
                     val postList = mutableListOf<Post>()
+
                     for (document in result) {
                         val data = document.data
                         val post = Post(
@@ -75,9 +83,13 @@ class FeedViewModel : ViewModel() {
                             status = PostStatus.PENDING
                         )
                         postList.add(post)
-                        loadComments(post)
                     }
-                    _posts.value = postList
+
+                    _posts.value = if (postList.size > 10) postList.take(10) else postList
+
+                    if (currentUser != null) {
+                        loadUserPosts(currentUser)
+                    }
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents.", exception)
@@ -85,7 +97,50 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    private fun loadUserPosts(currentUser: FirebaseUser) {
+        viewModelScope.launch {
+            // fetch the user object for currentUser
+            db.collection("users")
+                .document(currentUser.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    val user = document.toObject(User::class.java)
+                    val username = user?.username
 
+                    // now fetch the posts for this username
+                    db.collection("posts")
+                        .whereEqualTo("author", username)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            val userPosts = mutableListOf<Post>()
+                            Log.d(TAG, "Successfully fetched user posts from Firebase, found ${result.size()} posts")
+
+                            for (document in result) {
+                                val data = document.data
+                                val post = Post(
+                                    id = document.id,
+                                    text = data["text"] as? String ?: "",
+                                    timestamp = data["timestamp"] as? Long ?: 0,
+                                    author = data["author"] as? String ?: "",
+                                    likesCount = data["likesCount"] as? Long ?: 0,
+                                    imageUrl = data["imageUrl"] as? String ?: "",
+                                    videoUrl = data["videoUrl"] as? String ?: "",
+                                    status = PostStatus.PENDING
+                                )
+                                userPosts.add(post)
+                            }
+
+                            _userPosts.value = userPosts
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.w(TAG, "Error getting user's posts.", exception)
+                        }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting user data.", exception)
+                }
+        }
+    }
 
 
     private fun loadComments(post: Post) {

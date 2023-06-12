@@ -1,6 +1,8 @@
 package com.example.ensihub.ui.screens
 
+import android.content.ContentValues.TAG
 import android.text.format.DateUtils
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +14,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +29,9 @@ import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import com.example.ensihub.mainClasses.User
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ensihub.R
+import com.example.ensihub.mainClasses.FeedViewModel
 
 
 val user = User("1", "random_user", "random@uha.fr", Role.USER)
@@ -38,6 +45,12 @@ val posts = listOf(
 
 @Composable
 fun UserProfileScreen(user: User) {
+    val viewModel: FeedViewModel = viewModel()
+    val currentUser = viewModel.currentUser.collectAsState().value
+    val userPosts: List<Post> by viewModel.userPosts.observeAsState(initial = emptyList())
+    Log.d(TAG, "Observing ${userPosts.size} userPosts in Composable")
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -73,12 +86,10 @@ fun UserProfileScreen(user: User) {
                 }
             }
 
-            PostList(posts = posts)
+            PostList(posts = userPosts)
         }
     }
 }
-
-
 
 
 @Composable
