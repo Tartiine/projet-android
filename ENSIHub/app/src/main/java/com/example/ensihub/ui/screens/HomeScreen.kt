@@ -20,9 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +45,22 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     val posts: List<Post> by viewModel.posts.observeAsState(initial = emptyList())
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
 
+    val myList = remember { mutableStateListOf<Post>() }
+
+    myList.swapList(posts)
+
+    // Function to refresh the list
+    val onUpdateClick = {
+        // Do something that updates the list
+        swipeRefreshState.isRefreshing = true
+
+        viewModel.reload {
+            myList.swapList(posts)
+            swipeRefreshState.isRefreshing = false
+        }
+        // Get the updated list to trigger a recompose
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate("newPost") }) {
@@ -52,12 +70,10 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     ) {
         Column(modifier = Modifier.background(Color.Black).fillMaxSize()) {
             SwipeRefresh(state = swipeRefreshState, onRefresh = {
-                swipeRefreshState.isRefreshing = true
-                viewModel.reload()
-                swipeRefreshState.isRefreshing = false
+                onUpdateClick()
             }) {
                 LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-                    items(posts) { post ->
+                    items(myList) { post ->
                         Log.d("HomeScreen", "Post ID: ${post.id}")
                         val showImage = remember { mutableStateOf(false) }
                         PostView(
@@ -84,5 +100,11 @@ fun PreviewHomeScreen() {
     //HomeScreen()
 }
 
+fun <T> SnapshotStateList<T>.swapList(newList: List<T>){
+    newList.reversed().forEach {
+        if (!this.contains(it)) this.add(0, it)
+    }
+    if (this.size > 10) this.removeRange(10, this.size)
+}
 
 

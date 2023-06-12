@@ -111,7 +111,7 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun reload() {
+    fun reload(onCompletion: (() -> Unit)? = null) {
         viewModelScope.launch {
             i = 10
             _posts.value = mutableListOf()
@@ -128,6 +128,9 @@ class FeedViewModel : ViewModel() {
                         loadComments(post)
                     }
                     _posts.value = postList
+                    if (onCompletion != null) {
+                        onCompletion()
+                    }
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents.", exception)
