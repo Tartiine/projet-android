@@ -44,6 +44,7 @@ import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -57,6 +58,7 @@ fun PostView(
 ) {
 
     val isLiked = remember { mutableStateOf(false) }  // Remember the liked state
+    val currentUser = viewModel.currentUser.collectAsState().value
 
     Column(
         modifier = Modifier.background(Color.Black).fillMaxSize()
@@ -127,53 +129,56 @@ fun PostView(
             }
         }
 
-        if(user.role==Role.USER){
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                modifier = Modifier.width(100.dp),
-                onClick = {
-                    /* On click function */
-                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
-                elevation = null
-            ) {
-                Text("Report")
-            }
-        }else{
-            Button(
-                modifier = Modifier.width(100.dp),
-                onClick = {
 
-                    Log.d("PostView", "validatePost clicked for postId = ${post.id}")
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
-                elevation = null
-            ) {
-                Text("Validate",color = Color.White)
-            }
-            Button(
-                modifier = Modifier.width(100.dp),
-                onClick = {
+        if (currentUser != null) {
+            if(currentUser.role==Role.USER){
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    modifier = Modifier.width(100.dp),
+                    onClick = {
+                        /* On click function */
+                        Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
+                    elevation = null
+                ) {
+                    Text("Report")
+                }
+            }else{
+                Button(
+                    modifier = Modifier.width(100.dp),
+                    onClick = {
 
-                    Log.d("PostView", "deletePost clicked for postId = ${post.id}")
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
-                elevation = null
-            ) {
-                Text("Delete")
+                        Log.d("PostView", "validatePost clicked for postId = ${post.id}")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
+                    elevation = null
+                ) {
+                    Text("Validate",color = Color.White)
+                }
+                Button(
+                    modifier = Modifier.width(100.dp),
+                    onClick = {
+
+                        Log.d("PostView", "deletePost clicked for postId = ${post.id}")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                    elevation = null
+                ) {
+                    Text("Delete")
+                }
+
             }
 
+
+                Divider()
+
+                if (showImage && post.imageUrl != null) {
+                    // Display the image only if showImage is true and imageUrl is not null
+                    AsyncImage(post.imageUrl, null)
+                }
+            }
         }
-
-
-        Divider()
-
-        if (showImage && post.imageUrl != null) {
-            // Display the image only if showImage is true and imageUrl is not null
-            AsyncImage(post.imageUrl, null)
-        }
-    }
 }
 
 
