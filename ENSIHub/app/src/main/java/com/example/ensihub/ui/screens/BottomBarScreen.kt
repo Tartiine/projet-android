@@ -46,7 +46,8 @@ sealed class BottomBarScreen(
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
         BottomNavigation(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = Color(0xFFFFA500)
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
@@ -71,14 +72,17 @@ sealed class BottomBarScreen(
                             imageVector = screen.icon,
                             contentDescription = screen.title,
                             tint = if (currentRoute == screen.route) {
-                                Color(0xFFF79817)
+                                Color.White
                             } else {
-                                Color(0xFFBDBDBD)
+                                Color.White
                             }
                         )
                     },
                     label = {
-                        Text(screen.title)
+                        Text(
+                            screen.title
+                            
+                        )
                     }
                 )
             }
