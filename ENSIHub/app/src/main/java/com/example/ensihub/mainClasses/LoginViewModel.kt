@@ -131,7 +131,7 @@ class LoginViewModel(
             loginUiState.value = loginUiState.value.copy(isLoading = true)
             loginUiState.value = loginUiState.value.copy(loginError = null)
             repository.login(
-                loginUiState.value.eMail,
+                loginUiState.value.eMail + "@uha.fr",
                 loginUiState.value.password
             ){ isSuccessful->
                 if(isSuccessful){

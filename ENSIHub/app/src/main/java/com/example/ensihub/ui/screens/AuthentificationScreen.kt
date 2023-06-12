@@ -1,7 +1,9 @@
 package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -163,8 +165,8 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                loginUiState?.value?.eMail += "@uha.fr"
-                loginViewModel?.loginUser(context) },
+                loginViewModel?.loginUser(context)
+                      },
                 modifier = Modifier
                     .width(200.dp)
                     .padding(vertical = 16.dp),
