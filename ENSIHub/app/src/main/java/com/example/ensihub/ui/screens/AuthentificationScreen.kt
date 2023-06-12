@@ -83,7 +83,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.login_image_1),
+            painter = painterResource(id = R.drawable.ensihub),
             contentScale = ContentScale.Crop,
             contentDescription = "APPLOGO",
             modifier = Modifier
@@ -274,7 +274,7 @@ fun SignUpScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.login_image_1),
+            painter = painterResource(id = R.drawable.ensihub),
             contentScale = ContentScale.Crop,
             contentDescription = "APPLOGO",
             modifier = Modifier
@@ -493,7 +493,7 @@ fun ForgotPasswordScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.login_image_1),
+            painter = painterResource(id = R.drawable.ensihub),
             contentScale = ContentScale.Crop,
             contentDescription = "APPLOGO",
             modifier = Modifier
