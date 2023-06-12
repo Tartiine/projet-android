@@ -51,7 +51,7 @@ fun Navigation(
             modifier = Modifier.padding(innerPadding)
         ) {
                 composable(route = BottomBarScreen.Home.route) {
-                    HomeScreen(viewModel = viewModel)
+                    HomeScreen(viewModel = viewModel, navController = navController)
                 }
                 composable(route = BottomBarScreen.Profile.route) {
                     UserProfileScreen(user)
@@ -82,7 +82,11 @@ fun Navigation(
                         loginViewModel = loginViewModel
                     )
                 }
-            }
+
+                composable(route = "newPost") {
+                    NewPostView()
+                }
+        }
         }
     }
 
