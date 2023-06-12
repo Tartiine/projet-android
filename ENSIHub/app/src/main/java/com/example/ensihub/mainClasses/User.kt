@@ -15,6 +15,3 @@ data class User(
     val email: String = "",
     val role: Role = Role.USER
 )
-
-
-
