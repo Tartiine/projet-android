@@ -4,7 +4,6 @@ package com.example.ensihub.ui.screens
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
+import com.example.ensihub.mainClasses.Role
 
 @Composable
 fun PostView(
@@ -113,6 +113,50 @@ fun PostView(
                 }
             }
         }
+
+        if(user.role==Role.USER){
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                modifier = Modifier.width(80.dp),
+                onClick = {
+                    /* On click function */
+                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
+                elevation = null
+            ) {
+                Text("Report")
+            }
+        }else{
+            Button(
+                modifier = Modifier.width(80.dp),
+                onClick = {
+
+                    Log.d("PostView", "validatePost clicked for postId = ${post.id}")
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
+                elevation = null
+            ) {
+                Text("Validate")
+            }
+            Button(
+                modifier = Modifier.width(80.dp),
+                onClick = {
+
+                    Log.d("PostView", "deletePost clicked for postId = ${post.id}")
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                elevation = null
+            ) {
+                Text("Delete")
+            }
+
+        }
+
+
         Divider()
 
         if (showImage && post.imageUrl != null) {
@@ -143,4 +187,5 @@ fun PostViewPreview() {
         viewModel = viewModel
     )
 }
+
 
