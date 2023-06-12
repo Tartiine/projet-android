@@ -6,10 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FeedViewModel : ViewModel() {
@@ -24,10 +27,31 @@ class FeedViewModel : ViewModel() {
     private val db = Firebase.firestore
     private val storage = FirebaseStorage.getInstance()
 
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> get() = _currentUser
+
     private var i: Long = 10
 
     init {
         loadInitialData()
+        fetchCurrentUser()
+    }
+
+    fun fetchCurrentUser() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val db = Firebase.firestore
+
+        val docRef = uid?.let { db.collection("users").document(it) }
+        if (docRef != null) {
+            docRef.get().addOnSuccessListener { document ->
+                if (document != null) {
+                    val user = document.toObject(User::class.java)
+                    _currentUser.value = user
+                }
+            }.addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+            }
+        }
     }
 
     fun loadInitialData() {
