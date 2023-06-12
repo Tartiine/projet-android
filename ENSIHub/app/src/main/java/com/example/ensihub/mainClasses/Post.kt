@@ -19,6 +19,10 @@ data class Post(
     constructor(text: String, author: String, imageUrl: String?) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0,imageUrl = imageUrl)
 
     constructor(text: String, author: String, imageUrl: String?, videoUrl: String?) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0, imageUrl = imageUrl, videoUrl = videoUrl)
+
+    override fun equals(other: Any?): Boolean {
+        return (other is Post) && other.id == this.id
+    }
 }
 
 enum class PostStatus {

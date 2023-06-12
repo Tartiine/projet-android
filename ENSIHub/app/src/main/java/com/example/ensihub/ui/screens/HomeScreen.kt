@@ -94,17 +94,21 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     }
 }
 
+fun SnapshotStateList<Post>.swapList(newList: List<Post>){
+    newList.reversed().forEach {
+        val index = this.indexOf(it)
+        if (index != -1 && it.likesCount != this[index].likesCount) this[index] = it
+        if (!this.contains(it)) this.add(0, it)
+    }
+    if (this.size > 10) this.removeRange(10, this.size)
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewHomeScreen() {
     //HomeScreen()
 }
 
-fun <T> SnapshotStateList<T>.swapList(newList: List<T>){
-    newList.reversed().forEach {
-        if (!this.contains(it)) this.add(0, it)
-    }
-    if (this.size > 10) this.removeRange(10, this.size)
-}
+
 
 
