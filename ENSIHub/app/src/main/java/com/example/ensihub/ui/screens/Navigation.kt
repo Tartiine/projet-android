@@ -84,9 +84,9 @@ fun Navigation(
                 }
 
                 composable(route = "newPost") {
-                    NewPostView()
+                    NewPostView(navController = navController)
                 }
-        }
+            }
         }
     }
 
