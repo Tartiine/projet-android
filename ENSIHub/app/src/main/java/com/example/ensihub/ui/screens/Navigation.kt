@@ -3,10 +3,12 @@ package com.example.ensihub.ui.screens
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,10 +44,11 @@ fun Navigation(
                 BottomNavigationBar(navController = navController)
             }
         }
-    ) {
+    ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (isLoggedIn) BottomBarScreen.Home.route else LoginRoutes.SignIn.name
+            startDestination = if (isLoggedIn) BottomBarScreen.Home.route else LoginRoutes.SignIn.name,
+            modifier = Modifier.padding(innerPadding)
         ) {
                 composable(route = BottomBarScreen.Home.route) {
                     HomeScreen(viewModel = viewModel)

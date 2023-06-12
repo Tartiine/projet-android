@@ -16,6 +16,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,16 +30,16 @@ import com.example.ensihub.mainClasses.Post
 fun HomeScreen(viewModel: FeedViewModel) {
     val posts: List<Post> by viewModel.posts.observeAsState(initial = emptyList())
 
-    Column(modifier = Modifier.background(Color.Black).fillMaxHeight()) {
+    Column(modifier = Modifier.background(Color.Black)) {
         Text(text = "Home Screen")
-        LazyColumn(Modifier.fillMaxHeight(0.9f)) {
+        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(posts) { post ->
                 Log.d("HomeScreen", "Post ID: ${post.id}")
                 val showImage = remember { mutableStateOf(false) }
                 PostView(post = post, showImage = showImage.value, onToggleShowImage = { showImage.value = !showImage.value }, viewModel = viewModel)
             }
             item {
-                Button(onClick = { viewModel.loadMore() }) {
+                Button(onClick = { viewModel.loadMore() }, modifier = Modifier.padding(20.dp)) {
                     Text("Load More")
                 }
             }
