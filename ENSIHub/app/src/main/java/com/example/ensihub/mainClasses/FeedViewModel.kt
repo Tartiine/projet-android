@@ -33,8 +33,8 @@ class FeedViewModel : ViewModel() {
     fun loadInitialData() {
         viewModelScope.launch {
             db.collection("posts")
-                .limit(10)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(10)
                 .get()
                 .addOnSuccessListener { result ->
                     val postList = mutableListOf<Post>()
@@ -94,8 +94,8 @@ class FeedViewModel : ViewModel() {
             i += 10
             db.collection("posts")
                 .whereEqualTo("status", PostStatus.APPROVED.name)
-                .limit(i)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(i)
                 .get()
                 .addOnSuccessListener { result ->
                     val postList = mutableListOf<Post>()
@@ -117,9 +117,8 @@ class FeedViewModel : ViewModel() {
             _posts.value = mutableListOf()
             _comments.value = mutableMapOf()
             db.collection("posts")
-                .whereEqualTo("status", PostStatus.APPROVED.name)
-                .limit(i)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(i)
                 .get()
                 .addOnSuccessListener { result ->
                     val postList = mutableListOf<Post>()

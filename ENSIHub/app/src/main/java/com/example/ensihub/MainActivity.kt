@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -75,7 +76,6 @@ class MainActivity : ComponentActivity() {
     fun MainActivityContent(viewModel: FeedViewModel) {
         val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
         val navController = rememberNavController()
-
         ENSIHubTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),

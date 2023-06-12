@@ -1,7 +1,9 @@
 package com.example.ensihub.mainClasses
 
+import java.util.UUID
+
 data class Post(
-    var id: String? = null,  // Make the id nullable
+    var id: String,
     var text: String,
     val timestamp: Long,
     val author: String,
@@ -9,7 +11,15 @@ data class Post(
     var imageUrl: String? = null,
     var videoUrl: String? = null,
     var status : PostStatus = PostStatus.PENDING
-)
+) {
+    constructor() : this(UUID.randomUUID().toString(), "", System.currentTimeMillis(), "", 0)
+
+    constructor(text: String, author: String) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0)
+
+    constructor(text: String, author: String, imageUrl: String?) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0,imageUrl = imageUrl)
+
+    constructor(text: String, author: String, imageUrl: String?, videoUrl: String?) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0, imageUrl = imageUrl, videoUrl = videoUrl)
+}
 
 enum class PostStatus {
     PENDING, APPROVED

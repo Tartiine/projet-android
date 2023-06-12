@@ -185,9 +185,7 @@ fun PostViewPreview() {
     PostView(
         post = Post(
             text = "body",
-            timestamp = 1000,
             author = "titi\n difdc,",
-            likesCount = 0,
             imageUrl = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fmacollectiondepoupees.fr%2F2019%2F05%2F05%2Fhistorique-kiki-sekiguchi-ajena-monchhichi%2F&psig=AOvVaw3jXWSqFvxRp2mjB5uxrn7u&ust=1686322016766000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCPDCh5n1s_8CFQAAAAAdAAAAABAD"
         ),
         showImage = showImage.value,

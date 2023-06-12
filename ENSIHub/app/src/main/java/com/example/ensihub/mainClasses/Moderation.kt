@@ -35,7 +35,7 @@ class Moderation {
                 for(document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val data = document.data
-                    val post = Post(data["id"] as String?, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long, data["imageUrl"] as String?, data["videoUrl"] as String?, data["status"] as PostStatus)
+                    val post = Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long, data["imageUrl"] as String?, data["videoUrl"] as String?, data["status"] as PostStatus)
                     pendingPosts.add(post)
                 }
             }

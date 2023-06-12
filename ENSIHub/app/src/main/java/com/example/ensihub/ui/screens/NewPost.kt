@@ -43,9 +43,7 @@ fun NewPostView() {
                 if (currentUser != null) {
                     val newPost = Post(
                         text = messageState.value,
-                        timestamp = System.currentTimeMillis(),
-                        author = currentUser.displayName ?: "",  // Use the current user's display name
-                        likesCount = 0  // Set the initial likes count as needed
+                        author = currentUser.displayName ?: ""  // Use the current user's display name
                     )
                     viewModel.addPost(newPost)
                     messageState.value = ""
