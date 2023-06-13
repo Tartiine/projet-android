@@ -61,7 +61,7 @@ fun Navigation(
                     UserProfileScreen()
                 }
                 composable(route = BottomBarScreen.Settings.route) {
-                    SettingsView(navController, loginViewModel)
+                    SettingsView(navHostController = navController)
                 }
                 composable(route = LoginRoutes.SignIn.name) {
                     LoginScreen(
@@ -94,6 +94,14 @@ fun Navigation(
 
                 composable(route = "newPost") {
                     NewPostView(navController = navController)
+                }
+
+                composable(route = "settings/numberOfPosts") {
+                    NumPostsView()
+                }
+
+                composable(route = "settings/changeUsername"){
+                    ChangeUsernameView(navHostController = navController)
                 }
             }
         }

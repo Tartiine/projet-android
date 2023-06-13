@@ -1,5 +1,8 @@
 package com.example.ensihub.ui.screens
 
+import android.graphics.fonts.FontStyle
+import android.util.Log
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,28 +10,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,9 +53,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.Role
@@ -49,46 +69,309 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.firestore.ktx.firestore
 
 @Composable
-fun SettingsView(navHostController: NavHostController, loginViewModel: LoginViewModel) {
+fun SettingsView(navHostController: NavHostController) {
     val popupControl = remember {
         mutableStateOf(false)
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .verticalScroll(rememberScrollState())
+            .background(Color.Black),
+        verticalArrangement = Arrangement.Top,
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .fillMaxWidth()
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
+                .padding(10.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
-
         ) {
 
-            SettingsGroup(name = "Application Settings") {
-                SettingsElement(icon = Icons.Filled.Edit, name = "Number of posts loaded")
-            }
 
-            SettingsGroup(name = "Account Settings") {
-                SettingsElement(icon = Icons.Filled.AccountCircle, name = "Change username")
-                SettingsElement(icon = Icons.Filled.Lock, name = "Change password")
-            }
+            Text(
+                text = "SETTINGS",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
 
-            SettingsGroup(name = "About") {
-                SettingsElement(icon = Icons.Filled.Person, name = "Contact")
-                SettingsElement(icon = Icons.Filled.Build, name = "Info & Build")
-                Row {
+        Text(
+            text = "Application Settings",
+            style = TextStyle(
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                color = Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                ),
+                textAlign = TextAlign.Left
+            ),
+            modifier = Modifier.padding(8.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Build Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp)
+            )
 
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button (
+            ClickableText(
+                text = AnnotatedString("Number of posts loaded"),
+                onClick = {
+                          navHostController.navigate("settings/numberOfPosts")
+                },
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+
+
+            Text(
+                text = ">",
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                ),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Account Settings",
+            style = TextStyle(
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                color = Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                ),
+                textAlign = TextAlign.Left
+            ),
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Build Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp)
+            )
+
+            ClickableText(
+                text = AnnotatedString("Change Username"),
+                onClick = {
+                    navHostController.navigate("settings/changeUsername")
+                },
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+
+
+            Text(
+                text = ">",
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                ),
+            )
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Default.Lock,
+                contentDescription = "Build Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp)
+            )
+
+            ClickableText(
+                text = AnnotatedString("Change Password"),
+                onClick = {},
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+
+
+            Text(
+                text = ">",
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                ),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "About",
+            style = TextStyle(
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                color = Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                ),
+                textAlign = TextAlign.Left
+            ),
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Default.MailOutline,
+                contentDescription = "Build Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp)
+            )
+
+            ClickableText(
+                text = AnnotatedString("Contact"),
+                onClick = {},
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+
+
+            Text(
+                text = ">",
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                ),
+            )
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "Build Icon",
+                tint = Color.White,
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp)
+            )
+
+            ClickableText(
+                text = AnnotatedString("About us"),
+                onClick = {},
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+
+
+            Text(
+                text = ">",
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                ),
+            )
+        }
+
+
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
                 shape = RoundedCornerShape(10.dp),
                 onClick = { popupControl.value = true },
                 colors = ButtonDefaults.buttonColors(Color.Red),
@@ -103,7 +386,7 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
                         Button(onClick = {
                             disconnect()
                             navHostController.navigate(LoginRoutes.SignIn.name)
-                            loginViewModel.updateStatusLogin(false)
+                            LoginViewModel().updateStatusLogin(false)
                             popupControl.value = false
                         }) {
                             Text("Confirm", color = Color.Red)
@@ -120,7 +403,7 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
                 text = "ENSIHub",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(10.dp),
-                color = Color(0xFF, 0x99, 0x02 )
+                color = Color(0xFF, 0x99, 0x02)
             )
             Text(
                 text = "v0.1.0",
@@ -138,7 +421,185 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
             )
         }
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NumPostsView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(Color.Black),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Text(
+                text = "SETTINGS",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(
+                modifier = Modifier.padding(32.dp),
+                text = "Number of posts per page",
+                style = TextStyle(
+                    color = Color.White
+                ),
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize
+            )
+            TextField(
+                value ="10",
+                onValueChange = {},
+                modifier = Modifier
+                    .padding(8.dp)
+                    .width(50.dp)
+                    .height(50.dp),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChangeUsernameView(navHostController: NavHostController) {
+    val newUsername = remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = Color.Black),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Text(
+                text = "SETTINGS",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        Text(
+            text = "New Username",
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
+        )
+
+        TextField(
+            value = newUsername.value,
+            onValueChange = {
+                newUsername.value = it
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = Color.LightGray
+                )
+            },
+            label = { Text("Enter your new username") },
+            modifier = Modifier
+                .padding(16.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
+        )
+
+
+        Button(
+            onClick = {
+                if (newUsername.value != "") {
+                    val userId = Firebase.auth.currentUser!!.uid
+                    val db = Firebase.firestore
+                    db.collection("users").document(userId)
+                        .update("username", newUsername.value)
+                        .addOnSuccessListener {
+                            Log.d("TAG", "DocumentSnapshot successfully updated!")
+                        }
+                }
+                navHostController.navigate("settings/changeUsername")
+            },
+            modifier = Modifier
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
+        ) {
+            Text(text = "Change Username")
+        }
+
+    }
 }
 
 fun disconnect() {
@@ -146,60 +607,20 @@ fun disconnect() {
     FirebaseAuth.getInstance().signOut()
 }
 
+@Preview
 @Composable
-fun SettingsGroup(
-    name: String,
-    // to accept only composables compatible with column
-    content: @Composable ColumnScope.() -> Unit ){
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(name, color = Color.White)
-        Spacer(modifier = Modifier.height(8.dp))
-        Surface(
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(4),
-        ) {
-            Column {
-                content()
-            }
-        }
-    }
+fun SettingsViewPreview() {
+    SettingsView(navHostController = rememberNavController())
 }
 
-
+@Preview
 @Composable
-fun SettingsElement(
-    icon: ImageVector,
-    name: String,
-) {
+fun NumPostsViewPreview() {
+    NumPostsView()
+}
 
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    ) {
-        Column(modifier = Modifier.background(MaterialTheme.colorScheme.onSurface)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-            ) {
-                Icon(imageVector = icon, contentDescription = null, tint = Color.White)
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.padding(8.dp)) {
-                    // setting text title
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Start,
-                        color = Color.White
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                Spacer(Modifier.fillMaxWidth())
-
-
-            }
-            Divider()
-        }
-    }
+@Preview
+@Composable
+fun ChangeUsernameViewPreview() {
+    ChangeUsernameView(navHostController = rememberNavController())
 }
