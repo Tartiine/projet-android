@@ -99,12 +99,4 @@ sealed class BottomBarScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewBottomNavigationBar() {
-    // Create a dummy NavHostController for preview
-    val navController = rememberNavController()
-    BottomNavigationBar(navController = navController, user = user)
-    // Create a User object for preview with all the roles
-    val user = User(id = "1", username = "User", email = "user@example.com", role = Role.ADMIN)
-}
+
