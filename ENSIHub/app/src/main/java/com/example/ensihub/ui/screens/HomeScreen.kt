@@ -41,6 +41,8 @@ import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -89,11 +91,16 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
                             viewModel = viewModel
                         )
                     }
-                    item {
-                        LaunchedEffect(viewModel.i.toInt()<posts.size) {
-                            Log.d(TAG, "here")
-                            viewModel.loadMore {
-                                myList.swapList(posts, viewModel.i.toInt())
+                    if (!myList.isEmpty()) {
+                        item {
+                            LaunchedEffect(true) {
+                                viewModel.loadMore {
+                                    MainScope().launch {
+                                        Log.d(TAG, "loaded")
+                                        myList.swapList(posts, posts.size)
+                                        Log.d(TAG, "Swapped")
+                                    }
+                                }
                             }
                         }
                     }
@@ -104,12 +111,8 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
 }
 
 fun SnapshotStateList<Post>.swapList(newList: List<Post>, number: Int = 10){
-    newList.reversed().forEach {
-        val index = this.indexOf(it)
-        if (index != -1 && it.likesCount != this[index].likesCount) this[index] = it
-        if (!this.contains(it)) this.add(0, it)
-    }
-    if (this.size > number) this.removeRange(number, this.size)
+    clear()
+    addAll(newList)
 }
 
 @Preview(showBackground = true)

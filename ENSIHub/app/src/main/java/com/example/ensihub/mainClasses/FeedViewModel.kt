@@ -171,11 +171,9 @@ class FeedViewModel : ViewModel() {
 
 
     fun loadMore(onCompletion: (() -> Unit)? = null) {
+        i += 10
         viewModelScope.launch {
-            i += 10
             db.collection("posts")
-                .whereNotIn("id", _posts.value!!)
-                .orderBy("id")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -185,7 +183,7 @@ class FeedViewModel : ViewModel() {
                         val post = document.toObject(Post::class.java)
                         postList.add(post)
                     }
-                    _posts.value = _posts.value?.plus(postList)
+                    _posts.value = postList
                     if (onCompletion != null) {
                         onCompletion()
                     }
@@ -193,12 +191,15 @@ class FeedViewModel : ViewModel() {
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents.", exception)
                 }
+
+
+
         }
     }
 
     fun reload(onCompletion: (() -> Unit)? = null) {
+        i = 10
         viewModelScope.launch {
-            i = 10
             _posts.value = mutableListOf()
             _comments.value = mutableMapOf()
             db.collection("posts")
