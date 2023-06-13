@@ -58,7 +58,7 @@ import com.example.ensihub.mainClasses.LoginViewModel
 import com.google.firebase.firestore.ktx.firestore
 
 @Composable
-fun SettingsView(navHostController: NavHostController) {
+fun SettingsView(navHostController: NavHostController, loginViewModel: LoginViewModel) {
     val popupControl = remember {
         mutableStateOf(false)
     }
@@ -320,7 +320,7 @@ fun SettingsView(navHostController: NavHostController) {
                         Button(onClick = {
                             disconnect()
                             navHostController.navigate(LoginRoutes.SignIn.name)
-                            LoginViewModel().updateStatusLogin(false)
+                            loginViewModel.updateStatusLogin(false)
                             popupControl.value = false
                         }) {
                             Text("Confirm", color = Color.Red)
@@ -755,7 +755,7 @@ fun disconnect() {
 @Preview
 @Composable
 fun SettingsViewPreview() {
-    SettingsView(navHostController = rememberNavController())
+    SettingsView(navHostController = rememberNavController(), loginViewModel = LoginViewModel())
 }
 
 
