@@ -107,6 +107,10 @@ fun Navigation(
                 composable(route = "settings/changePassword"){
                     ChangePasswordView(navHostController = navController)
                 }
+
+                composable(route = "settings/contact"){
+                    ContactView(navHostController = navController)
+                }
             }
         }
     }
