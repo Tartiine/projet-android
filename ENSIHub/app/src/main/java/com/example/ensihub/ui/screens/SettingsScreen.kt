@@ -1,9 +1,12 @@
 package com.example.ensihub.ui.screens
 
+import android.content.Intent
 import android.graphics.fonts.FontStyle
+import android.net.Uri
 import android.util.Log
 import android.widget.Space
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,8 +35,12 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -308,7 +316,9 @@ fun SettingsView(navHostController: NavHostController) {
 
             ClickableText(
                 text = AnnotatedString("Contact"),
-                onClick = {},
+                onClick = {
+                    navHostController.navigate("settings/contact")
+                },
                 style = TextStyle(
                     color = Color.White,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -784,6 +794,133 @@ fun ChangePasswordView(navHostController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ContactView(navHostController: NavHostController) {
+    val emailObject = remember { mutableStateOf("") }
+    val emailBody = remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = Color.Black),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Text(
+                text = "SETTINGS",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        Text(
+            text = "Contact us",
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
+        )
+
+        TextField(
+            value = emailObject.value,
+            onValueChange = {
+                emailObject.value = it
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = Color.LightGray
+                )
+            },
+            label = { Text("Object") },
+            modifier = Modifier
+                .padding(16.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        TextField(
+            value = emailBody.value,
+            onValueChange = { emailBody.value = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                .padding(8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = {
+                val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:")
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("ensihub@gmail.com"))
+                    putExtra(Intent.EXTRA_SUBJECT, emailObject.value)
+                    putExtra(Intent.EXTRA_TEXT, emailBody.value)
+                }
+                context.startActivity(Intent.createChooser(emailIntent, "Send Email"))
+
+                navHostController.navigate(BottomBarScreen.Settings.route)
+            },
+            modifier = Modifier
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
+        ) {
+            Text(text = "Send Email")
+        }
+
+    }
+}
+
 fun disconnect() {
     Firebase.auth.signOut()
     FirebaseAuth.getInstance().signOut()
@@ -811,4 +948,10 @@ fun ChangeUsernameViewPreview() {
 @Composable
 fun ChangePasswordPreview() {
     ChangePasswordView(navHostController = rememberNavController())
+}
+
+@Preview
+@Composable
+fun ContactPreview() {
+    ContactView(navHostController = rememberNavController())
 }
