@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -42,13 +43,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
-import com.example.ensihub.MainActivity                   //DO NOT DELETE THIS LINE(here for testing)
 import com.example.ensihub.R
 import com.example.ensihub.mainClasses.AuthRepository
 import com.example.ensihub.mainClasses.LoginViewModel
@@ -192,17 +193,6 @@ fun LoginScreen(
         ) {
             Text(text = "Login")
         }
-
-        /*
-        Button(                                                          //DO NOT DELETE THIS BUTTON(here for testing)
-            onClick = { (context as MainActivity).showImagePicker() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text(text = "Post media content")
-        }
-        */
 
         Text(
             text = "New Member?",
