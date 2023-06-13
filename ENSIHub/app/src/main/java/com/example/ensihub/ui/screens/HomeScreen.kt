@@ -31,6 +31,7 @@ import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -42,6 +43,10 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
 
     val myList = remember { mutableStateListOf<Post>() }
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Black
+    )
 
     myList.swapList(posts)
 
