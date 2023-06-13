@@ -5,38 +5,28 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.StateRecord
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -61,10 +51,8 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
         swipeRefreshState.isRefreshing = true
 
         viewModel.reload {
-            MainScope().launch {
-                myList.swapList(posts)
-                swipeRefreshState.isRefreshing = false
-            }
+            myList.swapList(posts)
+            swipeRefreshState.isRefreshing = false
         }
         // Get the updated list to trigger a recompose
     }
@@ -93,15 +81,13 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
                             viewModel = viewModel
                         )
                     }
-                    if (!myList.isEmpty()) {
-                        item {
-                            LaunchedEffect(true) {
-                                viewModel.loadMore {
-                                    MainScope().launch {
-                                        Log.d(TAG, "loaded")
-                                        myList.swapList(posts, posts.size)
-                                        Log.d(TAG, "Swapped")
-                                    }
+                    item {
+                        LaunchedEffect(true) {
+                            viewModel.loadMore {
+                                MainScope().launch {
+                                    Log.d(TAG, "loaded")
+                                    myList.swapList(posts)
+                                    Log.d(TAG, "Swapped")
                                 }
                             }
                         }
@@ -112,9 +98,14 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     }
 }
 
-fun SnapshotStateList<Post>.swapList(newList: List<Post>, number: Int = 10){
-    clear()
-    addAll(newList)
+fun SnapshotStateList<Post>.swapList(newList: List<Post>){
+    newList.reversed().forEach {
+        if (this.contains(it) && this[this.indexOf(it)].likes != it.likes) this[this.indexOf(it)] = it
+        val post = this.firstOrNull { p-> p.timestamp < it.timestamp }
+        if (!this.contains(it) && post != null) this.add(this.indexOf(post), it)
+        if (!this.contains(it)) this.add(it)
+    }
+
 }
 
 @Preview(showBackground = true)
