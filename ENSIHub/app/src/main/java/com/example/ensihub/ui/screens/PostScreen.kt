@@ -64,9 +64,12 @@ fun PostView(
     val currentUser = viewModel.currentUser.collectAsState().value
 
     Column(
-        modifier = Modifier.background(Color.Black).fillMaxSize()
+        modifier = Modifier
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .fillMaxSize()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(color = Color(0xFF2D3949))
     ) {
-        BottomBorder(modifier = Modifier.fillMaxWidth())
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = post.author,
@@ -205,19 +208,6 @@ fun PostViewPreview() {
     )
 }
 
-@Composable
-fun BottomBorder(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier.fillMaxWidth()) {
-        val strokeWidth = 1f // border width in pixels
-        val borderColor = Color.LightGray
-        drawLine(
-            start = Offset(0f, size.height - strokeWidth / 2),
-            end = Offset(size.width, size.height - strokeWidth / 2),
-            color = borderColor,
-            strokeWidth = strokeWidth,
-            cap = StrokeCap.Square
-        )
-    }
-}
+
 
 

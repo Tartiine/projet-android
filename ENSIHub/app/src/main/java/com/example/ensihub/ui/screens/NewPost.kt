@@ -23,6 +23,8 @@ import androidx.navigation.NavController
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.FeedViewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.example.ensihub.MainActivity
 
 @Composable
@@ -33,55 +35,71 @@ fun NewPostView(navController: NavController) {
     val currentUser = viewModel.currentUser.collectAsState().value
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(0.dp)
-            .background(color = Color(0xFF000000))
-    ) {
-        TextField(
-            value = messageState.value,
-            onValueChange = { messageState.value = it },
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .padding(16.dp),
-            label = { Text("Enter your message") },
-            textStyle = MaterialTheme.typography.body1,
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White)
-        )
-
-        Button(
-            onClick = {
-                (context as MainActivity).showImagePicker()
-            },
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 16.dp)
+                .height(100.dp)
+                .background(Color(0xFFFF8C00)),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Add Media")
+            Text(
+                text = "Create Post",
+                style = MaterialTheme.typography.h6,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(16.dp)
+            )
         }
-
-        Button(
-            onClick = {
-                if (currentUser != null) {
-                    val newPost = Post(
-                        text = messageState.value,
-                        author = currentUser.username,
-                        imageUrl = imageUrlState.value
-                    )
-                    viewModel.addPost(newPost)
-                    messageState.value = ""
-                    imageUrlState.value = ""
-                    navController.navigateUp()
-                }
-            },
-            modifier = Modifier.align(Alignment.End)
-                .padding(end=16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(0.dp)
+                .background(color = Color(0xFF000000))
         ) {
-            Text("Add Post")
+            TextField(
+                value = messageState.value,
+                onValueChange = { messageState.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(16.dp),
+                label = { Text("Enter your message") },
+                textStyle = MaterialTheme.typography.body1,
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White)
+            )
+
+            Button(
+                onClick = {
+                    (context as MainActivity).showImagePicker()
+                },
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 16.dp)
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add Media")
+            }
+
+            Button(
+                onClick = {
+                    if (currentUser != null) {
+                        val newPost = Post(
+                            text = messageState.value,
+                            author = currentUser.username,
+                            imageUrl = imageUrlState.value
+                        )
+                        viewModel.addPost(newPost)
+                        messageState.value = ""
+                        imageUrlState.value = ""
+                        navController.navigateUp()
+                    }
+                },
+                modifier = Modifier.align(Alignment.End)
+                    .padding(end = 16.dp)
+            ) {
+                Text("Add Post")
+            }
         }
     }
 }
-
-
