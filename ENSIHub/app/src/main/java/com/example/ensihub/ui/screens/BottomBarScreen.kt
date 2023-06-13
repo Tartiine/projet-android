@@ -61,7 +61,12 @@ sealed class BottomBarScreen(
         val currentUser = viewModel.currentUser.collectAsState().value
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color(0xFFFFA500)
+            backgroundColor = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
