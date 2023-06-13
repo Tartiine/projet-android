@@ -59,7 +59,6 @@ class MainActivity : ComponentActivity() {
         )
     )*/
         viewModel.loadInitialData()
-
         if (!permissionsCheck()) {
             requestPermissions()
         }
@@ -74,7 +73,6 @@ class MainActivity : ComponentActivity() {
     fun MainActivityContent(viewModel: FeedViewModel) {
         val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
         val navController = rememberNavController()
-
         ENSIHubTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -89,7 +87,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
     private fun permissionsCheck(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)

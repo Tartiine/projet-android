@@ -17,6 +17,7 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class FeedViewModel : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
@@ -66,85 +67,68 @@ class FeedViewModel : ViewModel() {
             val currentUser = FirebaseAuth.getInstance().currentUser
             db.collection("posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(10)
                 .get()
-                .addOnSuccessListener { snapshots ->
-//                    if (e != null) {
-//                        Log.w(TAG, "Listen failed.", e)
-//                        return@addSnapshotListener
-//                    }
-
-                    val postList = mutableListOf<Post>()
-                    for (document in snapshots) {
+                .addOnSuccessListener { documents ->
+                    val postList = documents.mapNotNull { document ->
                         val data = document.data
-                        val post = Post(
-                            id = document.id,
-                            text = data["text"] as? String ?: "",
-                            timestamp = data["timestamp"] as? Long ?: 0,
-                            author = data["author"] as? String ?: "",
-                            likesCount = data["likesCount"] as? Long ?: 0,
-                            isLiked = data["isLiked"] as? Boolean ?: 0,
-                            imageUrl = data["imageUrl"] as? String ?: "",
-                            videoUrl = data["videoUrl"] as? String ?: "",
-                            status = PostStatus.PENDING,
-                            likes = data["likes"] as? Map<*, *> ?: 0
-                        )
-                        postList.add(post)
-                    }
+                            Post(
+                                id = document.id,
+                                text = data["text"] as? String ?: "",
+                                timestamp = data["timestamp"] as? Long ?: 0L,
+                                author = data["author"] as? String ?: "",
+                                likesCount = data["likesCount"] as? Long ?: 0L,
+                                isLiked = data["isLiked"] as? Boolean ?: false, // isLiked is Boolean
+                                imageUrl = data["imageUrl"] as? String ?: "",
+                                videoUrl = data["videoUrl"] as? String ?: "",
+                                status = PostStatus.PENDING,
+                                likes = data["likes"] as? Map<String, Boolean> ?: emptyMap() // likes is Map<String, Boolean>
+                            )
+                        }
 
-                    _posts.value = if (postList.size > 10) postList.take(10) else postList
+                    _posts.value = postList
 
                     if (currentUser != null) {
                         loadUserPosts(currentUser)
                     }
                 }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
         }
     }
 
-    private fun loadUserPosts(currentUser: FirebaseUser) {
+    fun loadUserPosts(user: FirebaseUser) {
         viewModelScope.launch {
-            // fetch the user object for currentUser
-            db.collection("users")
-                .document(currentUser.uid)
+            db.collection("posts")
+                .whereEqualTo("author", user.uid)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
-                .addOnSuccessListener { document ->
-                    val user = document.toObject(User::class.java)
-                    val username = user?.username
-
-                    // now fetch the posts for this username
-                    db.collection("posts")
-                        .whereEqualTo("author", username)
-                        .get()
-                        .addOnSuccessListener { result ->
-                            val userPosts = mutableListOf<Post>()
-                            Log.d(TAG, "Successfully fetched user posts from Firebase, found ${result.size()} posts")
-
-                            for (document in result) {
-                                val data = document.data
-                                val post = Post(
-                                    id = document.id,
-                                    text = data["text"] as? String ?: "",
-                                    timestamp = data["timestamp"] as? Long ?: 0,
-                                    author = data["author"] as? String ?: "",
-                                    likesCount = data["likesCount"] as? Long ?: 0,
-                                    imageUrl = data["imageUrl"] as? String ?: "",
-                                    videoUrl = data["videoUrl"] as? String ?: "",
-                                    status = PostStatus.PENDING
-                                )
-                                userPosts.add(post)
-                            }
-
-                            _userPosts.value = userPosts
+                .addOnSuccessListener { documents ->
+                    val userPostList = documents.mapNotNull { document ->
+                        val data = document.data
+                        data?.let {
+                            Post(
+                                id = document.id,
+                                text = data["text"] as? String ?: "",
+                                timestamp = data["timestamp"] as? Long ?: 0L,
+                                author = data["author"] as? String ?: "",
+                                likesCount = data["likesCount"] as? Long ?: 0L,
+                                isLiked = data["isLiked"] as? Boolean ?: false,
+                                imageUrl = data["imageUrl"] as? String ?: "",
+                                videoUrl = data["videoUrl"] as? String ?: "",
+                                status = PostStatus.PENDING,
+                                likes = data["likes"] as? Map<String, Boolean> ?: emptyMap()
+                            )
                         }
-                        .addOnFailureListener { exception ->
-                            Log.w(TAG, "Error getting user's posts.", exception)
-                        }
+                    }
+                    _userPosts.value = userPostList
                 }
                 .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting user data.", exception)
+                    Log.w(TAG, "Error getting documents: ", exception)
                 }
         }
     }
-
 
     private fun loadComments(post: Post) {
         post.id?.let { postId ->  // Let block will execute only if postId is not null
@@ -192,9 +176,6 @@ class FeedViewModel : ViewModel() {
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents.", exception)
                 }
-
-
-
         }
     }
 
@@ -244,8 +225,6 @@ class FeedViewModel : ViewModel() {
                 }
         }
     }
-
-
 
     fun addComment(postId: String, comment: Comment) {
         viewModelScope.launch {
@@ -312,78 +291,61 @@ class FeedViewModel : ViewModel() {
 
     fun likePost(post: Post) {
         viewModelScope.launch {
-            db.collection("posts").whereEqualTo("id", post.id.toString())
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (!documents.isEmpty) {
-                        val documentSnapshot = documents.documents[0] // Assuming only one document will match
-                        val postRef = db.collection("posts").document(documentSnapshot.id)
-                        val updatedLikesCount = post.likesCount + 1
-                        postRef.update("likesCount", updatedLikesCount)
-                            .addOnSuccessListener {
-                                Log.d(TAG, "+1 like")
-                                val updatedPosts = _posts.value?.toMutableList()
-                                val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
-                                if (updatedPostIndex != null && updatedPostIndex != -1) {
-                                    val updatedPost = post.copy(likesCount = updatedLikesCount)
-                                    updatedPosts[updatedPostIndex] = updatedPost
-                                    _posts.value = updatedPosts
-                                }
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w(TAG, "Error in liking the post: $e")
-                            }
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            currentUser?.let { user ->
+                val postRef = db.collection("posts").document(post.id)
+                db.runTransaction { transaction ->
+                    val postSnapshot = transaction.get(postRef)
+                    val likesMap = postSnapshot.get("likes") as? MutableMap<String, Boolean> ?: mutableMapOf()
+                    val isLiked = likesMap[user.uid] ?: false
+
+                    if (!isLiked) {
+                        likesMap[user.uid] = true
+                        transaction.update(postRef, "likes", likesMap)
+                        transaction.update(postRef, "likesCount", post.likesCount + 1)
+                        transaction.update(postRef, "isLiked", true)
+
+                        val updatedPost = post.copy(likesCount = post.likesCount + 1, likes = likesMap, isLiked = true)
+                        val updatedPosts = _posts.value?.toMutableList()
+                        val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                        if (updatedPostIndex != null && updatedPostIndex != -1) {
+                            updatedPosts[updatedPostIndex] = updatedPost
+                            _posts.value = updatedPosts
+                        }
                     }
                 }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents: ", exception)
-                }
+            }
         }
     }
 
     fun unlikePost(post: Post) {
-        try {
-            Log.d(TAG, "likePost method started for postId = ${post.id}")
-            // ... rest of method ...
-        } catch (e: Exception) {
-            Log.e(TAG, "Exception in likePost method for postId = ${post.id}", e)
-        }
         viewModelScope.launch {
-            db.collection("posts").whereEqualTo("id", post.id.toString())
-                .get()
-                .addOnSuccessListener { documents ->
-                    Log.w(TAG, "WESH ALORS !!!")
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents: ", exception)
-                }
-                .addOnSuccessListener { documents ->
-                    if (!documents.isEmpty) {
-                        val documentSnapshot = documents.documents[0] // Assuming only one document will match
-                        val postRef = db.collection("posts").document(documentSnapshot.id)
-                        val updatedLikesCount = if (post.likesCount > 0) post.likesCount - 1 else 0  // Ensure that likesCount never goes below 0
-                        postRef.update("likesCount", updatedLikesCount)
-                            .addOnSuccessListener {
-                                Log.d(TAG, "-1 like")
-                                val updatedPosts = _posts.value?.toMutableList()
-                                val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
-                                if (updatedPostIndex != null && updatedPostIndex != -1) {
-                                    val updatedPost = post.copy(likesCount = updatedLikesCount)
-                                    updatedPosts[updatedPostIndex] = updatedPost
-                                    _posts.value = updatedPosts
-                                }
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w(TAG, "Error in unliking the post: $e")
-                            }
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            currentUser?.let { user ->
+                val postRef = db.collection("posts").document(post.id)
+                db.runTransaction { transaction ->
+                    val postSnapshot = transaction.get(postRef)
+                    val likesMap = postSnapshot.get("likes") as? MutableMap<String, Boolean> ?: mutableMapOf()
+                    val isLiked = likesMap[user.uid] ?: false
+
+                    if (isLiked) {
+                        likesMap.remove(user.uid)
+                        transaction.update(postRef, "likes", likesMap)
+                        transaction.update(postRef, "likesCount", post.likesCount - 1)
+                        transaction.update(postRef, "isLiked", false)
+
+                        val updatedPost = post.copy(likesCount = post.likesCount - 1, likes = likesMap, isLiked = false)
+                        val updatedPosts = _posts.value?.toMutableList()
+                        val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                        if (updatedPostIndex != null && updatedPostIndex != -1) {
+                            updatedPosts[updatedPostIndex] = updatedPost
+                            _posts.value = updatedPosts
+                        }
                     }
                 }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents: ", exception)
-                }
+            }
         }
     }
-
 
     fun updateCommText(postId: String, comment: Comment, newText: String) {
         viewModelScope.launch {
@@ -405,7 +367,6 @@ class FeedViewModel : ViewModel() {
                 }
         }
     }
-
 
     fun deleteComment(postId: String, commentId: String)  {
         viewModelScope.launch {
@@ -429,7 +390,6 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-
     fun getCommentsLiveData(): MutableLiveData<Map<String, List<Comment>>> {
         return _comments
     }
@@ -445,8 +405,6 @@ class FeedViewModel : ViewModel() {
             }
         }
     }
-
-
 
     fun getImage(post: Post) {
         val storageRef = storage.reference.child("image/${post.id}")

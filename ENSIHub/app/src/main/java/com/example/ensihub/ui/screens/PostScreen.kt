@@ -60,7 +60,7 @@ fun PostView(
     viewModel: FeedViewModel
 ) {
 
-    val isLiked = remember { mutableStateOf(false) }  // Remember the liked state
+    val isLiked = remember { mutableStateOf(post.isLiked) }
     val currentUser = viewModel.currentUser.collectAsState().value
 
     Column(
@@ -89,14 +89,14 @@ fun PostView(
                 modifier = Modifier.size(60.dp),
                 colors = ButtonDefaults.buttonColors(contentColor = if (isLiked.value) Color(247, 152,23) else Color.White, backgroundColor = Color.Transparent),
                 onClick = {
-                    isLiked.value = !isLiked.value
                     if (isLiked.value) {
-                        viewModel.likePost(post)
-                        Log.d("PostView", "likePost clicked for postId = ${post.id}")
-                    } else {
                         viewModel.unlikePost(post)
                         Log.d("PostView", "unlikePost clicked for postId = ${post.id}")
+                    } else {
+                        viewModel.likePost(post)
+                        Log.d("PostView", "likePost clicked for postId = ${post.id}")
                     }
+                    isLiked.value = !isLiked.value
                 },
                 elevation = null
             ) {
