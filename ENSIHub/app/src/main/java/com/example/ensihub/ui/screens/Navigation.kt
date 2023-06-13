@@ -37,7 +37,7 @@ fun Navigation(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
     viewModel: FeedViewModel,
-    moderation: Moderation?
+    moderation: Moderation
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
     val user = loginViewModel.currentUser
