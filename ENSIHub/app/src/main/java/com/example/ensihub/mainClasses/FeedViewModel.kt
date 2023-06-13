@@ -66,6 +66,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch {
             val currentUser = FirebaseAuth.getInstance().currentUser
             db.collection("posts")
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
@@ -102,6 +103,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch {
             db.collection("posts")
                 .whereEqualTo("author", user.uid)
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener { documents ->
@@ -159,6 +161,7 @@ class FeedViewModel : ViewModel() {
         i += 10
         viewModelScope.launch {
             db.collection("posts")
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -185,6 +188,7 @@ class FeedViewModel : ViewModel() {
             _posts.value = mutableListOf()
             _comments.value = mutableMapOf()
             db.collection("posts")
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
