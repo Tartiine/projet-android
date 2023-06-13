@@ -1,6 +1,5 @@
 package com.example.ensihub.ui.screens
 
-
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -165,22 +164,22 @@ fun PostView(
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
                     elevation = null
-                    ) {
-                        Text("Delete")
-                    }
-
+                ) {
+                    Text("Delete")
                 }
 
-
-
             }
-            Divider()
 
-            if (showImage && post.imageUrl != null) {
-            // Display the image only if showImage is true and imageUrl is not null
-                AsyncImage(post.imageUrl, null, modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
+
+
         }
+        Divider()
+
+        if (showImage && post.imageUrl != null) {
+            // Display the image only if showImage is true and imageUrl is not null
+            AsyncImage(post.imageUrl, null, modifier = Modifier.align(Alignment.CenterHorizontally))
+        }
+    }
 }
 
 
@@ -202,6 +201,11 @@ fun PostViewPreview() {
         viewModel = viewModel
     )
 }
+
+
+
+
+
 
 
 
