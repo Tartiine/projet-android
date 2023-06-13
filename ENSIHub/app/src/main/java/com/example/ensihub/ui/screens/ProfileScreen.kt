@@ -45,7 +45,7 @@ fun UserProfileScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF363636))
+            .background(Color(0xFF000000))
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
