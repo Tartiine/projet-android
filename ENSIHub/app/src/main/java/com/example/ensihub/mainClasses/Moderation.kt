@@ -5,10 +5,8 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ensihub.ui.screens.posts
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import com.google.firebase.firestore.Query
 
@@ -47,20 +45,6 @@ class Moderation : ViewModel() {
             .addOnFailureListener{ exception ->
                 Log.w(TAG, "Error by reporting post", exception)
             }
-    }
-
-    fun getPendingPosts() {
-        db.collection("posts").whereEqualTo("status", PostStatus.PENDING.name).get()
-            .addOnSuccessListener { result ->
-                val posts = mutableListOf<Post>()
-                for(document in result) {
-                    Log.d(TAG, "${document.id} => ${document.data}")
-                    val data = document.data
-                    val post = Post(data["id"] as String, data["text"] as String, data["timestamp"] as Long, data["author"] as String, data["likesCount"] as Long, data["imageUrl"] as String?, data["videoUrl"] as String?, data["status"] as PostStatus)
-                    posts.add(post)
-                }
-            }
-            pendingPosts.value = posts
     }
 
     fun reloadPendingPosts() {

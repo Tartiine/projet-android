@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Role
 import com.example.ensihub.mainClasses.User
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
@@ -54,7 +56,8 @@ sealed class BottomBarScreen(
     )
 
     @Composable
-    fun BottomNavigationBar(navController: NavHostController, user : User) {
+    fun BottomNavigationBar(navController: NavHostController, viewModel: FeedViewModel) {
+        val currentUser = viewModel.currentUser.collectAsState().value
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
             backgroundColor = Color(0xFFFFA500)
@@ -62,7 +65,7 @@ sealed class BottomBarScreen(
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
-            val items = if (user.role == Role.ADMIN || user.role == Role.MODERATOR) {
+            val items = if (currentUser?.role == Role.ADMIN || currentUser?.role == Role.MODERATOR) {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings, BottomBarScreen.Moderation)
             } else {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings)
@@ -98,5 +101,3 @@ sealed class BottomBarScreen(
         }
     }
 }
-
-
