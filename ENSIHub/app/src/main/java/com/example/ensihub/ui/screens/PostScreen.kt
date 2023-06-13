@@ -38,7 +38,11 @@ import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
@@ -133,13 +137,13 @@ fun PostView(
                 Button(
                     modifier = Modifier.width(100.dp),
                     onClick = {
-                        /* On click function */
+                        viewModel.reportPost(post)
                         Log.d("PostView", "reportPost clicked for postId = ${post.id}")
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
                     elevation = null
                 ) {
-                    Text("Report")
+                    Icon(Icons.Default.Warning, contentDescription = "Report post")
                 }
             } else {
                 Button(
