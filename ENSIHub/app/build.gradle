@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'com.google.relay'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 android {

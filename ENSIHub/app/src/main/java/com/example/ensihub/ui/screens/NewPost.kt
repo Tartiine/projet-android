@@ -3,6 +3,7 @@ package com.example.ensihub.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -23,6 +24,7 @@ import androidx.navigation.NavController
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.FeedViewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.example.ensihub.MainActivity
@@ -35,51 +37,66 @@ fun NewPostView(navController: NavController) {
     val currentUser = viewModel.currentUser.collectAsState().value
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(0.dp)
+            .background(color = Color(0xFF000000))
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .background(Color(0xFFFF8C00)),
-            contentAlignment = Alignment.Center
+                .height(80.dp)
+                .background(color = Color(255, 152, 23))
         ) {
             Text(
-                text = "Create Post",
-                style = MaterialTheme.typography.h6,
-                color = Color.Black,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
+                text = "CREATE POST",
+                modifier = Modifier.align(Alignment.Center),
+                style = TextStyle(
+                    fontSize = androidx.compose.material3.MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                ),
+                color = Color.Black
             )
         }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp)
-                .background(color = Color(0xFF000000))
-        ) {
-            TextField(
-                value = messageState.value,
-                onValueChange = { messageState.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(16.dp),
-                label = { Text("Enter your message") },
-                textStyle = MaterialTheme.typography.body1,
-                colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White)
-            )
 
+        TextField(
+            value = messageState.value,
+            onValueChange = { messageState.value = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp),
+            label = { Text("What's happening?",color = Color.Black) },
+            textStyle = MaterialTheme.typography.body1,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                cursorColor = Color(255, 152, 23), // Set the cursor color to orange
+                focusedIndicatorColor = Color(255, 152, 23) // Set the focused indicator color to orange
+            )
+        )
+
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Button(
                 onClick = {
                     (context as MainActivity).showImagePicker()
                 },
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 16.dp)
+                modifier = Modifier.weight(0.25f).height(50.dp).padding(start = 16.dp, end = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(255, 152, 23),
+                    contentColor = Color.White
+                )
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Media")
             }
+
+            Spacer(modifier = Modifier.weight(0.5f))
 
             Button(
                 onClick = {
@@ -95,11 +112,16 @@ fun NewPostView(navController: NavController) {
                         navController.navigateUp()
                     }
                 },
-                modifier = Modifier.align(Alignment.End)
-                    .padding(end = 16.dp)
+                modifier = Modifier.weight(0.75f).height(50.dp).padding( end = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(255, 152, 23),
+                    contentColor = Color.White
+                )
             ) {
                 Text("Add Post")
             }
+
         }
     }
 }
+
