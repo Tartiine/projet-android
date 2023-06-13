@@ -29,7 +29,8 @@ import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 sealed class BottomBarScreen(
     val route: String,
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val user : User? = null
 ) {
     object Home : BottomBarScreen(
         route = "home",
@@ -60,12 +61,17 @@ sealed class BottomBarScreen(
         val currentUser = viewModel.currentUser.collectAsState().value
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color(0xFFFFA500)
+            backgroundColor = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
-            val items = if (currentUser?.role == Role.ADMIN || currentUser?.role == Role.MODERATOR) {
+            val items = if (true) {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings, BottomBarScreen.Moderation)
             } else {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings)
