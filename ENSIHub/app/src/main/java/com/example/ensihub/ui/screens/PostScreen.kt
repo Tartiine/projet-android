@@ -1,9 +1,7 @@
 package com.example.ensihub.ui.screens
 
-
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +38,10 @@ import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
@@ -135,13 +136,13 @@ fun PostView(
                 Button(
                     modifier = Modifier.width(100.dp),
                     onClick = {
-                        /* On click function */
+                        viewModel.reportPost(post)
                         Log.d("PostView", "reportPost clicked for postId = ${post.id}")
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
                     elevation = null
                 ) {
-                    Text("Report")
+                    Icon(Icons.Default.Warning, contentDescription = "Report post")
                 }
             } else {
                 Button(
@@ -163,22 +164,22 @@ fun PostView(
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
                     elevation = null
-                    ) {
-                        Text("Delete")
-                    }
-
+                ) {
+                    Text("Delete")
                 }
 
-
-
             }
-            Divider()
 
-            if (showImage && post.imageUrl != null) {
-            // Display the image only if showImage is true and imageUrl is not null
-                AsyncImage(post.imageUrl, null, modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
+
+
         }
+        Divider()
+
+        if (showImage && post.imageUrl != null) {
+            // Display the image only if showImage is true and imageUrl is not null
+            AsyncImage(post.imageUrl, null, modifier = Modifier.align(Alignment.CenterHorizontally))
+        }
+    }
 }
 
 
@@ -200,6 +201,11 @@ fun PostViewPreview() {
         viewModel = viewModel
     )
 }
+
+
+
+
+
 
 
 

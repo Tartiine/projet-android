@@ -37,16 +37,6 @@ class Moderation : ViewModel() {
             }
     }
 
-    fun reportPost(post : Post) {
-        db.collection("posts").document(post.id).update("status", PostStatus.PENDING.name)
-            .addOnSuccessListener {
-                Log.d(TAG, "Post reported and queued for a new manual review")
-            }
-            .addOnFailureListener{ exception ->
-                Log.w(TAG, "Error by reporting post", exception)
-            }
-    }
-
     fun reloadPendingPosts() {
         viewModelScope.launch {
             i = 10
