@@ -69,10 +69,15 @@ fun NewPostView(navController: NavController) {
                 .fillMaxWidth()
                 .height(200.dp)
                 .padding(16.dp),
-            label = { Text("What's happening?") },
+            label = { Text("What's happening?",color = Color.Black) },
             textStyle = MaterialTheme.typography.body1,
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White)
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                cursorColor = Color(255, 152, 23), // Set the cursor color to orange
+                focusedIndicatorColor = Color(255, 152, 23) // Set the focused indicator color to orange
+            )
         )
+
 
         Row(
             modifier = Modifier.fillMaxWidth(),
