@@ -1,6 +1,7 @@
 package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
@@ -18,6 +21,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -68,7 +72,9 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
             }
         }
     ) {
-        Column(modifier = Modifier.background(Color.Black).fillMaxSize()) {
+        Column(modifier = Modifier
+            .background(Color.Black)
+            .fillMaxSize()) {
             SwipeRefresh(state = swipeRefreshState, onRefresh = {
                 onUpdateClick()
             }) {
@@ -84,8 +90,11 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
                         )
                     }
                     item {
-                        Button(onClick = { viewModel.loadMore() }, modifier = Modifier.padding(20.dp)) {
-                            Text("Load More")
+                        LaunchedEffect(viewModel.i.toInt()<posts.size) {
+                            Log.d(TAG, "here")
+                            viewModel.loadMore {
+                                myList.swapList(posts, viewModel.i.toInt())
+                            }
                         }
                     }
                 }
@@ -94,13 +103,13 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     }
 }
 
-fun SnapshotStateList<Post>.swapList(newList: List<Post>){
+fun SnapshotStateList<Post>.swapList(newList: List<Post>, number: Int = 10){
     newList.reversed().forEach {
         val index = this.indexOf(it)
         if (index != -1 && it.likesCount != this[index].likesCount) this[index] = it
         if (!this.contains(it)) this.add(0, it)
     }
-    if (this.size > 10) this.removeRange(10, this.size)
+    if (this.size > number) this.removeRange(number, this.size)
 }
 
 @Preview(showBackground = true)

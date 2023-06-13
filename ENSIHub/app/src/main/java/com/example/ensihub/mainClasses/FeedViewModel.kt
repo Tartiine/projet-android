@@ -36,7 +36,7 @@ class FeedViewModel : ViewModel() {
     private val _userPosts = MutableLiveData<List<Post>>()
     val userPosts: LiveData<List<Post>> = _userPosts
 
-    private var i: Long = 10
+    var i: Long = 10
 
 
     init {
@@ -168,11 +168,12 @@ class FeedViewModel : ViewModel() {
     }
 
 
-    fun loadMore() {
+    fun loadMore(onCompletion: (() -> Unit)? = null) {
         viewModelScope.launch {
             i += 10
             db.collection("posts")
-                .whereEqualTo("status", PostStatus.APPROVED.name)
+                .whereNotIn("id", _posts.value!!)
+                .orderBy("id")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -183,6 +184,9 @@ class FeedViewModel : ViewModel() {
                         postList.add(post)
                     }
                     _posts.value = _posts.value?.plus(postList)
+                    if (onCompletion != null) {
+                        onCompletion()
+                    }
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents.", exception)

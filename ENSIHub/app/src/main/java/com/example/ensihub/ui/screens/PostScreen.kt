@@ -144,7 +144,7 @@ fun PostView(
                 ) {
                     Text("Report")
                 }
-            }else{
+            } else {
                 Button(
                     modifier = Modifier.width(100.dp),
                     onClick = {
@@ -164,19 +164,20 @@ fun PostView(
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
                     elevation = null
-                ) {
-                    Text("Delete")
+                    ) {
+                        Text("Delete")
+                    }
+
                 }
+
+
 
             }
+            Divider()
 
-
-                Divider()
-
-                if (showImage && post.imageUrl != null) {
-                    // Display the image only if showImage is true and imageUrl is not null
-                    AsyncImage(post.imageUrl, null)
-                }
+            if (showImage && post.imageUrl != null) {
+            // Display the image only if showImage is true and imageUrl is not null
+                AsyncImage(post.imageUrl, null, modifier = Modifier.align(Alignment.CenterHorizontally))
             }
         }
 }
