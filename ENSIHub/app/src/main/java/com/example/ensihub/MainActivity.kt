@@ -90,14 +90,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = Firebase.auth.currentUser
-        if (currentUser != null) {
-            Firebase.auth.signOut()
-        }
-    }
 
     private fun permissionsCheck(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
