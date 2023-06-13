@@ -16,6 +16,22 @@ class Moderation : ViewModel() {
     private var i: Long = 10
     val pendingPosts : MutableLiveData<List<Post>> = MutableLiveData()
 
+    init {
+        db.collection("posts").whereEqualTo("status", PostStatus.PENDING.name).orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get()
+            .addOnSuccessListener { result ->
+                val pendingPostList = mutableListOf<Post>()
+                for (document in result) {
+                    if (document == null) continue
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    val post = document.toObject(Post::class.java)
+                    pendingPostList.add(post)
+                }
+                _pendingPosts.value = pendingPostList
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
+            }
+    }
 
     fun approvePost(post : Post) {
         db.collection("posts").document(post.id).update("status", PostStatus.APPROVED.name)
