@@ -8,9 +8,11 @@ data class Post(
     val timestamp: Long,
     val author: String,
     var likesCount: Long,
+    var isLiked: Boolean = false, // Add this line
     var imageUrl: String? = null,
     var videoUrl: String? = null,
-    var status : PostStatus = PostStatus.PENDING
+    var status : PostStatus = PostStatus.PENDING,
+    val likes: Map<String, Boolean> = mapOf()
 ) {
     constructor() : this(UUID.randomUUID().toString(), "", System.currentTimeMillis(), "", 0)
 
@@ -19,6 +21,19 @@ data class Post(
     constructor(text: String, author: String, imageUrl: String?) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0,imageUrl = imageUrl)
 
     constructor(text: String, author: String, imageUrl: String?, videoUrl: String?) : this(UUID.randomUUID().toString(), text, System.currentTimeMillis(), author, 0, imageUrl = imageUrl, videoUrl = videoUrl)
+    constructor(
+        id: String,
+        text: String,
+        timestamp: Long,
+        author: String,
+        likesCount: Long,
+        isLiked: Comparable<*>,
+        imageUrl: String,
+        videoUrl: String,
+        status: PostStatus,
+        likes: Any
+    ) : this()
+
 
     override fun equals(other: Any?): Boolean {
         return (other is Post) && other.id == this.id

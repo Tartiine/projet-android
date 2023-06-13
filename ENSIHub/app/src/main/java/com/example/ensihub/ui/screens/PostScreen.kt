@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.FeedViewModel
+import com.example.ensihub.mainClasses.Moderation
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Canvas
@@ -48,6 +50,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun PostView(
@@ -67,7 +70,7 @@ fun PostView(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = post.author,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                 color = Color.White
             )
 

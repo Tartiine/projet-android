@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.example.ensihub.mainClasses.Moderation
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 
 enum class LoginRoutes{
@@ -25,7 +26,8 @@ enum class LoginRoutes{
 enum class HomeRoutes{
     Home,
     Profile,
-    Settings
+    Settings,
+    Moderation
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -34,14 +36,16 @@ enum class HomeRoutes{
 fun Navigation(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    viewModel: FeedViewModel
+    viewModel: FeedViewModel,
+    moderation: Moderation?
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
+    val user = loginViewModel.currentUser
 
     Scaffold(
         bottomBar = {
             if (isLoggedIn) {
-                BottomNavigationBar(navController = navController)
+                BottomNavigationBar(navController = navController, viewModel = viewModel)
             }
         }
     ) { innerPadding ->
@@ -66,6 +70,11 @@ fun Navigation(
                         onNavToSignUpPage = { navController.navigate(LoginRoutes.SignUp.name) },
                         onNavToForgotPasswordPage = { navController.navigate(LoginRoutes.ForgotPassword.name) }
                     )
+                }
+                composable(route = BottomBarScreen.Moderation.route) {
+                    if (moderation != null) {
+                        ModerationScreen(moderationViewModel = moderation)
+                    }
                 }
 
                 composable(route = LoginRoutes.SignUp.name) {

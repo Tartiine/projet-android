@@ -66,11 +66,14 @@ class FeedViewModel : ViewModel() {
             val currentUser = FirebaseAuth.getInstance().currentUser
             db.collection("posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener { result ->
-                    val postList = mutableListOf<Post>()
+                .addSnapshotListener { snapshots, e ->
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e)
+                        return@addSnapshotListener
+                    }
 
-                    for (document in result) {
+                    val postList = mutableListOf<Post>()
+                    for (document in snapshots!!) {
                         val data = document.data
                         val post = Post(
                             id = document.id,
@@ -78,9 +81,11 @@ class FeedViewModel : ViewModel() {
                             timestamp = data["timestamp"] as? Long ?: 0,
                             author = data["author"] as? String ?: "",
                             likesCount = data["likesCount"] as? Long ?: 0,
+                            isLiked = data["isLiked"] as? Boolean ?: 0,
                             imageUrl = data["imageUrl"] as? String ?: "",
                             videoUrl = data["videoUrl"] as? String ?: "",
-                            status = PostStatus.PENDING
+                            status = PostStatus.PENDING,
+                            likes = data["likes"] as? Map<*, *> ?: 0
                         )
                         postList.add(post)
                     }
@@ -90,9 +95,6 @@ class FeedViewModel : ViewModel() {
                     if (currentUser != null) {
                         loadUserPosts(currentUser)
                     }
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents.", exception)
                 }
         }
     }
@@ -308,45 +310,78 @@ class FeedViewModel : ViewModel() {
 
     fun likePost(post: Post) {
         viewModelScope.launch {
-            val postRef = db.collection("posts").document(post.id.toString())
-            val updatedLikesCount = post.likesCount + 1
-            postRef.update("likesCount", updatedLikesCount)
-                .addOnSuccessListener {
-                    Log.d(TAG, "+1 like")
-                    val updatedPosts = _posts.value?.toMutableList()
-                    val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
-                    if (updatedPostIndex != null && updatedPostIndex != -1) {
-                        val updatedPost = post.copy(likesCount = updatedLikesCount)
-                        updatedPosts[updatedPostIndex] = updatedPost
-                        _posts.value = updatedPosts
+            db.collection("posts").whereEqualTo("id", post.id.toString())
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        val documentSnapshot = documents.documents[0] // Assuming only one document will match
+                        val postRef = db.collection("posts").document(documentSnapshot.id)
+                        val updatedLikesCount = post.likesCount + 1
+                        postRef.update("likesCount", updatedLikesCount)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "+1 like")
+                                val updatedPosts = _posts.value?.toMutableList()
+                                val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                                if (updatedPostIndex != null && updatedPostIndex != -1) {
+                                    val updatedPost = post.copy(likesCount = updatedLikesCount)
+                                    updatedPosts[updatedPostIndex] = updatedPost
+                                    _posts.value = updatedPosts
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error in liking the post: $e")
+                            }
                     }
                 }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error in liking the post: $e")
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
                 }
         }
     }
 
     fun unlikePost(post: Post) {
+        try {
+            Log.d(TAG, "likePost method started for postId = ${post.id}")
+            // ... rest of method ...
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in likePost method for postId = ${post.id}", e)
+        }
         viewModelScope.launch {
-            val postRef = db.collection("posts").document(post.id.toString())
-            val updatedLikesCount = if (post.likesCount > 0) post.likesCount - 1 else 0  // Ensure that likesCount never goes below 0
-            postRef.update("likesCount", updatedLikesCount)
-                .addOnSuccessListener {
-                    Log.d(TAG, "-1 like")
-                    val updatedPosts = _posts.value?.toMutableList()
-                    val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
-                    if (updatedPostIndex != null && updatedPostIndex != -1) {
-                        val updatedPost = post.copy(likesCount = updatedLikesCount)
-                        updatedPosts[updatedPostIndex] = updatedPost
-                        _posts.value = updatedPosts
+            db.collection("posts").whereEqualTo("id", post.id.toString())
+                .get()
+                .addOnSuccessListener { documents ->
+                    Log.w(TAG, "WESH ALORS !!!")
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        val documentSnapshot = documents.documents[0] // Assuming only one document will match
+                        val postRef = db.collection("posts").document(documentSnapshot.id)
+                        val updatedLikesCount = if (post.likesCount > 0) post.likesCount - 1 else 0  // Ensure that likesCount never goes below 0
+                        postRef.update("likesCount", updatedLikesCount)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "-1 like")
+                                val updatedPosts = _posts.value?.toMutableList()
+                                val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
+                                if (updatedPostIndex != null && updatedPostIndex != -1) {
+                                    val updatedPost = post.copy(likesCount = updatedLikesCount)
+                                    updatedPosts[updatedPostIndex] = updatedPost
+                                    _posts.value = updatedPosts
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error in unliking the post: $e")
+                            }
                     }
                 }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error in unliking the post: $e")
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
                 }
         }
     }
+
 
     fun updateCommText(postId: String, comment: Comment, newText: String) {
         viewModelScope.launch {
