@@ -2,6 +2,7 @@ package com.example.ensihub.ui.screens
 
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,6 +41,13 @@ import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 
 @Composable
 fun PostView(
@@ -49,14 +58,12 @@ fun PostView(
 ) {
 
     val isLiked = remember { mutableStateOf(false) }  // Remember the liked state
+    val currentUser = viewModel.currentUser.collectAsState().value
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-            .clip(shape = RoundedCornerShape(10.dp))
-            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(10.dp))
+        modifier = Modifier.background(Color.Black).fillMaxSize()
     ) {
+        BottomBorder(modifier = Modifier.fillMaxWidth())
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = post.author,
@@ -122,56 +129,56 @@ fun PostView(
             }
         }
 
-        if(user.role==Role.USER){
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                modifier = Modifier.width(80.dp),
-                onClick = {
-                    /* On click function */
-                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
-                },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
-                elevation = null
-            ) {
-                Text("Report")
-            }
-        }else{
-            Button(
-                modifier = Modifier.width(80.dp),
-                onClick = {
 
-                    Log.d("PostView", "validatePost clicked for postId = ${post.id}")
-                },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
-                elevation = null
-            ) {
-                Text("Validate")
-            }
-            Button(
-                modifier = Modifier.width(80.dp),
-                onClick = {
+        if (currentUser != null) {
+            if(currentUser.role==Role.USER){
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    modifier = Modifier.width(100.dp),
+                    onClick = {
+                        /* On click function */
+                        Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF213865)),
+                    elevation = null
+                ) {
+                    Text("Report")
+                }
+            }else{
+                Button(
+                    modifier = Modifier.width(100.dp),
+                    onClick = {
 
-                    Log.d("PostView", "deletePost clicked for postId = ${post.id}")
-                },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
-                elevation = null
-            ) {
-                Text("Delete")
+                        Log.d("PostView", "validatePost clicked for postId = ${post.id}")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
+                    elevation = null
+                ) {
+                    Text("Validate",color = Color.White)
+                }
+                Button(
+                    modifier = Modifier.width(100.dp),
+                    onClick = {
+
+                        Log.d("PostView", "deletePost clicked for postId = ${post.id}")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                    elevation = null
+                ) {
+                    Text("Delete")
+                }
+
             }
 
+
+                Divider()
+
+                if (showImage && post.imageUrl != null) {
+                    // Display the image only if showImage is true and imageUrl is not null
+                    AsyncImage(post.imageUrl, null)
+                }
+            }
         }
-
-
-        Divider()
-
-        if (showImage && post.imageUrl != null) {
-            // Display the image only if showImage is true and imageUrl is not null
-            AsyncImage(post.imageUrl, null)
-        }
-    }
 }
 
 
@@ -192,6 +199,21 @@ fun PostViewPreview() {
         onToggleShowImage = { showImage.value = !showImage.value },
         viewModel = viewModel
     )
+}
+
+@Composable
+fun BottomBorder(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.fillMaxWidth()) {
+        val strokeWidth = 1f // border width in pixels
+        val borderColor = Color.LightGray
+        drawLine(
+            start = Offset(0f, size.height - strokeWidth / 2),
+            end = Offset(size.width, size.height - strokeWidth / 2),
+            color = borderColor,
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Square
+        )
+    }
 }
 
 

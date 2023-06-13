@@ -1,6 +1,8 @@
 package com.example.ensihub.ui.screens
 
+import android.content.ContentValues.TAG
 import android.text.format.DateUtils
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +14,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,20 +29,19 @@ import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import com.example.ensihub.mainClasses.User
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ensihub.R
+import com.example.ensihub.mainClasses.FeedViewModel
 
 
-val user = User("1", "random_user", "random@uha.fr", Role.USER)
-val posts = listOf(
-    Post(id="0", "L'application est incroyable !", System.currentTimeMillis(), user.id, 10),
-    Post(id="1","Quelle matinée incroyable ! J'ai eu la chance de rencontrer, une véritable légende de l'industrie cinématographique. Non seulement nous avons partagé un délicieux petit-déjeuner, mais nous avons également échangé sur notre passion commune pour le cinéma. Merci pour cette expérience inoubliable, Manuel ! #RencontreDeRêve #Cinéma", System.currentTimeMillis(), user.id, 5),
-    Post(id="2","wsh ", System.currentTimeMillis(), user.id, 3),
-    Post(id="3","Un autre texte textetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetextetexte", System.currentTimeMillis(), user.id, 3),
-    Post(id="4","JSP", System.currentTimeMillis(), user.id, 3)
-)
 
 @Composable
-fun UserProfileScreen(user: User) {
+fun UserProfileScreen() {
+    val viewModel: FeedViewModel = viewModel()
+    val currentUser = viewModel.currentUser.collectAsState().value
+    val userPosts: List<Post> by viewModel.userPosts.observeAsState(initial = emptyList())
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,21 +68,21 @@ fun UserProfileScreen(user: User) {
                     modifier = Modifier.padding(start = 8.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = user.username,
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.h6,
-                        color = Color.White
-                    )
+                    currentUser?.let {
+                        Text(
+                            text = it.username,
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.h6,
+                            color = Color.White
+                        )
+                    }
                 }
             }
 
-            PostList(posts = posts)
+            PostList(posts = userPosts)
         }
     }
 }
-
-
 
 
 @Composable
@@ -157,7 +161,5 @@ fun getTimeSincePost(timestamp: Long): String{
 @Preview
 @Composable
 fun UserProfileScreenPreview(){
-    UserProfileScreen(user)
-
-
+    //UserProfileScreen(user)
 }
