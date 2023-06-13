@@ -51,7 +51,7 @@ import com.google.firebase.ktx.Firebase
 import com.example.ensihub.mainClasses.LoginViewModel
 
 @Composable
-fun SettingsView(user: User, navHostController: NavHostController, loginViewModel: LoginViewModel) {
+fun SettingsView(navHostController: NavHostController, loginViewModel: LoginViewModel) {
     val popupControl = remember {
         mutableStateOf(false)
     }
@@ -139,12 +139,6 @@ fun SettingsView(user: User, navHostController: NavHostController, loginViewMode
         }
     }
 
-}
-
-@Preview
-@Composable
-fun SettingsViewPreview() {
-    SettingsView(user = User("1", "thib", "thibaut.herault@uha.fr", Role.ADMIN), rememberNavController(), LoginViewModel())
 }
 
 fun disconnect() {

@@ -63,13 +63,13 @@ fun Navigation(
             modifier = Modifier.padding(innerPadding)
         ) {
                 composable(route = BottomBarScreen.Home.route) {
-                    HomeScreen(viewModel = viewModel)
+                    HomeScreen(viewModel = viewModel, navController = navController)
                 }
                 composable(route = BottomBarScreen.Profile.route) {
-                    UserProfileScreen(user)
+                    UserProfileScreen()
                 }
                 composable(route = BottomBarScreen.Settings.route) {
-                    SettingsView(user, navController, loginViewModel)
+                    SettingsView(navController, loginViewModel)
                 }
                 composable(route = LoginRoutes.SignIn.name) {
                     LoginScreen(
@@ -96,6 +96,10 @@ fun Navigation(
                         onNavToLoginPage = { navController.navigate(LoginRoutes.SignIn.name) },
                         loginViewModel = loginViewModel
                     )
+                }
+
+                composable(route = "newPost") {
+                    NewPostView(navController = navController)
                 }
             }
         }
