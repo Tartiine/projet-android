@@ -40,7 +40,7 @@ class FeedViewModel : ViewModel() {
 
 
     init {
-        loadInitialData()
+        reload()
         fetchCurrentUser()
     }
 
@@ -66,14 +66,15 @@ class FeedViewModel : ViewModel() {
             val currentUser = FirebaseAuth.getInstance().currentUser
             db.collection("posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .addSnapshotListener { snapshots, e ->
-                    if (e != null) {
-                        Log.w(TAG, "Listen failed.", e)
-                        return@addSnapshotListener
-                    }
+                .get()
+                .addOnSuccessListener { snapshots ->
+//                    if (e != null) {
+//                        Log.w(TAG, "Listen failed.", e)
+//                        return@addSnapshotListener
+//                    }
 
                     val postList = mutableListOf<Post>()
-                    for (document in snapshots!!) {
+                    for (document in snapshots) {
                         val data = document.data
                         val post = Post(
                             id = document.id,

@@ -61,8 +61,10 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
         swipeRefreshState.isRefreshing = true
 
         viewModel.reload {
-            myList.swapList(posts)
-            swipeRefreshState.isRefreshing = false
+            MainScope().launch {
+                myList.swapList(posts)
+                swipeRefreshState.isRefreshing = false
+            }
         }
         // Get the updated list to trigger a recompose
     }
