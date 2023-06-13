@@ -81,7 +81,6 @@ sealed class BottomBarScreen(
                     label = {
                         Text(
                             screen.title
-                            
                         )
                     }
                 )
