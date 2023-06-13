@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -80,8 +82,9 @@ fun LoginScreen(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(color = Color.Black),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(color = Color.Black)
+            .verticalScroll(rememberScrollState()),
+    horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.ensihub),
@@ -260,7 +263,8 @@ fun SignUpScreen(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(color = Color.Black),
+            .background(color = Color.Black)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -479,7 +483,8 @@ fun ForgotPasswordScreen(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(color = Color.Black),
+            .background(color = Color.Black)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
