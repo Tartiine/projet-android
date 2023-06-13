@@ -52,7 +52,7 @@ sealed class BottomBarScreen(
 
     object Moderation : BottomBarScreen(
         route = "moderation",
-        title = "Moderation",
+        title = "Manage",
         icon = Icons.Default.Search
     )
 
@@ -71,7 +71,7 @@ sealed class BottomBarScreen(
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
-            val items = if (true) {
+            val items = if (user?.role == Role.MODERATOR || user?.role == Role.ADMIN) {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings, BottomBarScreen.Moderation)
             } else {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings)
