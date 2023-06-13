@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -40,6 +41,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -57,6 +59,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -246,7 +250,9 @@ fun SettingsView(navHostController: NavHostController) {
 
             ClickableText(
                 text = AnnotatedString("Change Password"),
-                onClick = {},
+                onClick = {
+                    navHostController.navigate("settings/changePassword")
+                },
                 style = TextStyle(
                     color = Color.White,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -425,13 +431,16 @@ fun SettingsView(navHostController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NumPostsView() {
+fun NumPostsView(navHostController: NavHostController) {
+    val postNumber = remember { mutableStateOf("10") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(Color.Black),
         verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
@@ -469,6 +478,7 @@ fun NumPostsView() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ){
+            
             Text(
                 modifier = Modifier.padding(32.dp),
                 text = "Number of posts per page",
@@ -477,14 +487,37 @@ fun NumPostsView() {
                 ),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize
             )
-            TextField(
-                value ="10",
-                onValueChange = {},
+            OutlinedTextField(
+                value = postNumber.value,
+                onValueChange = {
+                    postNumber.value = it
+                },
+                textStyle = TextStyle(
+                    color = Color.White
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(8.dp)
                     .width(50.dp)
                     .height(50.dp),
             )
+        }
+
+        Button(
+            onClick = { },
+            modifier = Modifier
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
+        ) {
+            Text(text = "Save", style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
@@ -582,7 +615,7 @@ fun ChangeUsernameView(navHostController: NavHostController) {
                             Log.d("TAG", "DocumentSnapshot successfully updated!")
                         }
                 }
-                navHostController.navigate("settings/changeUsername")
+                navHostController.navigate(BottomBarScreen.Settings.route)
             },
             modifier = Modifier
                 .width(200.dp)
@@ -602,6 +635,155 @@ fun ChangeUsernameView(navHostController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChangePasswordView(navHostController: NavHostController) {
+    val newPassword = remember { mutableStateOf("") }
+    val newPasswordConfirm = remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = Color.Black),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Text(
+                text = "SETTINGS",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        Text(
+            text = "New Password",
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
+        )
+
+        TextField(
+            value = newPassword.value,
+            onValueChange = {
+                newPassword.value = it
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = Color.LightGray
+                )
+            },
+            label = { Text("Enter your new Password") },
+            modifier = Modifier
+                .padding(16.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
+        )
+
+        TextField(
+            value = newPasswordConfirm.value,
+            onValueChange = {
+                newPasswordConfirm.value = it
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = Color.LightGray
+                )
+            },
+            label = { Text("Confirm your new Password") },
+            modifier = Modifier
+                .padding(16.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.White, // Set the text color to white
+                cursorColor = Color.White, // Set the cursor color to white
+                focusedBorderColor = Color.White, // Set the focused border color to white
+                unfocusedBorderColor = Color.White // Set the unfocused border color to white
+            ),
+            textStyle = TextStyle(color = Color.White) // Set the text color to white
+        )
+
+
+        Button(
+            onClick = {
+                if (newPassword.value != "" && newPassword.value == newPasswordConfirm.value) {
+                    val userId = Firebase.auth.currentUser!!.uid
+                    Firebase.auth.currentUser!!.updatePassword(newPassword.value)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d("TAG", "User password updated.")
+                            }
+                        }
+                }
+                if (newPassword.value != newPasswordConfirm.value){
+                    Log.d("TAG", "Passwords do not match")
+                }
+                if (newPassword.value == ""){
+                    Log.d("TAG", "Password cannot be empty")
+                }
+                if (newPasswordConfirm.value == ""){
+                    Log.d("TAG", "Please confirm password")
+                }
+                navHostController.navigate(BottomBarScreen.Settings.route)
+            },
+            modifier = Modifier
+                .width(200.dp)
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                Color(
+                    alpha = 255,
+                    red = 247,
+                    green = 152,
+                    blue = 23
+                )
+            )
+        ) {
+            Text(text = "Change Password")
+        }
+
+    }
+}
+
 fun disconnect() {
     Firebase.auth.signOut()
     FirebaseAuth.getInstance().signOut()
@@ -616,11 +798,17 @@ fun SettingsViewPreview() {
 @Preview
 @Composable
 fun NumPostsViewPreview() {
-    NumPostsView()
+    NumPostsView(navHostController = rememberNavController())
 }
 
 @Preview
 @Composable
 fun ChangeUsernameViewPreview() {
     ChangeUsernameView(navHostController = rememberNavController())
+}
+
+@Preview
+@Composable
+fun ChangePasswordPreview() {
+    ChangePasswordView(navHostController = rememberNavController())
 }
