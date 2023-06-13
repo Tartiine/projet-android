@@ -60,13 +60,16 @@ fun PostView(
     viewModel: FeedViewModel
 ) {
 
-    val isLiked = remember { mutableStateOf(false) }  // Remember the liked state
+    val isLiked = remember { mutableStateOf(post.isLiked) }
     val currentUser = viewModel.currentUser.collectAsState().value
 
     Column(
-        modifier = Modifier.background(Color.Black).fillMaxSize()
+        modifier = Modifier
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .fillMaxSize()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(color = Color(0xFF2D3949))
     ) {
-        BottomBorder(modifier = Modifier.fillMaxWidth())
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = post.author,
@@ -89,14 +92,14 @@ fun PostView(
                 modifier = Modifier.size(60.dp),
                 colors = ButtonDefaults.buttonColors(contentColor = if (isLiked.value) Color(247, 152,23) else Color.White, backgroundColor = Color.Transparent),
                 onClick = {
-                    isLiked.value = !isLiked.value
                     if (isLiked.value) {
-                        viewModel.likePost(post)
-                        Log.d("PostView", "likePost clicked for postId = ${post.id}")
-                    } else {
                         viewModel.unlikePost(post)
                         Log.d("PostView", "unlikePost clicked for postId = ${post.id}")
+                    } else {
+                        viewModel.likePost(post)
+                        Log.d("PostView", "likePost clicked for postId = ${post.id}")
                     }
+                    isLiked.value = !isLiked.value
                 },
                 elevation = null
             ) {
@@ -205,19 +208,6 @@ fun PostViewPreview() {
     )
 }
 
-@Composable
-fun BottomBorder(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier.fillMaxWidth()) {
-        val strokeWidth = 1f // border width in pixels
-        val borderColor = Color.LightGray
-        drawLine(
-            start = Offset(0f, size.height - strokeWidth / 2),
-            end = Offset(size.width, size.height - strokeWidth / 2),
-            color = borderColor,
-            strokeWidth = strokeWidth,
-            cap = StrokeCap.Square
-        )
-    }
-}
+
 
 

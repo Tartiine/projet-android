@@ -77,7 +77,7 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
         }
     ) {
         Column(modifier = Modifier
-            .background(Color.Black)
+            .background(color = Color(0xFF1B232E))
             .fillMaxSize()) {
             SwipeRefresh(state = swipeRefreshState, onRefresh = {
                 onUpdateClick()
