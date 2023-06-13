@@ -96,10 +96,6 @@ fun Navigation(
                     NewPostView(navController = navController)
                 }
 
-                composable(route = "settings/numberOfPosts") {
-                    NumPostsView(navHostController = navController)
-                }
-
                 composable(route = "settings/changeUsername"){
                     ChangeUsernameView(navHostController = navController)
                 }
