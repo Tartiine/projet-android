@@ -3,10 +3,13 @@ package com.example.ensihub.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.FeedViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.example.ensihub.MainActivity
 
 @Composable
 fun NewPostView(navController: NavController) {
@@ -26,6 +31,7 @@ fun NewPostView(navController: NavController) {
     val imageUrlState = remember { mutableStateOf("") }
     val viewModel: FeedViewModel = viewModel()
     val currentUser = viewModel.currentUser.collectAsState().value
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -47,13 +53,13 @@ fun NewPostView(navController: NavController) {
 
         Button(
             onClick = {
-                // Handle button click
+                (context as MainActivity).showImagePicker()
             },
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(end = 16.dp)
         ) {
-            Text("Add Media")
+            Icon(Icons.Filled.Add, contentDescription = "Add Media")
         }
 
         Button(
