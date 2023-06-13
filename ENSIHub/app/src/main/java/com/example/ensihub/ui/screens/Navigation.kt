@@ -22,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.ensihub.mainClasses.Post
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.collectAsState
 import com.example.ensihub.mainClasses.User
 
 enum class LoginRoutes{
@@ -48,7 +47,7 @@ fun Navigation(
     moderation : Moderation
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
-    val user by loginViewModel.currentUser.collectAsState()
+    val user = loginViewModel.currentUser
 
     Scaffold(
         bottomBar = {
