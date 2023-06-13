@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -19,6 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.ensihub.mainClasses.Role
+import com.example.ensihub.mainClasses.User
+import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 
 sealed class BottomBarScreen(
     val route: String,
@@ -43,8 +47,14 @@ sealed class BottomBarScreen(
         icon = Icons.Default.Settings
     )
 
+    object Moderation : BottomBarScreen(
+        route = "moderation",
+        title = "Moderation",
+        icon = Icons.Default.Search
+    )
+
     @Composable
-    fun BottomNavigationBar(navController: NavHostController) {
+    fun BottomNavigationBar(navController: NavHostController, user : User) {
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
             backgroundColor = Color(0xFFFFA500)
@@ -52,11 +62,11 @@ sealed class BottomBarScreen(
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
-            val items = listOf(
-                Home,
-                Profile,
-                Settings
-            )
+            val items = if (user.role == Role.ADMIN || user.role == Role.MODERATOR) {
+                listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings, BottomBarScreen.Moderation)
+            } else {
+                listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings)
+            }
 
             items.forEach { screen ->
                 BottomNavigationItem(
@@ -94,7 +104,7 @@ sealed class BottomBarScreen(
 fun PreviewBottomNavigationBar() {
     // Create a dummy NavHostController for preview
     val navController = rememberNavController()
-
-    // Wrap the BottomNavigationBar with a container to position it at the bottom
-    BottomBarScreen.Home.BottomNavigationBar(navController = navController)
+    BottomNavigationBar(navController = navController, user = user)
+    // Create a User object for preview with all the roles
+    val user = User(id = "1", username = "User", email = "user@example.com", role = Role.ADMIN)
 }

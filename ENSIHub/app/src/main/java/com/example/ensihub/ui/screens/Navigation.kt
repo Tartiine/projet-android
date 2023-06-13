@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -14,7 +15,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.example.ensihub.mainClasses.Moderation
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import com.example.ensihub.mainClasses.Post
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.collectAsState
+import com.example.ensihub.mainClasses.User
 
 enum class LoginRoutes{
     SignUp,
@@ -25,7 +34,8 @@ enum class LoginRoutes{
 enum class HomeRoutes{
     Home,
     Profile,
-    Settings
+    Settings,
+    Moderation
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -34,14 +44,16 @@ enum class HomeRoutes{
 fun Navigation(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    viewModel: FeedViewModel
+    viewModel: FeedViewModel,
+    moderation : Moderation
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
+    val user by loginViewModel.currentUser.collectAsState()
 
     Scaffold(
         bottomBar = {
             if (isLoggedIn) {
-                BottomNavigationBar(navController = navController)
+                BottomNavigationBar(navController = navController, user = user)
             }
         }
     ) { innerPadding ->
@@ -66,6 +78,9 @@ fun Navigation(
                         onNavToSignUpPage = { navController.navigate(LoginRoutes.SignUp.name) },
                         onNavToForgotPasswordPage = { navController.navigate(LoginRoutes.ForgotPassword.name) }
                     )
+                }
+                composable(route = BottomBarScreen.Moderation.route) {
+                    ModerationScreen(moderationViewModel = moderation)
                 }
 
                 composable(route = LoginRoutes.SignUp.name) {
