@@ -50,15 +50,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*viewModel.addPost(
-        Post(
-            id = 0,
-            text = "Post post post post post post",
-            timestamp = 1000,
-            author = "Tartine",
-            likesCount = 0
-        )
-    )*/
         viewModel.loadInitialData()
         if (!permissionsCheck()) {
             requestPermissions()

@@ -45,6 +45,9 @@ fun UserProfileScreen() {
         color = Color.Black
     )
 
+    if (currentUser != null) {
+        viewModel.loadUserPosts()
+    }
 
     Box(
         modifier = Modifier
