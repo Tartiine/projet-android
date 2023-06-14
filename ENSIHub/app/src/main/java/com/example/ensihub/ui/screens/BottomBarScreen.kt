@@ -71,7 +71,7 @@ sealed class BottomBarScreen(
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
-            val items = if (user?.role == Role.MODERATOR || user?.role == Role.ADMIN) {
+            val items = if (currentUser?.role == Role.MODERATOR || currentUser?.role == Role.ADMIN) {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings, BottomBarScreen.Moderation)
             } else {
                 listOf(BottomBarScreen.Home, BottomBarScreen.Profile, BottomBarScreen.Settings)
@@ -105,5 +105,6 @@ sealed class BottomBarScreen(
                 )
             }
         }
+        println("Current user: $currentUser, role: ${currentUser?.role}")
     }
 }

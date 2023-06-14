@@ -34,7 +34,7 @@ fun ModerationScreen(moderationViewModel : Moderation) {
     val pendingPosts: List<Post> by moderationViewModel.pendingPosts.observeAsState(initial = emptyList())
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false)
 
-    Column(modifier = Modifier.background(Color.Black).fillMaxSize()) {
+    Column(modifier = Modifier.background(color = Color(0xFF1B232E)).fillMaxSize()) {
         SwipeRefresh(state = swipeRefreshState, onRefresh = {
             swipeRefreshState.isRefreshing = true
             moderationViewModel.reloadPendingPosts()
