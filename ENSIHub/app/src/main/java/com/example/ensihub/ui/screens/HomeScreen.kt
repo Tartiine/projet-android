@@ -173,7 +173,6 @@ fun PostDetailScreen(
                             contentDescription = "defaultuser",
                             modifier = Modifier
                                 .size(30.dp)
-                                .weight(1f)
                         )
 
                         Spacer(modifier = Modifier.width(12.dp))
@@ -182,16 +181,13 @@ fun PostDetailScreen(
                             text = post!!.author,
                             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                             color = Color.White,
-                            modifier = Modifier
-                                .weight(3f)
                         )
 
                         if (currentUser != null) {
                             if (currentUser.role == Role.USER) {
                                 Button(
                                     modifier = Modifier
-                                        .width(80.dp)
-                                        .weight(1f),
+                                        .width(80.dp),
                                     onClick = {
                                         viewModel.reportPost(post!!)
                                         Log.d("PostView", "reportPost clicked for postId = ${post!!.id}")
@@ -269,21 +265,21 @@ fun PostDetailScreen(
                             color = Color.White
                         )
                     }
+                    if (post!!.imageUrl != null) {
+                        // Display the image only if showImage is true and imageUrl is not null
+                        AsyncImage(
+                            post!!.imageUrl,
+                            null,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .clip(shape = RoundedCornerShape(20.dp))
+                        )
                     }
                 }
+            }
                 Divider()
-
-                if (post!!.imageUrl != null) {
-                    // Display the image only if showImage is true and imageUrl is not null
-                    AsyncImage(
-                        post!!.imageUrl,
-                        null,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                    )
-                }
             }
         }
     }
