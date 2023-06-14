@@ -110,8 +110,7 @@ fun PostView(
                         if (currentUser.role == Role.USER) {
                             Button(
                                 modifier = Modifier
-                                    .width(80.dp)
-                                    .weight(1f),
+                                    .width(80.dp),
                                 onClick = {
                                     viewModel.reportPost(post)
                                     Log.d("PostView", "reportPost clicked for postId = ${post.id}")
