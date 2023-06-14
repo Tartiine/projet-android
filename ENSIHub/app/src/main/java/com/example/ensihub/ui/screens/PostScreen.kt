@@ -37,6 +37,7 @@ import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +47,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
@@ -53,123 +55,149 @@ fun PostView(
     post: Post,
     showImage: Boolean,
     onToggleShowImage: () -> Unit,
-    viewModel: FeedViewModel
+    viewModel: FeedViewModel,
+    navigateToPostDetails: (String) -> Unit
 ) {
 
     val isLiked = remember { mutableStateOf(post.isLiked) }
     val currentUser = viewModel.currentUser.collectAsState().value
+    val textLimit = 100
+    val fullText = post.text
+    val displayText = if (fullText.length > textLimit) {
+        "${fullText.substring(0, textLimit)}..."
+    } else {
+        fullText
+    }
 
-    Column(
-        modifier = Modifier
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-            .fillMaxSize()
-            .clip(shape = RoundedCornerShape(20.dp))
-            .background(color = Color(0xFF2D3949))
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+
+    Box(Modifier.clickable { navigateToPostDetails(post.id) }) {
+        Column(
+            modifier = Modifier
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                .fillMaxSize()
+                .clip(shape = RoundedCornerShape(20.dp))
+                .background(color = Color(0xFF2D3949))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                Text(
-                    text = post.author,
-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White
-                )
-                if (currentUser != null) {
-                    if (currentUser.role == Role.USER) {
-                        Button(
-                            modifier = Modifier.width(80.dp),
-                            onClick = {
-                                viewModel.reportPost(post)
-                                Log.d("PostView", "reportPost clicked for postId = ${post.id}")
-                            },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                            elevation = null
-                        ) {
-                            Icon(
-                                Icons.Default.Warning,
-                                contentDescription = "Report post",
-                                tint = Color.White
-                            )
+                    Text(
+                        text = post.author,
+                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                    if (currentUser != null) {
+                        if (currentUser.role == Role.USER) {
+                            Button(
+                                modifier = Modifier.width(80.dp),
+                                onClick = {
+                                    viewModel.reportPost(post)
+                                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                                elevation = null
+                            ) {
+                                Icon(
+                                    Icons.Default.Warning,
+                                    contentDescription = "Report post",
+                                    tint = Color.White
+                                )
+                            }
                         }
                     }
                 }
-            }
                 Text(
-                    text = post.text,
+                    text = displayText,
                     style = MaterialTheme.typography.body1,
                     color = Color.White,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-            Spacer(modifier = Modifier.height(20.dp))
 
-            Divider()
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(
-                    modifier = Modifier.size(60.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = if (isLiked.value) Color(
-                            247,
-                            152,
-                            23
-                        ) else Color.White, backgroundColor = Color.Transparent
-                    ),
-                    onClick = {
-                        if (isLiked.value) {
-                            viewModel.unlikePost(post)
-                            Log.d("PostView", "unlikePost clicked for postId = ${post.id}")
-                        } else {
-                            viewModel.likePost(post)
-                            Log.d("PostView", "likePost clicked for postId = ${post.id}")
-                        }
-                        isLiked.value = !isLiked.value
-                    },
-                    elevation = null
-                ) {
-                    Icon(if (isLiked.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
+                if (fullText.length > textLimit) {
+                    Text(
+                        text = "Show more",
+                        style = MaterialTheme.typography.body2.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+                        color = Color.LightGray,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                    )
                 }
+                Spacer(modifier = Modifier.height(20.dp))
 
-                Text(
-                    text = "Likes: ${post.likesCount}",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.White,
-                    modifier = Modifier.padding(start = 8.dp, end = 20.dp)
-                )
+                Divider()
 
-                Spacer(modifier = Modifier.width(8.dp))
-                if (post.imageUrl?.isNotEmpty() == true) {
-                    Row(modifier = Modifier.clickable { onToggleShowImage() }) {
-                        Text(
-                            text = if (showImage) "Reduce to hide image" else "Extend to see image",
-                            color = Color.White,
-                            modifier = Modifier
-                                .weight(1f)
-                                .wrapContentWidth(Alignment.Start)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(
+                        modifier = Modifier.size(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = if (isLiked.value) Color(
+                                247,
+                                152,
+                                23
+                            ) else Color.White, backgroundColor = Color.Transparent
+                        ),
+                        onClick = {
+                            if (isLiked.value) {
+                                viewModel.unlikePost(post)
+                                Log.d("PostView", "unlikePost clicked for postId = ${post.id}")
+                            } else {
+                                viewModel.likePost(post)
+                                Log.d("PostView", "likePost clicked for postId = ${post.id}")
+                            }
+                            isLiked.value = !isLiked.value
+                        },
+                        elevation = null
+                    ) {
                         Icon(
-                            imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = Color.White
+                            if (isLiked.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                            null
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+
+                    Text(
+                        text = "Likes: ${post.likesCount}",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 8.dp, end = 20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (post.imageUrl?.isNotEmpty() == true) {
+                        Row(modifier = Modifier.clickable { onToggleShowImage() }) {
+                            Text(
+                                text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                                color = Color.White,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .wrapContentWidth(Alignment.Start)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
                     }
                 }
-            }
-            Divider()
+                Divider()
 
-            if (showImage && post.imageUrl != null) {
-                // Display the image only if showImage is true and imageUrl is not null
-                AsyncImage(
-                    post.imageUrl,
-                    null,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                if (showImage && post.imageUrl != null) {
+                    // Display the image only if showImage is true and imageUrl is not null
+                    AsyncImage(
+                        post.imageUrl,
+                        null,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }
@@ -191,7 +219,8 @@ fun PostViewPreview() {
         ),
         showImage = showImage.value,
         onToggleShowImage = { showImage.value = !showImage.value },
-        viewModel = viewModel
+        viewModel = viewModel,
+        navigateToPostDetails = {}
     )
 }
 
