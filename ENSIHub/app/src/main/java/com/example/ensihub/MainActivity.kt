@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.Moderation
+import com.example.ensihub.mainClasses.SharedViewModel
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.firebase.auth.ktx.auth
@@ -151,6 +152,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val sharedViewModel : SharedViewModel by viewModels()
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> {
@@ -166,6 +168,15 @@ class MainActivity : ComponentActivity() {
                         Log.e(TAG, "Upload failed", exception)
                     }.addOnSuccessListener {
                         Log.d(TAG, "Upload successfully")
+                    }.addOnCompleteListener{ task ->
+                        if(task.isSuccessful) {
+                            val downloadUri = task.result
+                            val imageUrl = downloadUri.toString()
+                            sharedViewModel.imageUrl.value = imageUrl
+                        }
+                        else {
+
+                        }
                     }
                 }
 

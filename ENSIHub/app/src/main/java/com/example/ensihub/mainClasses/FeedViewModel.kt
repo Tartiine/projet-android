@@ -1,6 +1,7 @@
 package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.collectAsState
@@ -16,10 +17,12 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 class FeedViewModel : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
@@ -221,10 +224,12 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun addPost(post: Post) {
+    fun addPost(post: Post, imageUrl : String?) {
         viewModelScope.launch {
             post.status = PostStatus.PENDING
+            post.imageUrl = imageUrl
             val postsRef = db.collection("posts")
+<<<<<<< Updated upstream
             if (post.text.isNotEmpty()) {
                 postsRef.add(post)
                     .addOnSuccessListener { documentReference ->
@@ -240,6 +245,20 @@ class FeedViewModel : ViewModel() {
                         Log.w(TAG, "Error while sending post: $e")
                     }
             }
+=======
+            postsRef.add(post)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "Successfully sent post: $documentReference")
+                    post.id = documentReference.id  // Set the Firestore document's ID to the post's ID field
+
+                    val updatedPosts = _posts.value?.toMutableList()
+                    updatedPosts?.add(post)
+                    _posts.value = updatedPosts
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error while sending post: $e")
+                }
+>>>>>>> Stashed changes
         }
     }
 

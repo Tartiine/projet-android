@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.example.ensihub.MainActivity
+import com.example.ensihub.mainClasses.SharedViewModel
 
 @Composable
 fun NewPostView(navController: NavController) {
@@ -36,6 +38,8 @@ fun NewPostView(navController: NavController) {
     val viewModel: FeedViewModel = viewModel()
     val currentUser = viewModel.currentUser.collectAsState().value
     val context = LocalContext.current
+    val sharedViewModel: SharedViewModel = viewModel()
+    val imageUrl = sharedViewModel.imageUrl.observeAsState().value
 
     Column(
         modifier = Modifier
@@ -87,7 +91,10 @@ fun NewPostView(navController: NavController) {
                 onClick = {
                     (context as MainActivity).showImagePicker()
                 },
-                modifier = Modifier.weight(0.30f).height(50.dp).padding(start = 16.dp, end = 8.dp),
+                modifier = Modifier
+                    .weight(0.30f)
+                    .height(50.dp)
+                    .padding(start = 16.dp, end = 8.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(255, 152, 23),
                     contentColor = Color.White
@@ -106,13 +113,16 @@ fun NewPostView(navController: NavController) {
                             author = currentUser.username,
                             imageUrl = imageUrlState.value
                         )
-                        viewModel.addPost(newPost)
+                        viewModel.addPost(newPost, imageUrl)
                         messageState.value = ""
                         imageUrlState.value = ""
                         navController.navigateUp()
                     }
                 },
-                modifier = Modifier.weight(0.75f).height(50.dp).padding( end = 16.dp),
+                modifier = Modifier
+                    .weight(0.75f)
+                    .height(50.dp)
+                    .padding(end = 16.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(255, 152, 23),
                     contentColor = Color.White
