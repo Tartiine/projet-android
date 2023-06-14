@@ -11,7 +11,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,10 +44,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.net.toUri
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.ensihub.MainActivity
 import com.example.ensihub.mainClasses.SharedViewModel
+import com.google.relay.compose.RowScopeInstanceImpl.alignBy
 
 @Composable
 fun NewPostView(navController: NavController) {
@@ -56,6 +61,17 @@ fun NewPostView(navController: NavController) {
     val launcherImage = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         //When the user has selected a photo, its URI is returned here
         photoUri = uri
+    }
+    val isUploading by viewModel.isUploading.collectAsState()
+
+    if (isUploading) {
+        AlertDialog(
+            onDismissRequest = {},
+            text = { Text("Uploading post...") },
+            confirmButton = {},
+            dismissButton = {},
+            modifier = Modifier.padding(16.dp)
+        )
     }
 
     Column(
@@ -138,12 +154,19 @@ fun NewPostView(navController: NavController) {
                     if (currentUser != null) {
                         val post = Post(text = messageState.value, author = currentUser.username)
                         if (photoUri != null) {
-                            viewModel.pushImage(photoUri!!, post)
+                            viewModel.pushImage(photoUri!!, post) {
+                                viewModel.addPost(post)
+                                messageState.value = ""
+                                imageUrlState.value = ""
+                                navController.navigateUp()
+                            }
+                        } else {
+                            viewModel.addPost(post)
+                            messageState.value = ""
+                            imageUrlState.value = ""
+                            navController.navigateUp()
                         }
-                        viewModel.addPost(post)
-                        messageState.value = ""
-                        imageUrlState.value = ""
-                        navController.navigateUp()
+
                     }
                 },
                 modifier = Modifier
@@ -161,17 +184,13 @@ fun NewPostView(navController: NavController) {
         }
         if (photoUri != null) {
             //Use Coil to display the selected image
-            val painter = rememberAsyncImagePainter(
-                ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(data = photoUri)
-                    .build()
-            )
-            Image(
-                painter = painter,
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+            AsyncImage(photoUri, contentDescription = null, modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(10.dp)
+                .clip(
+                    RoundedCornerShape(10.dp)
+                )
+                .fillMaxSize(0.6f))
         }
     }
 }

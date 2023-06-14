@@ -23,6 +23,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -54,6 +56,8 @@ class FeedViewModel : ViewModel() {
     val isPostLikedByUser = MutableLiveData<Boolean>()
 
     val likesCountMap = mutableMapOf<String, Long>()
+
+    val isUploading: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     var i: Long = 10
 
@@ -235,8 +239,9 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun addPost(post: Post) {
-        viewModelScope.launch {
+        GlobalScope.launch {
             post.status = PostStatus.PENDING
             val postsRef = db.collection("posts")
             Log.d(TAG, "Sending post: $post")
@@ -494,7 +499,8 @@ class FeedViewModel : ViewModel() {
                 Log.w(ContentValues.TAG, "Error by reporting post", exception)
             }
     }
-    fun pushImage(image: Uri, post: Post) {
+    fun pushImage(image: Uri, post: Post, onCompletion: (() -> Unit)? = null){
+        isUploading.value = true
         viewModelScope.launch {
             Log.d(TAG, "Sending image to storage")
             val id = UUID.randomUUID()
@@ -506,13 +512,19 @@ class FeedViewModel : ViewModel() {
                         .addOnSuccessListener {
                             Log.d(TAG, "Image url successfully downloaded $it")
                             post.imageUrl = it.toString()
+                            if (onCompletion != null) {
+                                onCompletion()
+                            }
+                            isUploading.value = false
                         }
                         .addOnFailureListener {
                             Log.w(TAG, "Error downloading the url of image $it")
+                            isUploading.value = false
                         }
                 }
                 .addOnFailureListener {
                     Log.w(TAG, "Error while sending image $it")
+                    isUploading.value = false
                 }
         }
     }
