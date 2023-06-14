@@ -3,6 +3,7 @@ package com.example.ensihub.mainClasses
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -28,7 +29,7 @@ class AuthRepository {
         email:String,
         password:String,
         onComplete:(Boolean) -> Unit
-    ) = withContext(Dispatchers.IO){
+    ): AuthResult = withContext(Dispatchers.IO){
         Firebase.auth
             .createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{
@@ -62,7 +63,7 @@ class AuthRepository {
         email: String,
         password: String,
         onComplete: (Boolean) -> Unit
-    ) = withContext(Dispatchers.IO) {
+    ): AuthResult = withContext(Dispatchers.IO) {
         Firebase.auth
             .signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

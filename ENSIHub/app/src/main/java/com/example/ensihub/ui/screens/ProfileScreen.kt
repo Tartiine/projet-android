@@ -79,7 +79,7 @@ fun UserProfileScreen() {
                         Text(
                             text = it.username,
                             modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.h3,
                             color = Color.White
                         )
                     }
