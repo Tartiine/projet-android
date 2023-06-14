@@ -21,37 +21,65 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Role
 import com.example.ensihub.mainClasses.User
+/**
+ * @file
+ * @brief Fichier définissant les écrans de la barre de navigation inférieure.
+ */
 
+/**
+ * @brief Classe scellée représentant un écran de la barre de navigation inférieure.
+ *
+ * @param route Route de l'écran.
+ * @param title Titre de l'écran.
+ * @param icon Vecteur d'icône de l'écran.
+ * @param user Utilisateur associé à l'écran (facultatif).
+ */
 sealed class BottomBarScreen(
     val route: String,
     val title: String,
     val icon: ImageVector,
     val user : User? = null
 ) {
+    /**
+     * @brief Écran "Home" de la barre de navigation inférieure.
+     */
     object Home : BottomBarScreen(
         route = "home",
         title = "Home",
         icon = Icons.Default.Home
     )
-
+    /**
+     * @brief Écran "Profile" de la barre de navigation inférieure.
+     */
     object Profile : BottomBarScreen(
         route = "profile",
         title = "Profile",
         icon = Icons.Default.Person
     )
 
+    /**
+     * @brief Écran "Settings" de la barre de navigation inférieure.
+     */
     object Settings : BottomBarScreen(
         route = "settings",
         title = "Settings",
         icon = Icons.Default.Settings
     )
-
+    /**
+     * @brief Écran "Moderation" de la barre de navigation inférieure.
+     */
     object Moderation : BottomBarScreen(
         route = "moderation",
         title = "Manage",
         icon = Icons.Default.Search
     )
 
+    /**
+     * @brief Composant de la barre de navigation inférieure.
+     *
+     * @param navController Contrôleur de navigation.
+     * @param viewModel ViewModel du flux.
+     */
     @Composable
     fun BottomNavigationBar(navController: NavHostController, viewModel: FeedViewModel) {
         val currentUser = viewModel.currentUser.collectAsState().value
