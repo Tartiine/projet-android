@@ -259,6 +259,19 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun getPost(postId: String): LiveData<Post?> {
+        val post = MutableLiveData<Post?>()
+        _posts.value?.let { posts ->
+            for (p in posts) {
+                if (p.id == postId) {
+                    post.value = p
+                    break
+                }
+            }
+        }
+        return post
+    }
+
     fun addComment(postId: String, comment: Comment) {
         viewModelScope.launch {
             val postCommentsRef = db.collection("posts/${postId}/comments")
