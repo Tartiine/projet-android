@@ -55,6 +55,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.example.ensihub.mainClasses.LoginViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.firestore.ktx.firestore
 
 @Composable
@@ -62,6 +63,10 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
     val popupControl = remember {
         mutableStateOf(false)
     }
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Black
+    )
 
     Column(
         modifier = Modifier

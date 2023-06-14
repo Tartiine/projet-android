@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -22,11 +21,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.outlined.ThumbUp
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,17 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.Moderation
 import com.example.ensihub.mainClasses.Post
-import com.example.ensihub.mainClasses.Role
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
 fun ModerationView(
@@ -58,7 +53,7 @@ fun ModerationView(
             .fillMaxWidth()
             .padding(20.dp)
             .clip(shape = RoundedCornerShape(10.dp))
-            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(10.dp))
+            .background(color = Color(0xFF2D3949))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -99,33 +94,36 @@ fun ModerationView(
                 }
             }
         }
-
-        Button(
-            modifier = Modifier.width(80.dp),
-            onClick = {
-                moderationViewModel.approvePost(post)
-                Log.d("ModerationView", "The post = ${post.id} is approved")
-            },
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
-            elevation = null
+        Row(modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
         ) {
-            Text("Approve")
-        }
 
-        Button(
-            modifier = Modifier.width(80.dp),
-            onClick = {
-                moderationViewModel.rejectPost(post)
-                Log.d("ModerationView", "The post = ${post.id} is rejected and deleted")
-            },
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
-            elevation = null
-        ) {
-            Text("Reject")
-        }
+            Button(
+                modifier = Modifier.width(50.dp),
+                onClick = {
+                    moderationViewModel.approvePost(post)
+                    Log.d("ModerationView", "The post ${post.id} is approved")
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green),
+                elevation = null
+            ) {
+                Icon(Icons.Default.Check, contentDescription = "Approve post", tint = Color.White)
+            }
 
+            Button(
+                modifier = Modifier.width(50.dp),
+                onClick = {
+                    moderationViewModel.rejectPost(post)
+                    Log.d("ModerationView", "The post ${post.id} is rejected and deleted")
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                elevation = null
+            ) {
+                Icon(Icons.Default.Close, contentDescription = "Reject post", tint = Color.White)
+            }
+        }
         Divider()
 
         if (showImage && post.imageUrl != null) {

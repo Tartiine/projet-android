@@ -87,7 +87,7 @@ fun NewPostView(navController: NavController) {
                 onClick = {
                     (context as MainActivity).showImagePicker()
                 },
-                modifier = Modifier.weight(0.25f).height(50.dp).padding(start = 16.dp, end = 8.dp),
+                modifier = Modifier.weight(0.30f).height(50.dp).padding(start = 16.dp, end = 8.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(255, 152, 23),
                     contentColor = Color.White

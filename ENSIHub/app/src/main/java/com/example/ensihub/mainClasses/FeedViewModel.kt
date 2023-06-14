@@ -64,8 +64,8 @@ class FeedViewModel : ViewModel() {
 
     fun loadInitialData() {
         viewModelScope.launch {
-            val currentUser = FirebaseAuth.getInstance().currentUser
             db.collection("posts")
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
@@ -88,47 +88,58 @@ class FeedViewModel : ViewModel() {
 
                     _posts.value = postList
 
-                    if (currentUser != null) {
-                        loadUserPosts(currentUser)
-                    }
+
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents: ", exception)
                 }
+        }
+    }
+    fun loadUserPosts() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.let {
+            viewModelScope.launch {
+                db.collection("users").document(it.uid).get()
+                    .addOnSuccessListener { userSnapshot ->
+                        val username = userSnapshot["username"] as? String
+                        username?.let { uname ->
+                            db.collection("posts")
+                                .whereEqualTo("author", uname)
+                                //.whereEqualTo("status", PostStatus.APPROVED.name)
+                                .orderBy("timestamp", Query.Direction.DESCENDING)
+                                .get()
+                                .addOnSuccessListener { documents ->
+                                    val userPostList = documents.mapNotNull { document ->
+                                        val data = document.data
+                                        data?.let {
+                                            Post(
+                                                id = document.id,
+                                                text = data["text"] as? String ?: "",
+                                                timestamp = data["timestamp"] as? Long ?: 0L,
+                                                author = data["author"] as? String ?: "",
+                                                likesCount = data["likesCount"] as? Long ?: 0L,
+                                                isLiked = data["isLiked"] as? Boolean ?: false,
+                                                imageUrl = data["imageUrl"] as? String ?: "",
+                                                videoUrl = data["videoUrl"] as? String ?: "",
+                                                status = PostStatus.PENDING,
+                                                likes = data["likes"] as? Map<String, Boolean> ?: emptyMap()
+                                            )
+                                        }
+                                    }
+                                    _userPosts.value = userPostList
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.w(TAG, "Error getting documents: ", exception)
+                                }
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w(TAG, "Error getting user: ", exception)
+                    }
+            }
         }
     }
 
-    fun loadUserPosts(user: FirebaseUser) {
-        viewModelScope.launch {
-            db.collection("posts")
-                .whereEqualTo("author", user.uid)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener { documents ->
-                    val userPostList = documents.mapNotNull { document ->
-                        val data = document.data
-                        data?.let {
-                            Post(
-                                id = document.id,
-                                text = data["text"] as? String ?: "",
-                                timestamp = data["timestamp"] as? Long ?: 0L,
-                                author = data["author"] as? String ?: "",
-                                likesCount = data["likesCount"] as? Long ?: 0L,
-                                isLiked = data["isLiked"] as? Boolean ?: false,
-                                imageUrl = data["imageUrl"] as? String ?: "",
-                                videoUrl = data["videoUrl"] as? String ?: "",
-                                status = PostStatus.PENDING,
-                                likes = data["likes"] as? Map<String, Boolean> ?: emptyMap()
-                            )
-                        }
-                    }
-                    _userPosts.value = userPostList
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents: ", exception)
-                }
-        }
-    }
 
     private fun loadComments(post: Post) {
         post.id?.let { postId ->  // Let block will execute only if postId is not null
@@ -159,6 +170,7 @@ class FeedViewModel : ViewModel() {
         i += 10
         viewModelScope.launch {
             db.collection("posts")
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -185,6 +197,7 @@ class FeedViewModel : ViewModel() {
             _posts.value = mutableListOf()
             _comments.value = mutableMapOf()
             db.collection("posts")
+                //.whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -436,6 +449,16 @@ class FeedViewModel : ViewModel() {
                     Log.w(TAG, "Error sending the user: $e")
                 }
         }
+    }
+
+    fun reportPost(post : Post) {
+        db.collection("posts").document(post.id).update("status", PostStatus.PENDING.name)
+            .addOnSuccessListener {
+                Log.d(ContentValues.TAG, "Post reported and queued for a new manual review")
+            }
+            .addOnFailureListener{ exception ->
+                Log.w(ContentValues.TAG, "Error by reporting post", exception)
+            }
     }
 
     fun refreshPosts() {

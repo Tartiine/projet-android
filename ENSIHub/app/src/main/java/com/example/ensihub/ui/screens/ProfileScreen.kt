@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ensihub.R
 import com.example.ensihub.mainClasses.FeedViewModel
-
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
@@ -40,7 +40,14 @@ fun UserProfileScreen() {
     val viewModel: FeedViewModel = viewModel()
     val currentUser = viewModel.currentUser.collectAsState().value
     val userPosts: List<Post> by viewModel.userPosts.observeAsState(initial = emptyList())
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = Color.Black
+    )
 
+    if (currentUser != null) {
+        viewModel.loadUserPosts()
+    }
 
     Box(
         modifier = Modifier
