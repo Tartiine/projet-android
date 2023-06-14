@@ -61,7 +61,6 @@ import com.example.ensihub.mainClasses.Role
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -182,16 +181,12 @@ fun PostDetailScreen(
                             text = post!!.author,
                             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                             color = Color.White,
-                            modifier = Modifier
-                                .weight(3f)
+                            modifier = Modifier.weight(8f)
                         )
-
-                        if (currentUser != null) {
-                            if (currentUser.role == Role.USER) {
                                 Button(
                                     modifier = Modifier
                                         .width(80.dp)
-                                        .weight(1f),
+                                        .weight(2f),
                                     onClick = {
                                         viewModel.reportPost(post!!)
                                         Log.d("PostView", "reportPost clicked for postId = ${post!!.id}")
@@ -205,8 +200,6 @@ fun PostDetailScreen(
                                         tint = Color.White
                                     )
                                 }
-                            }
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -269,18 +262,21 @@ fun PostDetailScreen(
                             color = Color.White
                         )
                     }
+                    if (post!!.imageUrl != null) {
+                        // Display the image only if showImage is true and imageUrl is not null
+                        AsyncImage(
+                            post!!.imageUrl,
+                            null,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .clip(shape = RoundedCornerShape(20.dp))
+                        )
                     }
                 }
+            }
                 Divider()
-
-                if (post!!.imageUrl != null) {
-                    // Display the image only if showImage is true and imageUrl is not null
-                    AsyncImage(
-                        post!!.imageUrl,
-                        null,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
             }
         }
     }
