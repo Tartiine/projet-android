@@ -34,8 +34,9 @@ class FeedViewModel : ViewModel() {
         get() = _posts
 
     private val _comments = MutableLiveData<Map<String, List<Comment>>>()
-    val comments: LiveData<Map<String, List<Comment>>>
-        get() = _comments
+
+    val comments = MutableLiveData<List<Comment>>()
+
 
     private val db = Firebase.firestore
     private val storage = FirebaseStorage.getInstance()
@@ -443,9 +444,25 @@ class FeedViewModel : ViewModel() {
         return _comments
     }
 
-    fun getComments(postId: String): List<Comment>? {
-        return _comments.value?.get(postId)
+    fun getComments(postId: String) {
+        viewModelScope.launch {
+            val commentsRef = db.collection("posts/${postId}/comments")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+
+            commentsRef.get()
+                .addOnSuccessListener { querySnapshot ->
+                    val commentsList = querySnapshot.documents.mapNotNull { document ->
+                        document.toObject(Comment::class.java)
+                    }
+                    comments.value = commentsList
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error getting comments", e)
+                }
+        }
     }
+
+
 
     fun search(key: String) {
         viewModelScope.launch {
@@ -521,6 +538,36 @@ class FeedViewModel : ViewModel() {
                 }
                 .addOnFailureListener {
                     Log.w(TAG, "Error while sending image $it")
+                    isUploading.value = false
+                }
+        }
+    }
+
+    fun pushVideo(video: Uri, post: Post, onCompletion: (() -> Unit)? = null){
+        isUploading.value = true
+        viewModelScope.launch {
+            Log.d(TAG, "Sending video to storage")
+            val id = UUID.randomUUID()
+            storage.reference.child("Videos/${id}")
+                .putFile(video)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Video successfully sent to storage")
+                    storage.reference.child("Videos/$id").downloadUrl
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Video url successfully downloaded $it")
+                            post.videoUrl = it.toString()
+                            if (onCompletion != null) {
+                                onCompletion()
+                            }
+                            isUploading.value = false
+                        }
+                        .addOnFailureListener {
+                            Log.w(TAG, "Error downloading the url of video $it")
+                            isUploading.value = false
+                        }
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error while sending video $it")
                     isUploading.value = false
                 }
         }

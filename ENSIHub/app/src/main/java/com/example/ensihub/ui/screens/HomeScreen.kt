@@ -29,6 +29,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ThumbUp
@@ -43,6 +44,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,11 +52,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ensihub.R
+import com.example.ensihub.mainClasses.Comment
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
@@ -145,6 +149,7 @@ fun PostDetailScreen(
     val post: Post? by viewModel.getPost(postId).observeAsState()
     val isLikedByUser: Boolean by viewModel.isLikedByUser.collectAsState()
     val currentUser = viewModel.currentUser.collectAsState().value
+    val comments: List<Comment> by viewModel.comments.observeAsState(emptyList())
 
     post?.let {
         Column(
@@ -274,12 +279,63 @@ fun PostDetailScreen(
                                 .clip(shape = RoundedCornerShape(20.dp))
                         )
                     }
+                    if (post!!.videoUrl != null) {
+                        VideoPlayer(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(10.dp)
+                                .height(800.dp),
+                            uri = android.net.Uri.parse(post!!.videoUrl)
+                        )
+                    }
+//                    CommentInput(onCommentSent = { text ->
+//                        val currentTime = System.currentTimeMillis()
+//                        val authorName = viewModel.currentUser
+//                        val comment = Comment(id = "", text = text, author = authorName, timestamp = currentTime, likesCount = 0)
+//                        viewModel.addComment(postId, comment)
+//                    })
+//                    CommentList(comments)
                 }
+
             }
                 Divider()
             }
+
+    }
+    }
+
+@Composable
+fun CommentInput(onCommentSent: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+        TextField(
+            value = text,
+            onValueChange = { text = it },
+            placeholder = { Text("Enter your comment here...") },
+            modifier = Modifier.weight(1f)
+        )
+        Button(
+            onClick = {
+                onCommentSent(text)
+                text = ""
+            }
+        ) {
+            Text("Send")
         }
     }
+}
+
+@Composable
+fun CommentList(comments: List<Comment>) {
+    LazyColumn {
+        items(comments) { comment ->
+            Text(text = comment.text)
+        }
+    }
+}
+
+
 
 
 fun SnapshotStateList<Post>.swapList(newList: List<Post>){

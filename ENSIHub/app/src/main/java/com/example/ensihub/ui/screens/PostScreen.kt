@@ -1,5 +1,6 @@
 package com.example.ensihub.ui.screens
 
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -95,8 +96,10 @@ fun PostView(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(painter = painterResource(
-                        id = R.drawable.defaultuser),
+                    Image(
+                        painter = painterResource(
+                            id = R.drawable.defaultuser
+                        ),
                         contentDescription = "defaultuser",
                         modifier = Modifier
                             .size(30.dp)
@@ -111,23 +114,23 @@ fun PostView(
                         color = Color.White,
                         modifier = Modifier.weight(8f)
                     )
-                            Button(
-                                modifier = Modifier
-                                    .width(80.dp)
-                                    .weight(2f),
-                                onClick = {
-                                    viewModel.reportPost(post)
-                                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                                elevation = null
-                            ) {
-                                Icon(
-                                    Icons.Default.Warning,
-                                    contentDescription = "Report post",
-                                    tint = Color.White
-                                )
-                            }
+                    Button(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .weight(2f),
+                        onClick = {
+                            viewModel.reportPost(post)
+                            Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                        elevation = null
+                    ) {
+                        Icon(
+                            Icons.Default.Warning,
+                            contentDescription = "Report post",
+                            tint = Color.White
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -222,22 +225,32 @@ fun PostView(
                     )
                 }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                }
-                Divider()
+            }
+            Divider()
 
-                if (showImage && post.imageUrl != null) {
-                    // Display the image only if showImage is true and imageUrl is not null
-                    AsyncImage(
-                        post.imageUrl,
-                        null,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
+            if (showImage && post.imageUrl != null) {
+                // Display the image only if showImage is true and imageUrl is not null
+                AsyncImage(
+                    post.imageUrl,
+                    null,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+            if (showImage && post.videoUrl != null) {
+                VideoPlayer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(500.dp)
+                        .padding(10.dp)
+                        .align(Alignment.CenterHorizontally),
+                    uri = Uri.parse(post.videoUrl)
+                )
             }
         }
     }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
