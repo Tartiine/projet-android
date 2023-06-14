@@ -2,8 +2,10 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -223,19 +225,21 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch {
             post.status = PostStatus.PENDING
             val postsRef = db.collection("posts")
+            if (post.text.isNotEmpty()) {
+                postsRef.add(post)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "Successfully sent post: $documentReference")
+                        post.id =
+                            documentReference.id  // Set the Firestore document's ID to the post's ID field
 
-            postsRef.add(post)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "Successfully sent post: $documentReference")
-                    post.id = documentReference.id  // Set the Firestore document's ID to the post's ID field
-
-                    val updatedPosts = _posts.value?.toMutableList()
-                    updatedPosts?.add(post)
-                    _posts.value = updatedPosts
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error while sending post: $e")
-                }
+                        val updatedPosts = _posts.value?.toMutableList()
+                        updatedPosts?.add(post)
+                        _posts.value = updatedPosts
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error while sending post: $e")
+                    }
+            }
         }
     }
 

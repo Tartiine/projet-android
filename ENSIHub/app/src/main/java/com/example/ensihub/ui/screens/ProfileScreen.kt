@@ -52,7 +52,7 @@ fun UserProfileScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF000000))
+            .background(Color(0xFF1B232E))
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -95,7 +95,7 @@ fun UserProfileScreen() {
 @Composable
 fun PostList(posts: List<Post>) {
     Box(
-        modifier = Modifier.background(Color(0xFF262626)) // Set the background color to Black
+
     ) {
         LazyColumn {
             item {
@@ -129,32 +129,27 @@ fun OrangeRectangle() {
 
 @Composable
 fun PostItem2(post: Post) {
-    Box(
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(shape = MaterialTheme.shapes.medium)
-            .border(
-                border = BorderStroke(1.dp, Color.White),
-                shape = MaterialTheme.shapes.medium
-            )
-            .background(Color.LightGray) // Set the background color to LightGray
-    ) {
-        Column {
+
+        Column( modifier = Modifier
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .fillMaxSize()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(color = Color(0xFF2D3949))) {
             Text(
                 text = post.text,
-                color = Color.Black,
+                color = Color.White,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(8.dp)
             )
             Text(
                 text = getTimeSincePost(post.timestamp),
-                color = Color.Black,
+                color = Color.White,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(8.dp)
             )
         }
     }
-}
+
 
 
 
