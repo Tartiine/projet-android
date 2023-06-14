@@ -2,27 +2,20 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
 import android.net.Uri
-import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,8 +34,9 @@ class FeedViewModel : ViewModel() {
         get() = _posts
 
     private val _comments = MutableLiveData<Map<String, List<Comment>>>()
-    val comments: LiveData<Map<String, List<Comment>>>
-        get() = _comments
+
+    val comments = MutableLiveData<List<Comment>>()
+
 
     private val db = Firebase.firestore
     private val storage = FirebaseStorage.getInstance()
@@ -53,9 +47,14 @@ class FeedViewModel : ViewModel() {
     private val _userPosts = MutableLiveData<List<Post>>()
     val userPosts: LiveData<List<Post>> = _userPosts
 
-    val isPostLikedByUser = MutableLiveData<Boolean>()
+    private val _isLikedByUser = MutableStateFlow(false)
+    val isLikedByUser: StateFlow<Boolean> get() = _isLikedByUser
 
-    val likesCountMap = mutableMapOf<String, Long>()
+    private val _isLikedByUserMap = mutableStateMapOf<String, Boolean>()
+    val isLikedByUserMap: Map<String, Boolean> = _isLikedByUserMap
+
+    private val _likesCountMap = mutableStateMapOf<String, Int>()
+    val likesCountMap: Map<String, Int> = _likesCountMap
 
     val isUploading: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -321,35 +320,37 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun updatePostText(post: Post, newText: String) {
+    fun isPostLikedByUser(post: Post) {
         viewModelScope.launch {
-            db.collection("posts").document(post.id.toString())
-                .update("text", newText)
-                .addOnSuccessListener {
-                    Log.d(TAG, "Post updated")
-                    post.text = newText
-                    _posts.value = _posts.value?.map { if (it.id == post.id) post else it }
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error in updating the post: $e")
-                }
+            val docSnapshot = db.collection("posts")
+                .whereEqualTo("id", post.id)
+                .get()
+                .await()
+
+            if (!docSnapshot.isEmpty) {
+                val post = docSnapshot.documents[0].toObject(Post::class.java)
+                _isLikedByUserMap[post?.id ?: ""] = post?.likes?.contains(FirebaseAuth.getInstance().currentUser?.uid) ?: false
+            } else {
+                // handle error - document not found
+                _isLikedByUserMap[post.id] = false
+            }
         }
     }
 
-        private fun loadLikesCountForAllPosts() {
-            viewModelScope.launch {
-                val posts = getPosts()
-                posts.forEach { post ->
-                    likesCountMap[post.id] = post.likesCount
-                }
+    fun loadLikesCountForAllPosts() {
+        viewModelScope.launch {
+            val posts = getPosts()
+            _likesCountMap.clear() // Clear the existing map before updating
+            posts.forEach { post ->
+                _likesCountMap[post.id] = post.likesCount.toInt()
             }
         }
+    }
 
-        suspend fun getPosts(): List<Post> {
-            val snapshot = db.collection("posts").get().await()
-            return snapshot.documents.mapNotNull { it.toObject(Post::class.java) }
-        }
-
+    private suspend fun getPosts(): List<Post> {
+        val snapshot = db.collection("posts").get().await()
+        return snapshot.documents.mapNotNull { it.toObject(Post::class.java) }
+    }
 
     fun likePost(post: Post) {
         viewModelScope.launch {
@@ -364,10 +365,12 @@ class FeedViewModel : ViewModel() {
                     .update("likes", FieldValue.arrayUnion(FirebaseAuth.getInstance().currentUser?.uid))
                     .await()
 
-                likesCountMap[post.id] = likesCountMap[post.id]?.plus(1) ?: 0
-                isPostLikedByUser.value = true
+                _likesCountMap[post.id] = (_likesCountMap[post.id] ?: 0).plus(1)
+
+                Log.d("FeedViewModel", "Post liked: ${post.id}")
             } else {
                 // handle error - document not found
+                Log.d("FeedViewModel", "Error: Post not found")
             }
         }
     }
@@ -385,19 +388,15 @@ class FeedViewModel : ViewModel() {
                     .update("likes", FieldValue.arrayRemove(FirebaseAuth.getInstance().currentUser?.uid))
                     .await()
 
-                likesCountMap[post.id] = likesCountMap[post.id]?.minus(1) ?: 0
-                isPostLikedByUser.value = false
-            } else {
+                _likesCountMap[post.id] = (_likesCountMap[post.id] ?: 0).minus(1).coerceAtLeast(0)
 
+                Log.d("FeedViewModel", "Post unliked: ${post.id}")
+            } else {
+                // handle error - document not found
+                Log.d("FeedViewModel", "Error: Post not found")
             }
         }
     }
-
-        fun isPostLikedByUser(post: Post): Boolean {
-            val firebaseUser = FirebaseAuth.getInstance().currentUser
-            return post.likes.contains(firebaseUser?.uid)
-        }
-
 
     fun updateCommText(postId: String, comment: Comment, newText: String) {
         viewModelScope.launch {
@@ -407,7 +406,6 @@ class FeedViewModel : ViewModel() {
                     Log.d(TAG, "Comment updated")
                     comment.text = newText
                     val postComments = _comments.value?.get(postId)?.map { if (it.id == comment.id) comment else it }
-
                     val updatedComments = _comments.value?.toMutableMap()
                     if (postComments != null && updatedComments != null) {
                         updatedComments[postId] = postComments
@@ -446,9 +444,25 @@ class FeedViewModel : ViewModel() {
         return _comments
     }
 
-    fun getComments(postId: String): List<Comment>? {
-        return _comments.value?.get(postId)
+    fun getComments(postId: String) {
+        viewModelScope.launch {
+            val commentsRef = db.collection("posts/${postId}/comments")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+
+            commentsRef.get()
+                .addOnSuccessListener { querySnapshot ->
+                    val commentsList = querySnapshot.documents.mapNotNull { document ->
+                        document.toObject(Comment::class.java)
+                    }
+                    comments.value = commentsList
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error getting comments", e)
+                }
+        }
     }
+
+
 
     fun search(key: String) {
         viewModelScope.launch {
@@ -529,8 +543,34 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun refreshPosts() {
-        TODO("Not yet implemented")
+    fun pushVideo(video: Uri, post: Post, onCompletion: (() -> Unit)? = null){
+        isUploading.value = true
+        viewModelScope.launch {
+            Log.d(TAG, "Sending video to storage")
+            val id = UUID.randomUUID()
+            storage.reference.child("Videos/${id}")
+                .putFile(video)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Video successfully sent to storage")
+                    storage.reference.child("Videos/$id").downloadUrl
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Video url successfully downloaded $it")
+                            post.videoUrl = it.toString()
+                            if (onCompletion != null) {
+                                onCompletion()
+                            }
+                            isUploading.value = false
+                        }
+                        .addOnFailureListener {
+                            Log.w(TAG, "Error downloading the url of video $it")
+                            isUploading.value = false
+                        }
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error while sending video $it")
+                    isUploading.value = false
+                }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

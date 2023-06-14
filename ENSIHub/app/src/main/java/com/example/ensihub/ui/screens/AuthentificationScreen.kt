@@ -51,7 +51,15 @@ import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-
+/**
+ * @brief Écran de connexion.
+ *
+ * @param loginViewModel ViewModel de connexion.
+ * @param modifier Modifier du composant.
+ * @param onNavToHomePage Fonction de navigation vers la page d'accueil.
+ * @param onNavToSignUpPage Fonction de navigation vers la page d'inscription.
+ * @param onNavToForgotPasswordPage Fonction de navigation vers la page de récupération de mot de passe.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -236,6 +244,14 @@ fun LoginScreen(
     }
 }
 
+/**
+ * @brief Écran d'inscription.
+ *
+ * @param loginViewModel ViewModel de connexion.
+ * @param modifier Modifier du composant.
+ * @param onNavToHomePage Fonction de navigation vers la page d'accueil.
+ * @param onNavToLoginPage Fonction de navigation vers la page de connexion.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
@@ -456,6 +472,14 @@ fun SignUpScreen(
         }
     }
 }
+
+/**
+ * @brief Écran de récupération de mot de passe.
+ *
+ * @param loginViewModel ViewModel de connexion.
+ * @param modifier Modifier du composant.
+ * @param onNavToLoginPage Fonction de navigation vers la page de connexion.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPasswordScreen(

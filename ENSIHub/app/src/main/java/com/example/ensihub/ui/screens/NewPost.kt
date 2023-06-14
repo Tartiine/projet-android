@@ -2,6 +2,7 @@ package com.example.ensihub.ui.screens
 
 import android.content.ContentValues.TAG
 import android.net.Uri
+import android.provider.MediaStore.Video
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -24,6 +25,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -43,12 +45,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.ensihub.MainActivity
 import com.example.ensihub.mainClasses.SharedViewModel
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.relay.compose.RowScopeInstanceImpl.alignBy
 
 @Composable
@@ -58,9 +64,16 @@ fun NewPostView(navController: NavController) {
     val viewModel: FeedViewModel = viewModel()
     val currentUser = viewModel.currentUser.collectAsState().value
     var photoUri: Uri? by remember { mutableStateOf(null) }
+    var videoUri: Uri? by remember { mutableStateOf(null) }
     val launcherImage = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         //When the user has selected a photo, its URI is returned here
         photoUri = uri
+        videoUri = null
+    }
+    val launcherVideo = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        //When the user has selected a photo, its URI is returned here
+        videoUri = uri
+        photoUri = null
     }
     val isUploading by viewModel.isUploading.collectAsState()
 
@@ -142,12 +155,33 @@ fun NewPostView(navController: NavController) {
                 )
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Media")
-                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Add image")
+                Text("Image")
             }
 
+            Button(
+                onClick = {
+                    launcherVideo.launch(
+                        PickVisualMediaRequest(
+                            //Here we request only photos. Change this to .ImageAndVideo if
+                            //you want videos too.
+                            //Or use .VideoOnly if you only want videos.
+                            mediaType = ActivityResultContracts.PickVisualMedia.VideoOnly
+                        )
+                    )
+                    Log.d(TAG, videoUri.toString())
+                },
+                modifier = Modifier
+                    .height(50.dp)
+                    .padding(start = 16.dp, end = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(255, 152, 23),
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add Media")
+                Text("Video")
+            }
 
-            Spacer(modifier = Modifier.weight(0.5f))
 
             Button(
                 onClick = {
@@ -160,7 +194,15 @@ fun NewPostView(navController: NavController) {
                                 imageUrlState.value = ""
                                 navController.navigateUp()
                             }
-                        } else {
+                        } else if (videoUri != null) {
+                            viewModel.pushVideo(videoUri!!, post) {
+                                viewModel.addPost(post)
+                                messageState.value = ""
+                                imageUrlState.value = ""
+                                navController.navigateUp()
+                            }
+                        }
+                        else {
                             viewModel.addPost(post)
                             messageState.value = ""
                             imageUrlState.value = ""
@@ -192,6 +234,47 @@ fun NewPostView(navController: NavController) {
                 )
                 .fillMaxSize(0.6f))
         }
+        if (videoUri != null) {
+            VideoPlayer(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(10.dp)
+                    .height(800.dp),
+                uri = videoUri!!
+            )
+        }
     }
 }
+
+@Composable
+fun VideoPlayer(
+    modifier: Modifier = Modifier,
+    uri: Uri
+) {
+    val context = LocalContext.current
+    val player = remember(uri) {
+        SimpleExoPlayer.Builder(context).build().apply {
+            setMediaItem(MediaItem.fromUri(uri))
+            prepare()
+        }
+    }
+    val playerView = remember { PlayerView(context) }
+    playerView.player = player
+    AndroidView(
+        modifier = modifier,
+        factory = { playerView },
+        update = {
+            it.player = player
+        }
+    )
+
+    DisposableEffect(player, playerView) {
+        onDispose {
+            // Libération des ressources lorsqu'on quitte la vue
+            player.release()
+            playerView.player = null
+        }
+    }
+}
+
 

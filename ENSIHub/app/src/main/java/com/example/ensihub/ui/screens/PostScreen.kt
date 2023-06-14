@@ -1,5 +1,6 @@
 package com.example.ensihub.ui.screens
 
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -45,12 +46,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.ensihub.R
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.*
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -61,9 +64,6 @@ fun PostView(
     viewModel: FeedViewModel,
     navigateToPostDetails: (String) -> Unit
 ) {
-    val firebaseAuth = FirebaseAuth.getInstance()
-    val firebaseUser = firebaseAuth.currentUser
-    val isLikedByUser = viewModel.isPostLikedByUser.observeAsState(initial = post.likes.contains(firebaseUser?.uid)).value
     val currentUser = viewModel.currentUser.collectAsState().value
     val textLimit = 200
     val fullText = post.text
@@ -72,7 +72,15 @@ fun PostView(
     } else {
         fullText
     }
+    val likesCount = viewModel.likesCountMap[post.id] ?: 0
 
+    val isLikedByUser = remember(post.id) {
+        mutableStateOf(viewModel.isLikedByUserMap[post.id] ?: false)
+    }
+
+    LaunchedEffect(post.id) {
+        viewModel.isPostLikedByUser(post) // Fetch the liked state for the current user
+    }
 
     Box(Modifier.clickable { navigateToPostDetails(post.id) }) {
         Column(
@@ -88,8 +96,10 @@ fun PostView(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(painter = painterResource(
-                        id = R.drawable.defaultuser),
+                    Image(
+                        painter = painterResource(
+                            id = R.drawable.defaultuser
+                        ),
                         contentDescription = "defaultuser",
                         modifier = Modifier
                             .size(30.dp)
@@ -102,29 +112,24 @@ fun PostView(
                         text = post.author,
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                         color = Color.White,
-                        modifier = Modifier
-                            .weight(3f)
+                        modifier = Modifier.weight(8f)
                     )
-
-                    if (currentUser != null) {
-                        if (currentUser.role == Role.USER) {
-                            Button(
-                                modifier = Modifier
-                                    .width(80.dp),
-                                onClick = {
-                                    viewModel.reportPost(post)
-                                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                                elevation = null
-                            ) {
-                                Icon(
-                                    Icons.Default.Warning,
-                                    contentDescription = "Report post",
-                                    tint = Color.White
-                                )
-                            }
-                        }
+                    Button(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .weight(2f),
+                        onClick = {
+                            viewModel.reportPost(post)
+                            Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                        elevation = null
+                    ) {
+                        Icon(
+                            Icons.Default.Warning,
+                            contentDescription = "Report post",
+                            tint = Color.White
+                        )
                     }
                 }
 
@@ -152,28 +157,29 @@ fun PostView(
 
                 Divider()
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(
-                    modifier = Modifier.size(60.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = if (isLikedByUser) Color(247, 152, 23) else Color.White,
-                        backgroundColor = Color.Transparent
-                    ),
-                    onClick = {
-                        if (isLikedByUser) {
-                            viewModel.unlikePost(post)
-                        } else {
-                            viewModel.likePost(post)
-                        }
-                    },
-                    elevation = null
-                ) {
-                    Icon(if (isLikedByUser) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
-                }
-                if (post.imageUrl?.isNotEmpty() == true) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(
+                        modifier = Modifier.size(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = if (isLikedByUser.value) Color(247, 152, 23) else Color.White,
+                            backgroundColor = Color.Transparent
+                        ),
+                        onClick = {
+                            if (isLikedByUser.value) {
+                                viewModel.unlikePost(post)
+                            } else {
+                                viewModel.likePost(post)
+                            }
+                            isLikedByUser.value = !isLikedByUser.value
+                        },
+                        elevation = null
+                    ) {
+                        Icon(if (isLikedByUser.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
+                    }
+                if (post.imageUrl?.isNotEmpty() == true || post.videoUrl?.isNotEmpty() == true) {
                     Row(modifier = Modifier.clickable { onToggleShowImage() }) {
                         Text(
-                            text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                            text = if (showImage) "Reduce to hide media" else "Extend to see media",
                             color = Color.White,
                             modifier = Modifier
                                 .weight(1f)
@@ -200,7 +206,7 @@ fun PostView(
                 ) {
 
                     Text(
-                        text = "Likes: ${post.likesCount}",
+                        text = "$likesCount",
                         style = MaterialTheme.typography.body1,
                         color = Color.White,
                         modifier = Modifier.padding(start = 8.dp, end = 20.dp)
@@ -219,22 +225,32 @@ fun PostView(
                     )
                 }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                }
-                Divider()
+            }
+            Divider()
 
-                if (showImage && post.imageUrl != null) {
-                    // Display the image only if showImage is true and imageUrl is not null
-                    AsyncImage(
-                        post.imageUrl,
-                        null,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
+            if (showImage && post.imageUrl != null) {
+                // Display the image only if showImage is true and imageUrl is not null
+                AsyncImage(
+                    post.imageUrl,
+                    null,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+            if (showImage && post.videoUrl != null) {
+                VideoPlayer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(500.dp)
+                        .padding(10.dp)
+                        .align(Alignment.CenterHorizontally),
+                    uri = Uri.parse(post.videoUrl)
+                )
             }
         }
     }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview

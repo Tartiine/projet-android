@@ -29,6 +29,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ThumbUp
@@ -43,6 +44,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,18 +52,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ensihub.R
+import com.example.ensihub.mainClasses.Comment
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -144,8 +147,9 @@ fun PostDetailScreen(
     viewModel: FeedViewModel
 ) {
     val post: Post? by viewModel.getPost(postId).observeAsState()
-    val isLikedByUser = viewModel.isPostLikedByUser.observeAsState().value
+    val isLikedByUser: Boolean by viewModel.isLikedByUser.collectAsState()
     val currentUser = viewModel.currentUser.collectAsState().value
+    val comments: List<Comment> by viewModel.comments.observeAsState(emptyList())
 
     post?.let {
         Column(
@@ -182,16 +186,12 @@ fun PostDetailScreen(
                             text = post!!.author,
                             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                             color = Color.White,
-                            modifier = Modifier
-                                .weight(3f)
+                            modifier = Modifier.weight(8f)
                         )
-
-                        if (currentUser != null) {
-                            if (currentUser.role == Role.USER) {
                                 Button(
                                     modifier = Modifier
                                         .width(80.dp)
-                                        .weight(1f),
+                                        .weight(2f),
                                     onClick = {
                                         viewModel.reportPost(post!!)
                                         Log.d("PostView", "reportPost clicked for postId = ${post!!.id}")
@@ -205,8 +205,6 @@ fun PostDetailScreen(
                                         tint = Color.White
                                     )
                                 }
-                            }
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -269,24 +267,75 @@ fun PostDetailScreen(
                             color = Color.White
                         )
                     }
+                    if (post!!.imageUrl != null) {
+                        // Display the image only if showImage is true and imageUrl is not null
+                        AsyncImage(
+                            post!!.imageUrl,
+                            null,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .clip(shape = RoundedCornerShape(20.dp))
+                        )
                     }
+                    if (post!!.videoUrl != null) {
+                        VideoPlayer(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(10.dp)
+                                .height(800.dp),
+                            uri = android.net.Uri.parse(post!!.videoUrl)
+                        )
+                    }
+//                    CommentInput(onCommentSent = { text ->
+//                        val currentTime = System.currentTimeMillis()
+//                        val authorName = viewModel.currentUser
+//                        val comment = Comment(id = "", text = text, author = authorName, timestamp = currentTime, likesCount = 0)
+//                        viewModel.addComment(postId, comment)
+//                    })
+//                    CommentList(comments)
                 }
-                Divider()
 
-                if (post!!.imageUrl != null) {
-                    // Display the image only if showImage is true and imageUrl is not null
-                    AsyncImage(
-                        post!!.imageUrl,
-                        null,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                    )
-                }
             }
+                Divider()
+            }
+
+    }
+    }
+
+@Composable
+fun CommentInput(onCommentSent: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+        TextField(
+            value = text,
+            onValueChange = { text = it },
+            placeholder = { Text("Enter your comment here...") },
+            modifier = Modifier.weight(1f)
+        )
+        Button(
+            onClick = {
+                onCommentSent(text)
+                text = ""
+            }
+        ) {
+            Text("Send")
         }
     }
+}
+
+@Composable
+fun CommentList(comments: List<Comment>) {
+    LazyColumn {
+        items(comments) { comment ->
+            Text(text = comment.text)
+        }
+    }
+}
+
+
 
 
 fun SnapshotStateList<Post>.swapList(newList: List<Post>){
