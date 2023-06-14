@@ -8,11 +8,10 @@ data class Post(
     val timestamp: Long,
     val author: String,
     var likesCount: Long,
-    var isLiked: Boolean = false,
     var imageUrl: String? = null,
     var videoUrl: String? = null,
     var status : PostStatus = PostStatus.PENDING,
-    val likes: Map<String, Boolean> = mapOf()
+    val likes: List<String> = listOf()
 ) {
     constructor() : this(UUID.randomUUID().toString(), "", System.currentTimeMillis(), "", 0)
 

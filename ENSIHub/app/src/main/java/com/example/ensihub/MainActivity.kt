@@ -34,8 +34,11 @@ import com.example.ensihub.mainClasses.SharedViewModel
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.UUID
 
@@ -51,6 +54,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //viewModel.loadInitialData()
+
+        runBlocking {
+            // Call the changeLikesFieldType function and wait for it to complete
+            changeLikesFieldType()
+        }
+
         if (!permissionsCheck()) {
             requestPermissions()
         }
@@ -59,6 +68,33 @@ class MainActivity : ComponentActivity() {
             MainActivityContent(viewModel = viewModel)
         }
     }
+
+    private suspend fun changeLikesFieldType() {
+        val firestore = FirebaseFirestore.getInstance()
+        val collectionRef = firestore.collection("posts")
+
+        try {
+            val querySnapshot = collectionRef.get().await()
+
+            val batch = firestore.batch()
+
+            for (document in querySnapshot.documents) {
+                val postId = document.id
+                val likesArray = document.get("likes") as? List<*>
+                val likesList = likesArray?.filterIsInstance<String>() ?: emptyList()
+
+                val updatedData = mapOf("likes" to likesList)
+                val postRef = collectionRef.document(postId)
+                batch.update(postRef, updatedData)
+            }
+
+            batch.commit().await()
+            println("Likes field type updated for all posts.")
+        } catch (exception: Exception) {
+            println("Error updating likes field type: ${exception.message}")
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
