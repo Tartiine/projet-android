@@ -7,8 +7,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,8 +28,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ThumbUp
@@ -46,7 +41,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.StateRecord
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,7 +49,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ensihub.R
@@ -65,6 +58,7 @@ import com.example.ensihub.mainClasses.Role
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -143,11 +137,11 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
 @Composable
 fun PostDetailScreen(
     postId: String,
-    viewModel: FeedViewModel,
-    navController: NavController
+    viewModel: FeedViewModel
 ) {
     val post: Post? by viewModel.getPost(postId).observeAsState()
-    val isLiked = remember { post?.let { mutableStateOf(it.isLiked) } }
+    val firebaseAuth = FirebaseAuth.getInstance()
+    val isLikedByUser = viewModel.isPostLikedByUser.observeAsState().value
     val currentUser = viewModel.currentUser.collectAsState().value
 
     post?.let {
@@ -219,47 +213,34 @@ fun PostDetailScreen(
                     Divider()
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (isLiked != null) {
-                            Button(
-                                modifier = Modifier.size(60.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = if (isLiked.value) Color(
-                                        247,
-                                        152,
-                                        23
-                                    ) else Color.White, backgroundColor = Color.Transparent
-                                ),
-                                onClick = {
-                                    if (isLiked.value) {
-                                        viewModel.unlikePost(post!!)
-                                        Log.d(
-                                            "PostView",
-                                            "unlikePost clicked for postId = ${post!!.id}"
-                                        )
-                                    } else {
-                                        viewModel.likePost(post!!)
-                                        Log.d(
-                                            "PostView",
-                                            "likePost clicked for postId = ${post!!.id}"
-                                        )
-                                    }
-                                    isLiked.value = !isLiked.value
-                                },
-                                elevation = null
-                            ) {
-                                androidx.compose.material.Icon(
-                                    if (isLiked.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
-                                    null
-                                )
-                            }
+                        Button(
+                            modifier = Modifier.size(60.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = if (isLikedByUser == true) Color(247, 152, 23) else Color.White,
+                                backgroundColor = Color.Transparent
+                            ),
+                            onClick = {
+                                if (isLikedByUser == true) {
+                                    viewModel.unlikePost(post!!)
+                                } else {
+                                    viewModel.likePost(post!!)
+                                }
+                            },
+                            elevation = null
+                        ) {
+                            androidx.compose.material.Icon(
+                                if (isLikedByUser == true) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                                null
+                            )
                         }
+                    }
 
-                        Text(
-                            text = "Likes: ${post!!.likesCount}",
-                            style = MaterialTheme.typography.body1,
-                            color = Color.White,
-                            modifier = Modifier.padding(start = 8.dp, end = 20.dp)
-                        )
+                    Text(
+                        text = "Likes: ${post!!.likesCount}",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 8.dp, end = 20.dp)
+                    )
 
                         Spacer(modifier = Modifier.width(8.dp))
 
@@ -283,7 +264,7 @@ fun PostDetailScreen(
             }
         }
     }
-}
+
 
 fun SnapshotStateList<Post>.swapList(newList: List<Post>){
     newList.reversed().forEach {
