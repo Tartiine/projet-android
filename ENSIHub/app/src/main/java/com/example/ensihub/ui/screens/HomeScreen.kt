@@ -144,7 +144,7 @@ fun PostDetailScreen(
     viewModel: FeedViewModel
 ) {
     val post: Post? by viewModel.getPost(postId).observeAsState()
-    val isLikedByUser = viewModel.isPostLikedByUser.observeAsState().value
+    val isLikedByUser: Boolean by viewModel.isLikedByUser.collectAsState()
     val currentUser = viewModel.currentUser.collectAsState().value
 
     post?.let {

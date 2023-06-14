@@ -45,12 +45,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.ensihub.R
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.*
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -61,9 +63,6 @@ fun PostView(
     viewModel: FeedViewModel,
     navigateToPostDetails: (String) -> Unit
 ) {
-    val firebaseAuth = FirebaseAuth.getInstance()
-    val firebaseUser = firebaseAuth.currentUser
-    val isLikedByUser = viewModel.isPostLikedByUser.observeAsState(initial = post.likes.contains(firebaseUser?.uid)).value
     val currentUser = viewModel.currentUser.collectAsState().value
     val textLimit = 200
     val fullText = post.text
@@ -72,7 +71,15 @@ fun PostView(
     } else {
         fullText
     }
+    val likesCount = viewModel.likesCountMap[post.id] ?: 0
 
+    val isLikedByUser = remember(post.id) {
+        mutableStateOf(viewModel.isLikedByUserMap[post.id] ?: false)
+    }
+
+    LaunchedEffect(post.id) {
+        viewModel.isPostLikedByUser(post) // Fetch the liked state for the current user
+    }
 
     Box(Modifier.clickable { navigateToPostDetails(post.id) }) {
         Column(
@@ -153,24 +160,25 @@ fun PostView(
 
                 Divider()
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(
-                    modifier = Modifier.size(60.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = if (isLikedByUser) Color(247, 152, 23) else Color.White,
-                        backgroundColor = Color.Transparent
-                    ),
-                    onClick = {
-                        if (isLikedByUser) {
-                            viewModel.unlikePost(post)
-                        } else {
-                            viewModel.likePost(post)
-                        }
-                    },
-                    elevation = null
-                ) {
-                    Icon(if (isLikedByUser) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
-                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(
+                        modifier = Modifier.size(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = if (isLikedByUser.value) Color(247, 152, 23) else Color.White,
+                            backgroundColor = Color.Transparent
+                        ),
+                        onClick = {
+                            if (isLikedByUser.value) {
+                                viewModel.unlikePost(post)
+                            } else {
+                                viewModel.likePost(post)
+                            }
+                            isLikedByUser.value = !isLikedByUser.value
+                        },
+                        elevation = null
+                    ) {
+                        Icon(if (isLikedByUser.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
+                    }
                 if (post.imageUrl?.isNotEmpty() == true) {
                     Row(modifier = Modifier.clickable { onToggleShowImage() }) {
                         Text(
@@ -201,7 +209,7 @@ fun PostView(
                 ) {
 
                     Text(
-                        text = "Likes: ${post.likesCount}",
+                        text = "$likesCount",
                         style = MaterialTheme.typography.body1,
                         color = Color.White,
                         modifier = Modifier.padding(start = 8.dp, end = 20.dp)
