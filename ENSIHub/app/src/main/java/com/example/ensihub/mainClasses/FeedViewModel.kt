@@ -2,9 +2,11 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
 import android.net.Uri
+import android.os.Build
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +27,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.UUID
 
 class FeedViewModel : ViewModel() {
@@ -507,6 +513,29 @@ class FeedViewModel : ViewModel() {
     fun refreshPosts() {
         TODO("Not yet implemented")
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertTimestampToLocalDateTime(timestamp: Long): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun calculateTimePassed(date: LocalDateTime): String {
+        val now = LocalDateTime.now()
+        val duration = Duration.between(date, now)
+
+        val days = duration.toDays()
+        if (days > 0) return "${days}d"
+
+        val hours = duration.toHours()
+        if (hours > 0) return "${hours}h"
+
+        val minutes = duration.toMinutes()
+        if (minutes > 0) return "${minutes}m"
+
+        return "Just now"
+    }
+
 
     companion object {
         private const val TAG = "FeedViewModel"

@@ -36,6 +36,7 @@ import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,8 +49,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import com.example.ensihub.R
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -64,7 +67,7 @@ fun PostView(
     val firebaseUser = firebaseAuth.currentUser
     val isLikedByUser = viewModel.isPostLikedByUser.observeAsState(initial = post.likes.contains(firebaseUser?.uid)).value
     val currentUser = viewModel.currentUser.collectAsState().value
-    val textLimit = 100
+    val textLimit = 200
     val fullText = post.text
     val displayText = if (fullText.length > textLimit) {
         "${fullText.substring(0, textLimit)}..."
@@ -85,14 +88,23 @@ fun PostView(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Image(painter = painterResource(
+                        id = R.drawable.defaultuser),
+                        contentDescription = "defaultuser",
+                        modifier = Modifier
+                            .size(30.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
                     Text(
                         text = post.author,
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
+                    Spacer(modifier = Modifier.width(180.dp))
                     if (currentUser != null) {
                         if (currentUser.role == Role.USER) {
                             Button(
@@ -113,6 +125,9 @@ fun PostView(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
                     text = displayText,
                     style = MaterialTheme.typography.body1,

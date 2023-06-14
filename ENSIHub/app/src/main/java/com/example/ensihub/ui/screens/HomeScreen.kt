@@ -2,7 +2,10 @@ package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,12 +51,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.ensihub.R
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
@@ -133,7 +138,8 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
         }
     }
 }
-/*
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostDetailScreen(
     postId: String,
@@ -161,24 +167,32 @@ fun PostDetailScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Image(painter = painterResource(
+                            id = R.drawable.defaultuser),
+                            contentDescription = "defaultuser",
+                            modifier = Modifier
+                                .size(30.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
                         Text(
                             text = post!!.author,
                             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
+
                         if (currentUser != null) {
                             if (currentUser.role == Role.USER) {
                                 Button(
-                                    modifier = Modifier.width(80.dp),
+                                    modifier = Modifier
+                                        .width(80.dp)
+                                        .weight(1f),
                                     onClick = {
                                         viewModel.reportPost(post!!)
-                                        Log.d(
-                                            "PostView",
-                                            "reportPost clicked for postId = ${post!!.id}"
-                                        )
+                                        Log.d("PostView", "reportPost clicked for postId = ${post!!.id}")
                                     },
                                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                                     elevation = null
@@ -192,6 +206,8 @@ fun PostDetailScreen(
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = post!!.text,
                         style = MaterialTheme.typography.body1,
@@ -246,6 +262,12 @@ fun PostDetailScreen(
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = viewModel.calculateTimePassed(viewModel.convertTimestampToLocalDateTime(post!!.timestamp)),
+                            style = MaterialTheme.typography.body1,
+                            color = Color.White
+                        )
                     }
                 }
                 Divider()
@@ -262,7 +284,6 @@ fun PostDetailScreen(
         }
     }
 }
-*/
 
 fun SnapshotStateList<Post>.swapList(newList: List<Post>){
     newList.reversed().forEach {
