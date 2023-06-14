@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -86,7 +87,7 @@ class FeedViewModel : ViewModel() {
     fun loadInitialData() {
         viewModelScope.launch {
             db.collection("posts")
-                //.whereEqualTo("status", PostStatus.APPROVED.name)
+                .whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
@@ -189,7 +190,7 @@ class FeedViewModel : ViewModel() {
         i += 10
         viewModelScope.launch {
             db.collection("posts")
-                //.whereEqualTo("status", PostStatus.APPROVED.name)
+                .whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -216,7 +217,7 @@ class FeedViewModel : ViewModel() {
             _posts.value = mutableListOf()
             _comments.value = mutableMapOf()
             db.collection("posts")
-                //.whereEqualTo("status", PostStatus.APPROVED.name)
+                .whereEqualTo("status", PostStatus.APPROVED.name)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(i)
                 .get()
@@ -505,14 +506,31 @@ class FeedViewModel : ViewModel() {
     }
 
     fun reportPost(post : Post) {
-        db.collection("posts").document(post.id).update("status", PostStatus.PENDING.name)
-            .addOnSuccessListener {
-                Log.d(ContentValues.TAG, "Post reported and queued for a new manual review")
+        val userId = Firebase.auth.currentUser?.uid
+        currentUser?.let { user ->
+            if (userId != null) {
+                println("look:"+post.id)
+                db.collection("posts")
+                    .whereEqualTo("id", post.id)
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        for (document in querySnapshot.documents) {
+                            document.reference.update("status", PostStatus.PENDING.name)
+                                .addOnSuccessListener {
+                                    Log.d(ContentValues.TAG, "Post reported and queued for a new manual review")
+                                }
+                                .addOnFailureListener{ exception ->
+                                    Log.w(ContentValues.TAG, "Error by reporting post", exception)
+                                }
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w(ContentValues.TAG, "Error getting documents: ", exception)
+                    }
             }
-            .addOnFailureListener{ exception ->
-                Log.w(ContentValues.TAG, "Error by reporting post", exception)
-            }
+        }
     }
+
     fun pushImage(image: Uri, post: Post, onCompletion: (() -> Unit)? = null){
         isUploading.value = true
         viewModelScope.launch {
