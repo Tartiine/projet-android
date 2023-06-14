@@ -93,6 +93,7 @@ fun PostView(
                         contentDescription = "defaultuser",
                         modifier = Modifier
                             .size(30.dp)
+                            .weight(1f)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -100,13 +101,13 @@ fun PostView(
                     Text(
                         text = post.author,
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier.weight(8f)
                     )
-
-                    if (currentUser != null) {
                             Button(
                                 modifier = Modifier
-                                    .width(80.dp),
+                                    .width(80.dp)
+                                    .weight(2f),
                                 onClick = {
                                     viewModel.reportPost(post)
                                     Log.d("PostView", "reportPost clicked for postId = ${post.id}")
@@ -120,8 +121,6 @@ fun PostView(
                                     tint = Color.White
                                 )
                             }
-
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
