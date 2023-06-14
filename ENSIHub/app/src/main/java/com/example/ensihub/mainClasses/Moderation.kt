@@ -50,7 +50,7 @@ class Moderation : ViewModel() {
                         for (document in querySnapshot.documents) {
                             document.reference.update("status", PostStatus.APPROVED.name)
                                 .addOnSuccessListener {
-                                    Log.d(ContentValues.TAG, "Post reported and queued for a new manual review")
+                                    Log.d(ContentValues.TAG, "Post approved and will be load in the feed")
                                 }
                                 .addOnFailureListener{ exception ->
                                     Log.w(ContentValues.TAG, "Error by reporting post", exception)
@@ -117,7 +117,7 @@ class Moderation : ViewModel() {
                     val post = document.toObject(Post::class.java)
                     pendingPostList.add(post)
                 }
-                pendingPosts.value = _pendingPosts.value?.plus(pendingPostList)
+                pendingPosts.value = pendingPostList
             }.addOnFailureListener { exception ->
                 Log.w(TAG, "Error in loading more pending posts.", exception)
             }

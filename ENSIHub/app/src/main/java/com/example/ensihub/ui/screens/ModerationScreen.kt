@@ -24,9 +24,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +48,10 @@ fun ModerationView(
     onToggleShowImage: () -> Unit,
     moderationViewModel : Moderation
 ) {
+
+    var approve by remember { mutableStateOf(false) }
+    var reject by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,6 +106,7 @@ fun ModerationView(
                 modifier = Modifier.width(50.dp),
                 onClick = {
                     moderationViewModel.approvePost(post)
+                    approve = true
                     Log.d("ModerationView", "The post ${post.id} is approved")
                 },
                 shape = RoundedCornerShape(8.dp),
@@ -112,6 +120,7 @@ fun ModerationView(
                 modifier = Modifier.width(50.dp),
                 onClick = {
                     moderationViewModel.rejectPost(post)
+                    reject = true
                     Log.d("ModerationView", "The post ${post.id} is rejected and deleted")
                 },
                 shape = RoundedCornerShape(8.dp),
@@ -119,6 +128,17 @@ fun ModerationView(
                 elevation = null
             ) {
                 Icon(Icons.Default.Close, contentDescription = "Reject post", tint = Color.White)
+            }
+
+            if(approve == true || reject == true) {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "UI confirm",
+                    tint = Color.White
+                )
+            }
+            else {
+
             }
         }
         Divider()
