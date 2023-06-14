@@ -1,9 +1,7 @@
 package com.example.ensihub.ui.screens
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,7 +17,6 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -30,7 +27,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -45,17 +41,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.R
-import com.example.ensihub.mainClasses.AuthRepository
 import com.example.ensihub.mainClasses.LoginViewModel
-import com.example.ensihub.mainClasses.User
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -248,7 +240,7 @@ fun LoginScreen(
 @Composable
 fun SignUpScreen(
     loginViewModel: LoginViewModel? = null,
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     onNavToHomePage: () -> Unit,
     onNavToLoginPage: () -> Unit
 ) {
@@ -413,7 +405,7 @@ fun SignUpScreen(
         Button(
             onClick = {
                 loginViewModel?.createUser(context)
-                loginViewModel?.sendUser(context)
+                loginViewModel?.sendUser()
                       },
             modifier = Modifier
                 .width(200.dp)
@@ -574,7 +566,6 @@ fun ForgotPasswordScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun PrevLoginScreen() {
-    val navController = rememberNavController()
     ENSIHubTheme {
         LoginScreen(onNavToHomePage = {}, onNavToSignUpPage = {}, onNavToForgotPasswordPage = {})
         }

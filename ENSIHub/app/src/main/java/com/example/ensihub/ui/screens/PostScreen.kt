@@ -1,6 +1,8 @@
 package com.example.ensihub.ui.screens
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -35,23 +37,22 @@ import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.mainClasses.Role
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import com.example.ensihub.R
 import com.google.firebase.auth.FirebaseAuth
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostView(
     post: Post,
@@ -64,7 +65,7 @@ fun PostView(
     val firebaseUser = firebaseAuth.currentUser
     val isLikedByUser = viewModel.isPostLikedByUser.observeAsState(initial = post.likes.contains(firebaseUser?.uid)).value
     val currentUser = viewModel.currentUser.collectAsState().value
-    val textLimit = 100
+    val textLimit = 200
     val fullText = post.text
     val displayText = if (fullText.length > textLimit) {
         "${fullText.substring(0, textLimit)}..."
@@ -85,18 +86,32 @@ fun PostView(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Image(painter = painterResource(
+                        id = R.drawable.defaultuser),
+                        contentDescription = "defaultuser",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .weight(1f)
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
                     Text(
                         text = post.author,
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier
+                            .weight(3f)
                     )
+
                     if (currentUser != null) {
                         if (currentUser.role == Role.USER) {
                             Button(
-                                modifier = Modifier.width(80.dp),
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .weight(1f),
                                 onClick = {
                                     viewModel.reportPost(post)
                                     Log.d("PostView", "reportPost clicked for postId = ${post.id}")
@@ -113,6 +128,9 @@ fun PostView(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
                     text = displayText,
                     style = MaterialTheme.typography.body1,
@@ -131,7 +149,9 @@ fun PostView(
                             .padding(top = 4.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Divider()
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
@@ -151,7 +171,34 @@ fun PostView(
                 ) {
                     Icon(if (isLikedByUser) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
                 }
+                if (post.imageUrl?.isNotEmpty() == true) {
+                    Row(modifier = Modifier.clickable { onToggleShowImage() }) {
+                        Text(
+                            text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                            color = Color.White,
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.Start)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                }
             }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
 
                     Text(
                         text = "Likes: ${post.likesCount}",
@@ -161,25 +208,20 @@ fun PostView(
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
-                    if (post.imageUrl?.isNotEmpty() == true) {
-                        Row(modifier = Modifier.clickable { onToggleShowImage() }) {
-                            Text(
-                                text = if (showImage) "Reduce to hide image" else "Extend to see image",
-                                color = Color.White,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .wrapContentWidth(Alignment.Start)
+
+                    Text(
+                        text = viewModel.calculateTimePassed(
+                            viewModel.convertTimestampToLocalDateTime(
+                                post.timestamp
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Icon(
-                                imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                tint = Color.White
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
-                    }
+                        ),
+                        style = MaterialTheme.typography.body2.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+                        color = Color.White
+                    )
+                }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
                 }
                 Divider()
 
@@ -195,6 +237,7 @@ fun PostView(
         }
     }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PostViewPreview() {

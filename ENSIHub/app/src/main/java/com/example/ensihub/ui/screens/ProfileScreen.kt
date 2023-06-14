@@ -1,12 +1,8 @@
 package com.example.ensihub.ui.screens
 
-import android.content.ContentValues.TAG
 import android.text.format.DateUtils
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,8 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ensihub.mainClasses.Post
-import com.example.ensihub.mainClasses.Role
-import com.example.ensihub.mainClasses.User
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ensihub.R
@@ -79,7 +73,7 @@ fun UserProfileScreen() {
                         Text(
                             text = it.username,
                             modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.h3,
                             color = Color.White
                         )
                     }
@@ -155,7 +149,6 @@ fun PostItem2(post: Post) {
 
 fun getTimeSincePost(timestamp: Long): String{
     val now = System.currentTimeMillis()
-    val elapsedTime = now - timestamp
     return DateUtils.getRelativeTimeSpanString(timestamp, now , DateUtils.MINUTE_IN_MILLIS).toString()
 }
 

@@ -17,17 +17,10 @@ import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.Moderation
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 
-enum class LoginRoutes{
+enum class LoginRoutes {
     SignUp,
     SignIn,
     ForgotPassword
-}
-
-enum class HomeRoutes{
-    Home,
-    Profile,
-    Settings,
-    Moderation
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -40,7 +33,6 @@ fun Navigation(
     moderation: Moderation
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
-    val user = loginViewModel.currentUser
 
     Scaffold(
         bottomBar = {
@@ -72,9 +64,7 @@ fun Navigation(
                     )
                 }
                 composable(route = BottomBarScreen.Moderation.route) {
-                    if (moderation != null) {
-                        ModerationScreen(moderationViewModel = moderation)
-                    }
+                    ModerationScreen(moderationViewModel = moderation)
                 }
 
                 composable(route = LoginRoutes.SignUp.name) {
@@ -109,7 +99,8 @@ fun Navigation(
                 }
 
                 composable(route = "postDetails/{postId}"){navBackStackEntry ->
-                    //PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel, navController = navController)
+                    PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel
+                    )
                 }
             }
         }
