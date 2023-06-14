@@ -176,10 +176,10 @@ fun PostView(
                     ) {
                         Icon(if (isLikedByUser.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
                     }
-                if (post.imageUrl?.isNotEmpty() == true) {
+                if (post.imageUrl?.isNotEmpty() == true || post.videoUrl?.isNotEmpty() == true) {
                     Row(modifier = Modifier.clickable { onToggleShowImage() }) {
                         Text(
-                            text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                            text = if (showImage) "Reduce to hide media" else "Extend to see media",
                             color = Color.White,
                             modifier = Modifier
                                 .weight(1f)
