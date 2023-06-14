@@ -576,7 +576,7 @@ fun ForgotPasswordScreen(
 fun PrevLoginScreen() {
     val navController = rememberNavController()
     ENSIHubTheme {
-        LoginScreen(onNavToHomePage = { /*TODO*/ }, onNavToSignUpPage = { /*TODO*/ }, onNavToForgotPasswordPage = { /*TODO*/ })
+        LoginScreen(onNavToHomePage = {}, onNavToSignUpPage = {}, onNavToForgotPasswordPage = {})
         }
 
 }
@@ -586,8 +586,8 @@ fun PrevLoginScreen() {
 @Composable
 fun PrevSignUpScreen() {
     ENSIHubTheme {
-        SignUpScreen(onNavToHomePage = { /*TODO*/ },
-            onNavToLoginPage = { /*TODO*/ }
+        SignUpScreen(onNavToHomePage = {},
+            onNavToLoginPage = {}
         )
     }
 }
@@ -597,7 +597,7 @@ fun PrevSignUpScreen() {
 @Composable
 fun PrevForgotPasswordScreen() {
     ENSIHubTheme {
-        ForgotPasswordScreen(onNavToLoginPage = { /*TODO*/ })
+        ForgotPasswordScreen(onNavToLoginPage = {})
     }
 
 }
