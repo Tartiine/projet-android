@@ -239,21 +239,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch {
             post.status = PostStatus.PENDING
             val postsRef = db.collection("posts")
-            if (post.text.isNotEmpty()) {
-                postsRef.add(post)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "Successfully sent post: $documentReference")
-                        post.id =
-                            documentReference.id  // Set the Firestore document's ID to the post's ID field
-
-                        val updatedPosts = _posts.value?.toMutableList()
-                        updatedPosts?.add(post)
-                        _posts.value = updatedPosts
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error while sending post: $e")
-                    }
-            }
+            Log.d(TAG, "Sending post: $post")
             postsRef.add(post)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "Successfully sent post: $documentReference")
@@ -510,6 +496,7 @@ class FeedViewModel : ViewModel() {
     }
     fun pushImage(image: Uri, post: Post) {
         viewModelScope.launch {
+            Log.d(TAG, "Sending image to storage")
             val id = UUID.randomUUID()
             storage.reference.child("Images/${id}")
                 .putFile(image)
@@ -517,8 +504,8 @@ class FeedViewModel : ViewModel() {
                     Log.d(TAG, "Image successfully sent to storage")
                     storage.reference.child("Images/$id").downloadUrl
                         .addOnSuccessListener {
+                            Log.d(TAG, "Image url successfully downloaded $it")
                             post.imageUrl = it.toString()
-                            addPost(post)
                         }
                         .addOnFailureListener {
                             Log.w(TAG, "Error downloading the url of image $it")

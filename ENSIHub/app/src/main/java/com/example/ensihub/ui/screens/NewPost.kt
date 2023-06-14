@@ -136,7 +136,11 @@ fun NewPostView(navController: NavController) {
             Button(
                 onClick = {
                     if (currentUser != null) {
-                        photoUri?.let { viewModel.pushImage(it, Post(text = messageState.value, author = currentUser.username)) }
+                        val post = Post(text = messageState.value, author = currentUser.username)
+                        if (photoUri != null) {
+                            viewModel.pushImage(photoUri!!, post)
+                        }
+                        viewModel.addPost(post)
                         messageState.value = ""
                         imageUrlState.value = ""
                         navController.navigateUp()
