@@ -229,7 +229,6 @@ class FeedViewModel : ViewModel() {
             post.status = PostStatus.PENDING
             post.imageUrl = imageUrl
             val postsRef = db.collection("posts")
-<<<<<<< Updated upstream
             if (post.text.isNotEmpty()) {
                 postsRef.add(post)
                     .addOnSuccessListener { documentReference ->
@@ -245,7 +244,6 @@ class FeedViewModel : ViewModel() {
                         Log.w(TAG, "Error while sending post: $e")
                     }
             }
-=======
             postsRef.add(post)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "Successfully sent post: $documentReference")
@@ -258,8 +256,20 @@ class FeedViewModel : ViewModel() {
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error while sending post: $e")
                 }
->>>>>>> Stashed changes
         }
+    }
+
+    fun getPost(postId: String): LiveData<Post?> {
+        val post = MutableLiveData<Post?>()
+        _posts.value?.let { posts ->
+            for (p in posts) {
+                if (p.id == postId) {
+                    post.value = p
+                    break
+                }
+            }
+        }
+        return post
     }
 
     fun addComment(postId: String, comment: Comment) {
