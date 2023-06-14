@@ -93,7 +93,6 @@ fun PostView(
                         contentDescription = "defaultuser",
                         modifier = Modifier
                             .size(30.dp)
-                            .weight(1f)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -101,13 +100,10 @@ fun PostView(
                     Text(
                         text = post.author,
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White,
-                        modifier = Modifier
-                            .weight(3f)
+                        color = Color.White
                     )
 
                     if (currentUser != null) {
-                        if (currentUser.role == Role.USER) {
                             Button(
                                 modifier = Modifier
                                     .width(80.dp),
@@ -124,7 +120,7 @@ fun PostView(
                                     tint = Color.White
                                 )
                             }
-                        }
+
                     }
                 }
 

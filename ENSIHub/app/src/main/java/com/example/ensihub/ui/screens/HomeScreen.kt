@@ -61,7 +61,6 @@ import com.example.ensihub.mainClasses.Role
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -184,7 +183,6 @@ fun PostDetailScreen(
                         )
 
                         if (currentUser != null) {
-                            if (currentUser.role == Role.USER) {
                                 Button(
                                     modifier = Modifier
                                         .width(80.dp),
@@ -201,7 +199,6 @@ fun PostDetailScreen(
                                         tint = Color.White
                                     )
                                 }
-                            }
                         }
                     }
 
