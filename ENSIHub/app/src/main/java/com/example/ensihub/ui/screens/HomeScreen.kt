@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,6 +64,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
@@ -158,6 +160,7 @@ fun PostDetailScreen(
                     .background(color = Color(0xFF2D3949))
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -168,6 +171,7 @@ fun PostDetailScreen(
                             contentDescription = "defaultuser",
                             modifier = Modifier
                                 .size(30.dp)
+                                .weight(1f)
                         )
 
                         Spacer(modifier = Modifier.width(12.dp))
@@ -175,7 +179,9 @@ fun PostDetailScreen(
                         Text(
                             text = post!!.author,
                             style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                            color = Color.White
+                            color = Color.White,
+                            modifier = Modifier
+                                .weight(3f)
                         )
 
                         if (currentUser != null) {
@@ -234,21 +240,33 @@ fun PostDetailScreen(
                             )
                         }
                     }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
-                    Text(
-                        text = "Likes: ${post!!.likesCount}",
-                        style = MaterialTheme.typography.body1,
-                        color = Color.White,
-                        modifier = Modifier.padding(start = 8.dp, end = 20.dp)
-                    )
+                        Text(
+                            text = "Likes: ${post!!.likesCount}",
+                            style = MaterialTheme.typography.body1,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 8.dp, end = 20.dp)
+                        )
 
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = viewModel.calculateTimePassed(viewModel.convertTimestampToLocalDateTime(post!!.timestamp)),
-                            style = MaterialTheme.typography.body1,
+                            text = viewModel.calculateTimePassed(
+                                viewModel.convertTimestampToLocalDateTime(
+                                    post!!.timestamp
+                                )
+                            ),
+                            style = MaterialTheme.typography.body2.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
                             color = Color.White
                         )
+                    }
                     }
                 }
                 Divider()

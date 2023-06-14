@@ -1,6 +1,8 @@
 package com.example.ensihub.ui.screens
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.ensihub.R
 import com.google.firebase.auth.FirebaseAuth
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostView(
     post: Post,
@@ -95,6 +98,7 @@ fun PostView(
                         contentDescription = "defaultuser",
                         modifier = Modifier
                             .size(30.dp)
+                            .weight(1f)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -102,13 +106,17 @@ fun PostView(
                     Text(
                         text = post.author,
                         style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier
+                            .weight(3f)
                     )
-                    Spacer(modifier = Modifier.width(180.dp))
+
                     if (currentUser != null) {
                         if (currentUser.role == Role.USER) {
                             Button(
-                                modifier = Modifier.width(80.dp),
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .weight(1f),
                                 onClick = {
                                     viewModel.reportPost(post)
                                     Log.d("PostView", "reportPost clicked for postId = ${post.id}")
@@ -146,7 +154,9 @@ fun PostView(
                             .padding(top = 4.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Divider()
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
@@ -166,7 +176,34 @@ fun PostView(
                 ) {
                     Icon(if (isLikedByUser) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, null)
                 }
+                if (post.imageUrl?.isNotEmpty() == true) {
+                    Row(modifier = Modifier.clickable { onToggleShowImage() }) {
+                        Text(
+                            text = if (showImage) "Reduce to hide image" else "Extend to see image",
+                            color = Color.White,
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.Start)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                }
             }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
 
                     Text(
                         text = "Likes: ${post.likesCount}",
@@ -176,25 +213,20 @@ fun PostView(
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
-                    if (post.imageUrl?.isNotEmpty() == true) {
-                        Row(modifier = Modifier.clickable { onToggleShowImage() }) {
-                            Text(
-                                text = if (showImage) "Reduce to hide image" else "Extend to see image",
-                                color = Color.White,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .wrapContentWidth(Alignment.Start)
+
+                    Text(
+                        text = viewModel.calculateTimePassed(
+                            viewModel.convertTimestampToLocalDateTime(
+                                post.timestamp
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Icon(
-                                imageVector = if (showImage) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                tint = Color.White
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
-                    }
+                        ),
+                        style = MaterialTheme.typography.body2.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+                        color = Color.White
+                    )
+                }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
                 }
                 Divider()
 
@@ -210,6 +242,7 @@ fun PostView(
         }
     }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PostViewPreview() {

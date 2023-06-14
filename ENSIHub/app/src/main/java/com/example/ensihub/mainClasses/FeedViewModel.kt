@@ -525,13 +525,13 @@ class FeedViewModel : ViewModel() {
         val duration = Duration.between(date, now)
 
         val days = duration.toDays()
-        if (days > 0) return "${days}d"
+        if (days > 0) return "$days days ago"
 
         val hours = duration.toHours()
-        if (hours > 0) return "${hours}h"
+        if (hours > 0) return "$hours hours ago"
 
         val minutes = duration.toMinutes()
-        if (minutes > 0) return "${minutes}m"
+        if (minutes > 0) return "$minutes minutes ago"
 
         return "Just now"
     }
