@@ -86,11 +86,7 @@ sealed class BottomBarScreen(
                         Icon(
                             imageVector = screen.icon,
                             contentDescription = screen.title,
-                            tint = if (currentRoute == screen.route) {
-                                Color.White
-                            } else {
-                                Color.White
-                            }
+                            tint = Color.White
                         )
                     },
                     label = {

@@ -2,8 +2,8 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
 import android.net.Uri
-import android.os.Build
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -235,10 +235,9 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun addPost(post: Post, imageUrl : String?) {
+    fun addPost(post: Post) {
         viewModelScope.launch {
             post.status = PostStatus.PENDING
-            post.imageUrl = imageUrl
             val postsRef = db.collection("posts")
             if (post.text.isNotEmpty()) {
                 postsRef.add(post)
@@ -508,6 +507,27 @@ class FeedViewModel : ViewModel() {
             .addOnFailureListener{ exception ->
                 Log.w(ContentValues.TAG, "Error by reporting post", exception)
             }
+    }
+    fun pushImage(image: Uri, post: Post) {
+        viewModelScope.launch {
+            val id = UUID.randomUUID()
+            storage.reference.child("Images/${id}")
+                .putFile(image)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Image successfully sent to storage")
+                    storage.reference.child("Images/$id").downloadUrl
+                        .addOnSuccessListener {
+                            post.imageUrl = it.toString()
+                            addPost(post)
+                        }
+                        .addOnFailureListener {
+                            Log.w(TAG, "Error downloading the url of image $it")
+                        }
+                }
+                .addOnFailureListener {
+                    Log.w(TAG, "Error while sending image $it")
+                }
+        }
     }
 
     fun refreshPosts() {

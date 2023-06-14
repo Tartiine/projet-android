@@ -24,6 +24,19 @@ data class Post(
     override fun equals(other: Any?): Boolean {
         return (other is Post) && other.id == this.id
     }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + text.hashCode()
+        result = 31 * result + timestamp.hashCode()
+        result = 31 * result + author.hashCode()
+        result = 31 * result + likesCount.hashCode()
+        result = 31 * result + (imageUrl?.hashCode() ?: 0)
+        result = 31 * result + (videoUrl?.hashCode() ?: 0)
+        result = 31 * result + status.hashCode()
+        result = 31 * result + likes.hashCode()
+        return result
+    }
 }
 
 enum class PostStatus {

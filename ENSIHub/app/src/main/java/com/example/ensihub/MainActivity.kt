@@ -1,6 +1,7 @@
 package com.example.ensihub
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.ContentValues.TAG
@@ -186,6 +187,7 @@ class MainActivity : ComponentActivity() {
         builder.show()
     }
 
+    @SuppressLint("Recycle")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val sharedViewModel : SharedViewModel by viewModels()
@@ -210,9 +212,6 @@ class MainActivity : ComponentActivity() {
                             val imageUrl = downloadUri.toString()
                             sharedViewModel.imageUrl.value = imageUrl
                         }
-                        else {
-
-                        }
                     }
                 }
 
@@ -225,7 +224,7 @@ class MainActivity : ComponentActivity() {
                     lightImage.compress(Bitmap.CompressFormat.JPEG, 75, imageArray)
                     val data = imageArray.toByteArray()
                     val storage = Firebase.storage
-                    val storageRef = storage.reference.child("Images/${selectedImageUri?.lastPathSegment}")
+                    val storageRef = storage.reference.child("Images/${selectedImageUri.lastPathSegment}")
                     val uploadTask = storageRef.putBytes(data)
                     uploadTask.addOnFailureListener { exception ->
                         Log.e(TAG, "Upload failed", exception)
@@ -242,7 +241,7 @@ class MainActivity : ComponentActivity() {
                     }
                     else {
                         val storage = Firebase.storage
-                        val storageRef = storage.reference.child("Videos/${selectedVideoUri?.lastPathSegment}")
+                        val storageRef = storage.reference.child("Videos/${selectedVideoUri.lastPathSegment}")
                         val uploadTask = storageRef.putFile(selectedVideoUri)
                         uploadTask.addOnFailureListener { exception ->
                             Log.e(TAG, "Upload failed", exception)
