@@ -17,7 +17,7 @@ class Moderation : ViewModel() {
     val pendingPosts : MutableLiveData<List<Post>> = MutableLiveData()
 
     init {
-        db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get()
+        db.collection("posts").whereEqualTo("status", PostStatus.PENDING.name).orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get()
             .addOnSuccessListener { result ->
                 val pendingPostList = mutableListOf<Post>()
                 for (document in result) {
@@ -57,7 +57,7 @@ class Moderation : ViewModel() {
         viewModelScope.launch {
             i = 10
             _pendingPosts.value = mutableListOf()
-            db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get().addOnSuccessListener { result ->
+            db.collection("posts").whereEqualTo("status", PostStatus.PENDING.name).orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get().addOnSuccessListener { result ->
                 val pendingPostList = mutableListOf<Post>()
                 for (document in result) {
                     val post = document.toObject(Post::class.java)
@@ -73,7 +73,7 @@ class Moderation : ViewModel() {
     fun loadMorePendingPosts() {
         viewModelScope.launch {
             i+=10
-            db.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get().addOnSuccessListener { result ->
+            db.collection("posts").whereEqualTo("status", PostStatus.PENDING.name).orderBy("timestamp", Query.Direction.DESCENDING).limit(i).get().addOnSuccessListener { result ->
                 val pendingPostList = mutableListOf<Post>()
                 for (document in result) {
                     val post = document.toObject(Post::class.java)
