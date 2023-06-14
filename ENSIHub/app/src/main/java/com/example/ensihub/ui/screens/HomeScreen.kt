@@ -278,7 +278,10 @@ fun PostDetailScreen(
                     AsyncImage(
                         post!!.imageUrl,
                         null,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(16.dp)
+                            .fillMaxWidth()
                     )
                 }
             }
