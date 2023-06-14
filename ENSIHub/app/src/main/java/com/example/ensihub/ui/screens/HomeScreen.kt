@@ -133,7 +133,7 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
         }
     }
 }
-
+/*
 @Composable
 fun PostDetailScreen(
     postId: String,
@@ -262,6 +262,7 @@ fun PostDetailScreen(
         }
     }
 }
+*/
 
 fun SnapshotStateList<Post>.swapList(newList: List<Post>){
     newList.reversed().forEach {

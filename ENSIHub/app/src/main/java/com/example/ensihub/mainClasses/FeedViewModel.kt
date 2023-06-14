@@ -2,6 +2,7 @@ package com.example.ensihub.mainClasses
 
 import android.content.ContentValues
 import android.net.Uri
+import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.collectAsState
@@ -13,6 +14,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -42,12 +45,16 @@ class FeedViewModel : ViewModel() {
     private val _userPosts = MutableLiveData<List<Post>>()
     val userPosts: LiveData<List<Post>> = _userPosts
 
-    var i: Long = 10
+    val isPostLikedByUser = MutableLiveData<Boolean>()
 
+    val likesCountMap = mutableMapOf<String, Long>()
+
+    var i: Long = 10
 
     init {
         reload()
         fetchCurrentUser()
+        loadLikesCountForAllPosts()
     }
 
     fun fetchCurrentUser() {
@@ -77,18 +84,17 @@ class FeedViewModel : ViewModel() {
                 .addOnSuccessListener { documents ->
                     val postList = documents.mapNotNull { document ->
                         val data = document.data
-                            Post(
-                                id = document.id,
-                                text = data["text"] as? String ?: "",
-                                timestamp = data["timestamp"] as? Long ?: 0L,
-                                author = data["author"] as? String ?: "",
-                                likesCount = data["likesCount"] as? Long ?: 0L,
-                                isLiked = data["isLiked"] as? Boolean ?: false, // isLiked is Boolean
-                                imageUrl = data["imageUrl"] as? String ?: "",
-                                videoUrl = data["videoUrl"] as? String ?: "",
-                                status = PostStatus.PENDING,
-                                likes = data["likes"] as? Map<String, Boolean> ?: emptyMap() // likes is Map<String, Boolean>
-                            )
+                        Post(
+                            id = document.id,
+                            text = data["text"] as? String ?: "",
+                            timestamp = data["timestamp"] as? Long ?: 0L,
+                            author = data["author"] as? String ?: "",
+                            likesCount = data["likesCount"] as? Long ?: 0L,
+                            imageUrl = data["imageUrl"] as? String ?: "",
+                            videoUrl = data["videoUrl"] as? String ?: "",
+                            status = PostStatus.PENDING,
+                            likes = (data["likes"] as? List<*>)?.map { it.toString() } ?: listOf()
+                        )
                         }
 
                     _posts.value = postList
@@ -123,11 +129,10 @@ class FeedViewModel : ViewModel() {
                                                 timestamp = data["timestamp"] as? Long ?: 0L,
                                                 author = data["author"] as? String ?: "",
                                                 likesCount = data["likesCount"] as? Long ?: 0L,
-                                                isLiked = data["isLiked"] as? Boolean ?: false,
                                                 imageUrl = data["imageUrl"] as? String ?: "",
                                                 videoUrl = data["videoUrl"] as? String ?: "",
                                                 status = PostStatus.PENDING,
-                                                likes = data["likes"] as? Map<String, Boolean> ?: emptyMap()
+                                                likes = (data["likes"] as? List<*>)?.map { it.toString() } ?: listOf()
                                             )
                                         }
                                     }
@@ -335,63 +340,68 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+        private fun loadLikesCountForAllPosts() {
+            viewModelScope.launch {
+                val posts = getPosts()
+                posts.forEach { post ->
+                    likesCountMap[post.id] = post.likesCount
+                }
+            }
+        }
+
+        suspend fun getPosts(): List<Post> {
+            val snapshot = db.collection("posts").get().await()
+            return snapshot.documents.mapNotNull { it.toObject(Post::class.java) }
+        }
+
+
     fun likePost(post: Post) {
         viewModelScope.launch {
-            val currentUser = FirebaseAuth.getInstance().currentUser
-            currentUser?.let { user ->
-                val postRef = db.collection("posts").document(post.id)
-                db.runTransaction { transaction ->
-                    val postSnapshot = transaction.get(postRef)
-                    val likesMap = postSnapshot.get("likes") as? MutableMap<String, Boolean> ?: mutableMapOf()
-                    val isLiked = likesMap[user.uid] ?: false
+            val docSnapshot = db.collection("posts")
+                .whereEqualTo("id", post.id)
+                .get()
+                .await()
 
-                    if (!isLiked) {
-                        likesMap[user.uid] = true
-                        transaction.update(postRef, "likes", likesMap)
-                        transaction.update(postRef, "likesCount", post.likesCount + 1)
-                        transaction.update(postRef, "isLiked", true)
+            if (!docSnapshot.isEmpty) {
+                val docId = docSnapshot.documents[0].id
+                db.collection("posts").document(docId)
+                    .update("likes", FieldValue.arrayUnion(FirebaseAuth.getInstance().currentUser?.uid))
+                    .await()
 
-                        val updatedPost = post.copy(likesCount = post.likesCount + 1, likes = likesMap, isLiked = true)
-                        val updatedPosts = _posts.value?.toMutableList()
-                        val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
-                        if (updatedPostIndex != null && updatedPostIndex != -1) {
-                            updatedPosts[updatedPostIndex] = updatedPost
-                            _posts.value = updatedPosts
-                        }
-                    }
-                }
+                likesCountMap[post.id] = likesCountMap[post.id]?.plus(1) ?: 0
+                isPostLikedByUser.value = true
+            } else {
+                // handle error - document not found
             }
         }
     }
 
     fun unlikePost(post: Post) {
         viewModelScope.launch {
-            val currentUser = FirebaseAuth.getInstance().currentUser
-            currentUser?.let { user ->
-                val postRef = db.collection("posts").document(post.id)
-                db.runTransaction { transaction ->
-                    val postSnapshot = transaction.get(postRef)
-                    val likesMap = postSnapshot.get("likes") as? MutableMap<String, Boolean> ?: mutableMapOf()
-                    val isLiked = likesMap[user.uid] ?: false
+            val docSnapshot = db.collection("posts")
+                .whereEqualTo("id", post.id)
+                .get()
+                .await()
 
-                    if (isLiked) {
-                        likesMap.remove(user.uid)
-                        transaction.update(postRef, "likes", likesMap)
-                        transaction.update(postRef, "likesCount", post.likesCount - 1)
-                        transaction.update(postRef, "isLiked", false)
+            if (!docSnapshot.isEmpty) {
+                val docId = docSnapshot.documents[0].id
+                db.collection("posts").document(docId)
+                    .update("likes", FieldValue.arrayRemove(FirebaseAuth.getInstance().currentUser?.uid))
+                    .await()
 
-                        val updatedPost = post.copy(likesCount = post.likesCount - 1, likes = likesMap, isLiked = false)
-                        val updatedPosts = _posts.value?.toMutableList()
-                        val updatedPostIndex = updatedPosts?.indexOfFirst { it.id == post.id }
-                        if (updatedPostIndex != null && updatedPostIndex != -1) {
-                            updatedPosts[updatedPostIndex] = updatedPost
-                            _posts.value = updatedPosts
-                        }
-                    }
-                }
+                likesCountMap[post.id] = likesCountMap[post.id]?.minus(1) ?: 0
+                isPostLikedByUser.value = false
+            } else {
+
             }
         }
     }
+
+        fun isPostLikedByUser(post: Post): Boolean {
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            return post.likes.contains(firebaseUser?.uid)
+        }
+
 
     fun updateCommText(postId: String, comment: Comment, newText: String) {
         viewModelScope.launch {

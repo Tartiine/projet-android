@@ -109,7 +109,7 @@ fun Navigation(
                 }
 
                 composable(route = "postDetails/{postId}"){navBackStackEntry ->
-                    PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel, navController = navController)
+                    //PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel, navController = navController)
                 }
             }
         }
