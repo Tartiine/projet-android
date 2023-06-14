@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -131,6 +132,22 @@ fun PostView(
                             tint = Color.White
                         )
                     }
+                            Button(
+                                modifier = Modifier
+                                    .width(80.dp),
+                                onClick = {
+                                    viewModel.reportPost(post)
+                                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                                elevation = null
+                            ) {
+                                Icon(
+                                    Icons.Default.Warning,
+                                    contentDescription = "Report post",
+                                    tint = Color.White
+                                )
+                            }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
