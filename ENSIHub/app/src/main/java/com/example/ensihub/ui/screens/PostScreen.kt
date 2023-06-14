@@ -47,6 +47,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
@@ -60,6 +61,13 @@ fun PostView(
 
     val isLiked = remember { mutableStateOf(post.isLiked) }
     val currentUser = viewModel.currentUser.collectAsState().value
+    val textLimit = 100
+    val fullText = post.text
+    val displayText = if (fullText.length > textLimit) {
+        "${fullText.substring(0, textLimit)}..."
+    } else {
+        fullText
+    }
 
 
     Box(Modifier.clickable { navigateToPostDetails(post.id) }) {
@@ -103,11 +111,23 @@ fun PostView(
                     }
                 }
                 Text(
-                    text = post.text,
+                    text = displayText,
                     style = MaterialTheme.typography.body1,
                     color = Color.White,
                     modifier = Modifier.padding(top = 4.dp)
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (fullText.length > textLimit) {
+                    Text(
+                        text = "Show more",
+                        style = MaterialTheme.typography.body2.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+                        color = Color.LightGray,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Divider()
