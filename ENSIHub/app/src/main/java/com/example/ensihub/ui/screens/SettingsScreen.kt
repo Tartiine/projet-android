@@ -98,7 +98,7 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.padding(16.dp)
             )
@@ -398,7 +398,7 @@ fun ChangeUsernameView(navHostController: NavHostController) {
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.padding(16.dp)
             )
@@ -512,7 +512,7 @@ fun ChangePasswordView(navHostController: NavHostController) {
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.padding(16.dp)
             )
@@ -588,7 +588,7 @@ fun ChangePasswordView(navHostController: NavHostController) {
         Button(
             onClick = {
                 if (newPassword.value != "" && newPassword.value == newPasswordConfirm.value) {
-                    val userId = Firebase.auth.currentUser!!.uid
+                    Firebase.auth.currentUser!!.uid
                     Firebase.auth.currentUser!!.updatePassword(newPassword.value)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -662,7 +662,7 @@ fun ContactView(navHostController: NavHostController) {
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.padding(16.dp)
             )

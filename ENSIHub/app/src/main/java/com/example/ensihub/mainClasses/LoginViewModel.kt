@@ -7,8 +7,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,12 +15,8 @@ class LoginViewModel(
     private val repository: AuthRepository = AuthRepository()
 ): ViewModel() {
     val loginUiState: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
-    val currentUser = repository.currentUser
-    val userName: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> = mutableStateOf("")
     private val _isLoggedIn = MutableStateFlow(false)
-
-    private val db = Firebase.firestore
 
     val isLoggedIn: StateFlow<Boolean> get() = _isLoggedIn
     init {
@@ -158,7 +152,7 @@ class LoginViewModel(
         }
     }
 
-    fun sendUser(context: Context) = viewModelScope.launch{
+    fun sendUser() = viewModelScope.launch{
         Log.d("sendUser", "User sent to repository.")
         User(
             id = repository.getUserId(),

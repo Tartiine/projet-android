@@ -8,7 +8,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,20 +15,12 @@ import androidx.navigation.compose.composable
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.Moderation
-import com.example.ensihub.mainClasses.Post
 import com.example.ensihub.ui.screens.BottomBarScreen.Home.BottomNavigationBar
 
-enum class LoginRoutes{
+enum class LoginRoutes {
     SignUp,
     SignIn,
     ForgotPassword
-}
-
-enum class HomeRoutes{
-    Home,
-    Profile,
-    Settings,
-    Moderation
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -42,8 +33,6 @@ fun Navigation(
     moderation: Moderation
 ) {
     val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
-    val user = loginViewModel.currentUser
-    val posts: List<Post> by viewModel.posts.observeAsState(initial = emptyList())
 
     Scaffold(
         bottomBar = {
@@ -75,9 +64,7 @@ fun Navigation(
                     )
                 }
                 composable(route = BottomBarScreen.Moderation.route) {
-                    if (moderation != null) {
-                        ModerationScreen(moderationViewModel = moderation)
-                    }
+                    ModerationScreen(moderationViewModel = moderation)
                 }
 
                 composable(route = LoginRoutes.SignUp.name) {

@@ -144,7 +144,6 @@ fun PostDetailScreen(
     viewModel: FeedViewModel
 ) {
     val post: Post? by viewModel.getPost(postId).observeAsState()
-    val firebaseAuth = FirebaseAuth.getInstance()
     val isLikedByUser = viewModel.isPostLikedByUser.observeAsState().value
     val currentUser = viewModel.currentUser.collectAsState().value
 

@@ -1,10 +1,8 @@
 package com.example.ensihub.mainClasses
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
