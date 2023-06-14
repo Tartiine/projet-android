@@ -229,7 +229,6 @@ class FeedViewModel : ViewModel() {
             post.status = PostStatus.PENDING
             post.imageUrl = imageUrl
             val postsRef = db.collection("posts")
-<<<<<<< Updated upstream
             if (post.text.isNotEmpty()) {
                 postsRef.add(post)
                     .addOnSuccessListener { documentReference ->
@@ -245,7 +244,6 @@ class FeedViewModel : ViewModel() {
                         Log.w(TAG, "Error while sending post: $e")
                     }
             }
-=======
             postsRef.add(post)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "Successfully sent post: $documentReference")
@@ -258,7 +256,6 @@ class FeedViewModel : ViewModel() {
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error while sending post: $e")
                 }
->>>>>>> Stashed changes
         }
     }
 
