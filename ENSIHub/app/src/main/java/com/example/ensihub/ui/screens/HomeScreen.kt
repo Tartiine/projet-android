@@ -453,7 +453,6 @@ fun SnapshotStateList<Comment>.swapComment(newList: List<Comment>){
         if (!this.contains(it) && comment != null) this.add(this.indexOf(comment), it)
         if (!this.contains(it)) this.add(it)
     }
-
 }
 
 

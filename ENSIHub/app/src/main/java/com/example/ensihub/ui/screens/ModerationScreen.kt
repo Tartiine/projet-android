@@ -40,7 +40,14 @@ import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.Moderation
 import com.example.ensihub.mainClasses.Post
 
-
+/**
+ * @brief Vue de modération d'un post.
+ *
+ * @param post Post à modérer.
+ * @param showImage Indicateur pour afficher ou masquer l'image du post.
+ * @param onToggleShowImage Fonction de basculement pour afficher ou masquer l'image.
+ * @param moderationViewModel ViewModel de modération.
+ */
 @Composable
 fun ModerationView(
     post: Post,
