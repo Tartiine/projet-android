@@ -421,8 +421,7 @@ fun SignUpScreen(
         Button(
             onClick = {
                 loginViewModel?.createUser(context)
-                loginViewModel?.sendUser()
-                      },
+            },
             modifier = Modifier
                 .width(200.dp)
                 .padding(vertical = 16.dp),

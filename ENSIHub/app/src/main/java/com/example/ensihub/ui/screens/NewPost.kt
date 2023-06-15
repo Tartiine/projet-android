@@ -186,6 +186,7 @@ fun NewPostView(navController: NavController) {
             Button(
                 onClick = {
                     if (currentUser != null) {
+                        Log.d(TAG, "onClick: ${messageState.value}")
                         val post = Post(text = messageState.value, author = currentUser.username)
                         if (photoUri != null) {
                             viewModel.pushImage(photoUri!!, post) {
