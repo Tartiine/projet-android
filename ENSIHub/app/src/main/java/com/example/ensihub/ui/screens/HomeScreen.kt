@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -314,16 +315,20 @@ fun PostDetailScreen(
         Row(modifier = Modifier
             .fillMaxWidth()
             .align(Alignment.BottomCenter)
-            .background(Color.Gray)) {
+            .background(Color(0xFF1B232E)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             TextField(
                 value = text,
                 onValueChange = { text = it },
-                placeholder = { Text("Enter your comment here...") },
+                textStyle = TextStyle(color = Color.White),
+                placeholder = { Text("Enter your comment here...", color = Color.White) },
                 modifier = Modifier
                     .weight(1f)
                     .onGloballyPositioned {
                         textFieldHeight = it.size.height
-                    },
+                    }
+                    .background(Color(0xFF2D3949))
                 
             )
             Button(
@@ -332,6 +337,10 @@ fun PostDetailScreen(
                     commentViewModel.addComment(comment)
                     text = ""
                 },
+                colors = ButtonDefaults.buttonColors(contentColor = Color.White, backgroundColor = Color(alpha = 255, red = 247, green = 152, blue = 23)),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .height((textFieldHeight / Resources.getSystem().displayMetrics.density + 0.5f).toInt().dp)
             ) {
                 Text("Send")
             }
@@ -342,7 +351,41 @@ fun PostDetailScreen(
 @Composable
 fun CommentList(comments: List<Comment>) {
     Column {
-        for (comment in comments) Text(text = comment.text)
+        Text(
+            text = "Comments",
+            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
+            color = Color.White,
+            modifier = Modifier.padding(12.dp)
+        )
+        for (comment in comments){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Image(painter = painterResource(
+                    id = R.drawable.defaultuser),
+                    contentDescription = "defaultuser",
+                    modifier = Modifier
+                        .size(15.dp)
+                )
+
+                Text(
+                    text = comment.author + " :",
+                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
+                    color = Color.White,
+                    modifier = Modifier.padding(6.dp)
+                )
+                Text(
+                    text = comment.text,
+                    style = MaterialTheme.typography.body2,
+                    color = Color.White,
+                    modifier = Modifier.padding(6.dp)
+                )
+            } }
+        Spacer(modifier = Modifier.padding(bottom = 12.dp))
     }
 }
 
