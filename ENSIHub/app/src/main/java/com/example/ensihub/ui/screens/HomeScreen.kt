@@ -31,13 +31,15 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -143,6 +145,7 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostDetailScreen(
@@ -335,13 +338,17 @@ fun PostDetailScreen(
                     onValueChange = { text = it },
                     textStyle = TextStyle(color = Color.White),
                     placeholder = { Text("Enter your comment here...", color = Color.White) },
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color(0xFF2D3949),
+                        unfocusedIndicatorColor = Color(0xFF2D3949),
+                        containerColor = Color(0xFF2D3949),
+                    ),
                     modifier = Modifier
                         .weight(1f)
                         .onGloballyPositioned {
                             textFieldHeight = it.size.height
                         }
                         .background(Color(0xFF2D3949))
-
                 )
                 Button(
                     onClick = {
