@@ -72,7 +72,12 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-
+/**
+ * @brief Écran d'accueil.
+ *
+ * @param viewModel ViewModel du flux.
+ * @param navController Contrôleur de navigation.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -89,7 +94,9 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
 
     myList.swapPost(posts)
 
-    // Function to refresh the list
+    /**
+     * Fonction pour rafraîchir la liste.
+     */
     val onUpdateClick = {
         // Do something that updates the list
         swipeRefreshState.isRefreshing = true
@@ -145,6 +152,14 @@ fun HomeScreen(viewModel: FeedViewModel, navController: NavController) {
     }
 }
 
+
+/**
+ * @brief Écran de détails d'un message.
+ *
+ * @param postId ID du message.
+ * @param viewModel ViewModel du flux.
+ * @param commentViewModel ViewModel des commentaires.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -167,7 +182,6 @@ fun PostDetailScreen(
     val myList = remember { mutableStateListOf<Comment>() }
 
     myList.swapComment(comments)
-
 
     Box(modifier = Modifier.fillMaxSize()) {
         post?.let {
@@ -371,7 +385,11 @@ fun PostDetailScreen(
         }
     }
 
-
+/**
+ * @brief Liste de commentaires.
+ *
+ * @param comments Liste des commentaires.
+ */
     @Composable
     fun CommentList(comments: List<Comment>) {
         Column {

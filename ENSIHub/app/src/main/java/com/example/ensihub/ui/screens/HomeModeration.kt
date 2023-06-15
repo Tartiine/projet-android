@@ -23,6 +23,11 @@ import com.example.ensihub.mainClasses.Post
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+/**
+ * @brief Écran de modération.
+ *
+ * @param moderationViewModel ViewModel de modération.
+ */
 @Composable
 fun ModerationScreen(moderationViewModel : Moderation) {
     val pendingPosts: List<Post> by moderationViewModel.pendingPosts.observeAsState(initial = emptyList())
