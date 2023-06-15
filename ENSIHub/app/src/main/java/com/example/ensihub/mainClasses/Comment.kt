@@ -11,6 +11,8 @@ data class Comment (
     var timestamp: Long,
     val likesCount: Int,
 ){
+
+    constructor(): this(UUID.randomUUID().toString(), "", "", "", System.currentTimeMillis(), 0)
     constructor(postId: String, text: String, author: String): this(UUID.randomUUID().toString(), postId, text, author, System.currentTimeMillis(), 0)
 
 }

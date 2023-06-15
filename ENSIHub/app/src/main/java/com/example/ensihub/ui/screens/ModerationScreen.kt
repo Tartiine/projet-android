@@ -130,7 +130,7 @@ fun ModerationView(
                 Icon(Icons.Default.Close, contentDescription = "Reject post", tint = Color.White)
             }
 
-            if(approve == true || reject == true) {
+            if(approve || reject) {
                 Icon(
                     Icons.Default.Search,
                     contentDescription = "UI confirm",

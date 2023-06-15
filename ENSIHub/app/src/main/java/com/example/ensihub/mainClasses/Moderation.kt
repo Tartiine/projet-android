@@ -41,7 +41,7 @@ class Moderation : ViewModel() {
 
     fun approvePost(post : Post) {
         val userId = Firebase.auth.currentUser?.uid
-        currentUser?.let { user ->
+        currentUser.let {
             if (userId != null) {
                 db.collection("posts")
                     .whereEqualTo("id", post.id)
@@ -66,7 +66,7 @@ class Moderation : ViewModel() {
 
     fun rejectPost(post : Post) {
         val userId = Firebase.auth.currentUser?.uid
-        currentUser?.let { user ->
+        currentUser.let {
             if (userId != null) {
                 db.collection("posts")
                     .whereEqualTo("id", post.id)
