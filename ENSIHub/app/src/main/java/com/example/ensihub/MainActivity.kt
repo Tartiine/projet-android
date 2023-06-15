@@ -70,6 +70,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+ override fun onStart() {
+        super.onStart()
+        if (Firebase.auth.currentUser == null) {
+            Firebase.auth.signOut()
+        }
+
+    }
+
     private suspend fun changeLikesFieldType() {
         val firestore = FirebaseFirestore.getInstance()
         val collectionRef = firestore.collection("posts")

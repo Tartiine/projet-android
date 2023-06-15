@@ -156,7 +156,7 @@ fun PostDetailScreen(
             modifier = Modifier
                 .background(color = Color(0xFF1B232E))
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+//                .verticalScroll(rememberScrollState())
         ) {
             Column(
                 modifier = Modifier
@@ -288,15 +288,8 @@ fun PostDetailScreen(
                             uri = android.net.Uri.parse(post!!.videoUrl)
                         )
                     }
-//                    CommentInput(onCommentSent = { text ->
-//                        val currentTime = System.currentTimeMillis()
-//                        val authorName = viewModel.currentUser
-//                        val comment = Comment(id = "", text = text, author = authorName, timestamp = currentTime, likesCount = 0)
-//                        viewModel.addComment(postId, comment)
-//                    })
-//                    CommentList(comments)
-                }
 
+                }
             }
                 Divider()
             }

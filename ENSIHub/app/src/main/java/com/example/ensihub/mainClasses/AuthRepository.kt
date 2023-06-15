@@ -38,7 +38,7 @@ class AuthRepository {
                         val user = hashMapOf(
                             "email" to email,
                             "id" to Firebase.auth.currentUser?.uid,
-                            "kind" to "user",
+                            "role" to "USER",
                             "username" to username
                         )
                         db.collection("users").document(userId)

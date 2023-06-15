@@ -246,9 +246,8 @@ class FeedViewModel : ViewModel() {
             val postsRef = db.collection("posts")
             Log.d(TAG, "Sending post: $post")
             postsRef.add(post)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "Successfully sent post: $documentReference")
-                    post.id = documentReference.id  // Set the Firestore document's ID to the post's ID field
+                .addOnSuccessListener {
+                    Log.d(TAG, "Successfully sent post: $it")
 
                     val updatedPosts = _posts.value?.toMutableList()
                     updatedPosts?.add(post)
