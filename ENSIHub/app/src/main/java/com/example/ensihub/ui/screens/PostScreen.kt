@@ -132,22 +132,6 @@ fun PostView(
                             tint = Color.White
                         )
                     }
-                            Button(
-                                modifier = Modifier
-                                    .width(80.dp),
-                                onClick = {
-                                    viewModel.reportPost(post)
-                                    Log.d("PostView", "reportPost clicked for postId = ${post.id}")
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                                elevation = null
-                            ) {
-                                Icon(
-                                    Icons.Default.Warning,
-                                    contentDescription = "Report post",
-                                    tint = Color.White
-                                )
-                            }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
