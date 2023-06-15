@@ -316,7 +316,7 @@ fun PostDetailScreen(
                                     post!!.imageUrl,
                                     null,
                                     modifier = Modifier
-                                        .padding(16.dp)
+                                        .padding(8.dp)
                                         .fillMaxWidth()
                                         .clip(shape = RoundedCornerShape(20.dp))
                                 )
