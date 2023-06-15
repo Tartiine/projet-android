@@ -281,7 +281,9 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
 
             ClickableText(
                 text = AnnotatedString("About us"),
-                onClick = {},
+                onClick = {
+                    navHostController.navigate("settings/aboutUs")
+                },
                 style = TextStyle(
                     color = Color.White,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
@@ -584,7 +586,6 @@ fun ChangePasswordView(navHostController: NavHostController) {
             textStyle = TextStyle(color = Color.White) // Set the text color to white
         )
 
-
         Button(
             onClick = {
                 if (newPassword.value != "" && newPassword.value == newPasswordConfirm.value) {
@@ -750,6 +751,53 @@ fun ContactView(navHostController: NavHostController) {
         }
 
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AboutUsView(navHostController: NavHostController){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = Color.Black),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Color(
+                        alpha = 255,
+                        red = 247,
+                        green = 152,
+                        blue = 23
+                    )
+                )
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Text(
+                text = "SETTINGS",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+
+
+    }
+
 }
 
 fun disconnect() {
