@@ -12,6 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * @class CommentViewModel
+ * @brief ViewModel for handling comments related to a post.
+ *
+ * This class is responsible for loading and adding comments associated with a specific post.
+ */
 class CommentViewModel(private val postId: String): ViewModel() {
 
     private val _comments = MutableLiveData<List<Comment>>()
@@ -24,12 +30,16 @@ class CommentViewModel(private val postId: String): ViewModel() {
     private val _currentUser = MutableStateFlow<User?>( null)
     val currentUser: StateFlow<User?> get() = _currentUser
 
-
+    /**
+     * @brief Initializes the CommentViewModel and loads initial comments.
+     */
     init {
         loadInitialComments()
     }
 
-
+    /**
+     * @brief Loads the initial comments for the post from the Firebase Firestore.
+     */
     private fun loadInitialComments() {
         viewModelScope.launch {
             Log.d(TAG, "Loading")
@@ -54,7 +64,11 @@ class CommentViewModel(private val postId: String): ViewModel() {
 
     }
 
-
+    /**
+     * @brief Adds a new comment to the Firebase Firestore.
+     *
+     * @param comment The comment to be added.
+     */
     fun addComment(comment: Comment) {
         viewModelScope.launch {
             db.collection("comments")
