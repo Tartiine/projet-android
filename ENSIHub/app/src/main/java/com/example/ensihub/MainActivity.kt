@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.Moderation
+import com.example.ensihub.mainClasses.NotificationUtils
 import com.example.ensihub.ui.screens.Navigation
 import com.example.ensihub.ui.theme.ENSIHubTheme
 import com.google.firebase.auth.ktx.auth
@@ -27,6 +28,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
+import java.util.UUID
+import androidx.core.app.NotificationManagerCompat
+
 
 
 class MainActivity : ComponentActivity() {
@@ -35,15 +40,16 @@ class MainActivity : ComponentActivity() {
     private val REQUEST_IMAGE_SELECTION = 3
     private val REQUEST_VIDEO_SELECTION = 4
     private val viewModel: FeedViewModel by viewModels()
+    private lateinit var notificationManager: NotificationManagerCompat
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        runBlocking {
-            // Call the changeLikesFieldType function and wait for it to complete
-            changeLikesFieldType()
-        }
+        notificationManager = NotificationManagerCompat.from(this)
+        //viewModel.loadInitialData()
+        NotificationUtils.checkForNewPostInDatabase(this)
+
 
         if (!permissionsCheck()) {
             requestPermissions()
@@ -119,7 +125,7 @@ class MainActivity : ComponentActivity() {
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
             PERMISSION_REQUEST_CODE
         )
     }
