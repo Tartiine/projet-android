@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.ensihub.mainClasses.CommentViewModel
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.LoginViewModel
 import com.example.ensihub.mainClasses.Moderation
@@ -99,7 +100,7 @@ fun Navigation(
                 }
 
                 composable(route = "postDetails/{postId}"){navBackStackEntry ->
-                    PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel
+                    PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel, commentViewModel = CommentViewModel(navBackStackEntry.arguments?.getString("postId") ?: "")
                     )
                 }
             }
