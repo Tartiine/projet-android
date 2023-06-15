@@ -109,6 +109,7 @@ class LoginViewModel(
                 if(isSuccessful){
                     Toast.makeText(context, "Success Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = true)
+                    _isLoggedIn.value = true
                 }else{
                     Toast.makeText(context, "Failed Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = false)
@@ -138,7 +139,6 @@ class LoginViewModel(
                     Toast.makeText(context, "Success Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = true)
                     _isLoggedIn.value = true
-
                 }else{
                     Toast.makeText(context, "Failed Login", Toast.LENGTH_SHORT).show()
                     loginUiState.value = loginUiState.value.copy(isSuccessLogin = false)

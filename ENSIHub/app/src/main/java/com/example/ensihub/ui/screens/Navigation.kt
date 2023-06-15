@@ -90,15 +90,15 @@ fun Navigation(
                 composable(route = "settings/changeUsername"){
                     ChangeUsernameView(navHostController = navController)
                 }
-
                 composable(route = "settings/changePassword"){
                     ChangePasswordView(navHostController = navController)
                 }
-
                 composable(route = "settings/contact"){
                     ContactView(navHostController = navController)
                 }
-
+                composable(route = "settings/aboutUs"){
+                AboutUsView(navHostController = navController)
+                }
                 composable(route = "postDetails/{postId}"){navBackStackEntry ->
                     PostDetailScreen(navBackStackEntry.arguments?.getString("postId") ?: "", viewModel = viewModel, commentViewModel = CommentViewModel(navBackStackEntry.arguments?.getString("postId") ?: "")
                     )
