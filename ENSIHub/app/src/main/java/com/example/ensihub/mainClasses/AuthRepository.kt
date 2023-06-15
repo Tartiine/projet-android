@@ -15,12 +15,29 @@ import kotlinx.coroutines.withContext
 class AuthRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.Default) {
     val currentUser:FirebaseUser? = Firebase.auth.currentUser
 
+    /**
+     * @brief Vérifie si un utilisateur est connecté.
+     *
+     * @return Boolean indiquant si un utilisateur est connecté.
+     */
     fun hasUser():Boolean = Firebase.auth.currentUser != null
-
+    /**
+     * @brief Réinitialise le mot de passe de l'utilisateur en envoyant un e-mail de réinitialisation.
+     *
+     * @param email Adresse e-mail de l'utilisateur.
+     */
     fun resetPassword(email: String) = Firebase.auth.sendPasswordResetEmail(email)
 
 
-
+    /**
+     * @brief Crée un nouvel utilisateur avec l'adresse e-mail et le mot de passe donnés.
+     *
+     * @param username Nom d'utilisateur de l'utilisateur.
+     * @param email Adresse e-mail de l'utilisateur.
+     * @param password Mot de passe de l'utilisateur.
+     * @param onComplete Fonction de rappel appelée une fois la création de l'utilisateur terminée.
+     * @return Résultat de l'opération de création d'utilisateur.
+     */
     suspend fun createUser(
         username:String,
         email:String,
@@ -56,7 +73,14 @@ class AuthRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.D
             }.await()
     }
 
-
+    /**
+     * @brief Connecte l'utilisateur avec l'adresse e-mail et le mot de passe donnés.
+     *
+     * @param email Adresse e-mail de l'utilisateur.
+     * @param password Mot de passe de l'utilisateur.
+     * @param onComplete Fonction de rappel appelée une fois la connexion terminée.
+     * @return Résultat de l'opération de connexion.
+     */
     suspend fun login(
         email: String,
         password: String,
