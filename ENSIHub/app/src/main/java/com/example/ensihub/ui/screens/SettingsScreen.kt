@@ -794,10 +794,43 @@ fun AboutUsView(navHostController: NavHostController){
 
         Spacer(modifier = Modifier.height(64.dp))
 
+        Text(
+            text = "About us",
+            modifier = Modifier
+                .padding(start = 32.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+            color = Color(
+                alpha = 255,
+                red = 247,
+                green = 152,
+                blue = 23
+            )
+        )
 
+        Spacer(modifier = Modifier.height(32.dp))
 
+        Text(
+            text = "Introducing EnsiHub: Connecting Students Worldwide\n" +
+                    "\n" +
+                    "EnsiHub is a social networking app designed to connect students globally. Our platform enables students to collaborate, share knowledge, and build a supportive community.\n" +
+                    "\n" +
+                    "Features:\n" +
+                    "- Create a student profile to showcase your educational background and interests.\n" +
+                    "- Engage in discussions, ask questions, and share experiences on the EnsiHub feed.\n" +
+                    "- Stay updated with educational events and announcements.\n" +
+                    "- Privacy and security are our top priorities.\n" +
+                    "\n" +
+                    "Join EnsiHub today and unlock a world of opportunities to connect, learn, and thrive together.\n" +
+                    "\n" +
+                    "Connect. Collaborate. Grow. EnsiHub.",
+            modifier = Modifier
+                .padding(start = 32.dp,end=22.dp)
+                .align(Alignment.Start),
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+            color = Color.White
+        )
     }
-
 }
 
 fun disconnect() {
