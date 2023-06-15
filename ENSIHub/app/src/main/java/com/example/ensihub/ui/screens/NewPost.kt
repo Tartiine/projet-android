@@ -47,6 +47,11 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
 
+/**
+ * @brief Vue de création d'un nouveau post.
+ *
+ * @param navController Contrôleur de navigation.
+ */
 @Composable
 fun NewPostView(navController: NavController) {
     val messageState = remember { mutableStateOf("") }
@@ -237,6 +242,12 @@ fun NewPostView(navController: NavController) {
     }
 }
 
+/**
+ * @brief Composant pour lire une vidéo.
+ *
+ * @param modifier Modifier pour personnaliser l'apparence du composant.
+ * @param uri URI de la vidéo à lire.
+ */
 @Composable
 fun VideoPlayer(
     modifier: Modifier = Modifier,

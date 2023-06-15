@@ -57,8 +57,6 @@ object NotificationUtils {
             }
     }
 
-
-
     private fun sendNotification(context: Context, message: String) {
         Log.d(TAG, "sendNotification called with message: $message")
 
@@ -116,5 +114,4 @@ object NotificationUtils {
             commit()
         }
     }
-
 }

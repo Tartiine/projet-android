@@ -24,6 +24,14 @@ enum class LoginRoutes {
     ForgotPassword
 }
 
+/**
+ * @brief Gestion de la navigation de l'application.
+ *
+ * @param navController Contrôleur de navigation.
+ * @param loginViewModel ViewModel de connexion.
+ * @param viewModel ViewModel du flux.
+ * @param moderation Composant de modération.
+ */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
