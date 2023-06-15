@@ -137,9 +137,6 @@ fun ModerationView(
                     tint = Color.White
                 )
             }
-            else {
-
-            }
         }
         Divider()
 
