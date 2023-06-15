@@ -532,6 +532,7 @@ class FeedViewModel : ViewModel() {
 
     fun pushImage(image: Uri, post: Post, onCompletion: (() -> Unit)? = null){
         isUploading.value = true
+        post.status = PostStatus.PENDING
         viewModelScope.launch {
             Log.d(TAG, "Sending image to storage")
             val id = UUID.randomUUID()
@@ -562,6 +563,7 @@ class FeedViewModel : ViewModel() {
 
     fun pushVideo(video: Uri, post: Post, onCompletion: (() -> Unit)? = null){
         isUploading.value = true
+        post.status = PostStatus.PENDING
         viewModelScope.launch {
             Log.d(TAG, "Sending video to storage")
             val id = UUID.randomUUID()
