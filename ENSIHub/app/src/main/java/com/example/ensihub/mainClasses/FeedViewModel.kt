@@ -29,6 +29,12 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID
 
+/**
+ * @class FeedViewModel
+ * @brief ViewModel for managing the feed and posts in an application.
+ *
+ * This class is responsible for loading, managing, and interacting with posts, comments, and user information.
+ */
 class FeedViewModel : ViewModel() {
     private val _posts = MutableLiveData<List<Post>>()
     val posts: LiveData<List<Post>>
@@ -63,12 +69,18 @@ class FeedViewModel : ViewModel() {
 
     private val error = "Error getting documents: "
 
+    /**
+     * @brief Initializes the FeedViewModel and fetches the current user's information.
+     */
     init {
         reload()
         fetchCurrentUser()
         loadLikesCountForAllPosts()
     }
 
+    /**
+     * @brief Fetches the information of the current user from the Firebase Firestore.
+     */
     private fun fetchCurrentUser() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val db = Firebase.firestore
@@ -84,6 +96,9 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Loads the initial data for the feed by fetching approved posts from the Firebase Firestore.
+     */
     fun loadInitialData() {
         viewModelScope.launch {
             db.collection("posts")
@@ -116,6 +131,9 @@ class FeedViewModel : ViewModel() {
                 }
         }
     }
+    /**
+     * @brief Loads the posts authored by the current user from the Firebase Firestore.
+     */
     fun loadUserPosts() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         currentUser?.let {
@@ -161,6 +179,11 @@ class FeedViewModel : ViewModel() {
     }
 
 
+    /**
+     * @brief Loads the comments for a specific post from the Firebase Firestore.
+     *
+     * @param post The post for which to load the comments.
+     */
     private fun loadComments(post: Post) {
         post.id?.let { postId ->  // Let block will execute only if postId is not null
             viewModelScope.launch {
@@ -185,7 +208,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-
+    /**
+     * @brief Loads more posts for pagination purposes from the Firebase Firestore.
+     *
+     * @param onCompletion Callback function to be called after loading the additional posts.
+     */
     fun loadMore(onCompletion: (() -> Unit)? = null) {
         i += 10
         viewModelScope.launch {
@@ -211,6 +238,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Reloads the feed by clearing the existing data and fetching posts from the Firebase Firestore.
+     *
+     * @param onCompletion Callback function to be called after reloading the feed.
+     */
     fun reload(onCompletion: (() -> Unit)? = null) {
         i = 10
         viewModelScope.launch {
@@ -239,6 +271,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Adds a new post to the Firebase Firestore.
+     *
+     * @param post The post to be added.
+     */
     @OptIn(DelicateCoroutinesApi::class)
     fun addPost(post: Post) {
         GlobalScope.launch {
@@ -259,6 +296,12 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Retrieves a specific post by its ID.
+     *
+     * @param postId The ID of the post to retrieve.
+     * @return LiveData object containing the post.
+     */
     fun getPost(postId: String): LiveData<Post?> {
         val post = MutableLiveData<Post?>()
         _posts.value?.let { posts ->
@@ -272,6 +315,12 @@ class FeedViewModel : ViewModel() {
         return post
     }
 
+    /**
+     * @brief Adds a comment to a specific post in the Firebase Firestore.
+     *
+     * @param postId The ID of the post to add the comment to.
+     * @param comment The comment to be added.
+     */
     fun addComment(postId: String, comment: Comment) {
         viewModelScope.launch {
             val postCommentsRef = db.collection("posts/${postId}/comments")
@@ -504,6 +553,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Reports a post for manual review by changing its status to PENDING in the Firebase Firestore.
+     *
+     * @param post The post to be reported.
+     */
     fun reportPost(post : Post) {
         val userId = Firebase.auth.currentUser?.uid
         currentUser.let {
@@ -530,6 +584,13 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Pushes an image to the Firebase Storage and updates the post's image URL in the Firebase Firestore.
+     *
+     * @param image The URI of the image to be uploaded.
+     * @param post The post to associate the image with.
+     * @param onCompletion Callback function to be called after the image upload is completed.
+     */
     fun pushImage(image: Uri, post: Post, onCompletion: (() -> Unit)? = null){
         isUploading.value = true
         post.status = PostStatus.PENDING
@@ -561,6 +622,13 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Pushes a video to the Firebase Storage and updates the post's video URL in the Firebase Firestore.
+     *
+     * @param video The URI of the video to be uploaded.
+     * @param post The post to associate the video with.
+     * @param onCompletion Callback function to be called after the video upload is completed.
+     */
     fun pushVideo(video: Uri, post: Post, onCompletion: (() -> Unit)? = null){
         isUploading.value = true
         post.status = PostStatus.PENDING
@@ -592,11 +660,23 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * @brief Converts a timestamp to a LocalDateTime object in the local time zone.
+     *
+     * @param timestamp The timestamp to convert.
+     * @return The LocalDateTime object representing the converted timestamp.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertTimestampToLocalDateTime(timestamp: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
     }
 
+    /**
+     * @brief Calculates the time passed since a given LocalDateTime object until now.
+     *
+     * @param date The LocalDateTime object representing the starting date.
+     * @return A string indicating the time passed, such as "X days ago", "X hours ago", etc.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun calculateTimePassed(date: LocalDateTime): String {
         val now = LocalDateTime.now()
