@@ -29,7 +29,9 @@ import com.example.ensihub.R
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-
+/**
+ * @brief Écran du profil utilisateur.
+ */
 @Composable
 fun UserProfileScreen() {
     val viewModel: FeedViewModel = viewModel()
@@ -86,7 +88,11 @@ fun UserProfileScreen() {
     }
 }
 
-
+/**
+ * @brief Liste des publications d'utilisateurs.
+ *
+ * @param posts Liste des publications à afficher.
+ */
 @Composable
 fun PostList(posts: List<Post>) {
     Box(
@@ -116,12 +122,14 @@ fun OrangeRectangle() {
                 blue = 23
             ))
     ) {
-        // Content of the orange rectangle
     }
 }
 
-
-
+/**
+ * @brief Élément de publication.
+ *
+ * @param post Publication à afficher.
+ */
 @Composable
 fun PostItem2(post: Post) {
 
@@ -160,7 +168,12 @@ fun PostItem2(post: Post) {
 
 
 
-
+/**
+ * @brief Récupère le temps écoulé depuis une publication sous forme de chaîne de caractères.
+ *
+ * @param timestamp Horodatage de la publication.
+ * @return Temps écoulé depuis la publication.
+ */
 fun getTimeSincePost(timestamp: Long): String{
     val now = System.currentTimeMillis()
     return DateUtils.getRelativeTimeSpanString(timestamp, now , DateUtils.MINUTE_IN_MILLIS).toString()

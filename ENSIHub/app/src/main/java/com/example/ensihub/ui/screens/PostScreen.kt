@@ -50,7 +50,15 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.ensihub.R
 import androidx.compose.runtime.*
 
-
+/**
+ * @brief Vue d'affichage d'un post.
+ *
+ * @param post Post à afficher.
+ * @param showImage Indicateur pour afficher ou masquer l'image ou la vidéo du post.
+ * @param onToggleShowImage Fonction de basculement pour afficher ou masquer l'image ou la vidéo.
+ * @param viewModel ViewModel du flux.
+ * @param navigateToPostDetails Fonction de navigation vers les détails du post.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostView(
