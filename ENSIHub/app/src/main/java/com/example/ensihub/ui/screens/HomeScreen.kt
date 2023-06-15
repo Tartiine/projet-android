@@ -151,8 +151,12 @@ fun PostDetailScreen(
     viewModel: FeedViewModel,
     commentViewModel: CommentViewModel
 ) {
+    val isLikedByUser = remember(postId) {
+        mutableStateOf(viewModel.isLikedByUserMap[postId] ?: false)
+    }
+    val likesCount = viewModel.likesCountMap[postId] ?: 0
     val post: Post? by viewModel.getPost(postId).observeAsState()
-    val isLikedByUser: Boolean by viewModel.isLikedByUser.collectAsState()
+    val currentPost = viewModel.getPost(postId).value
     val currentUser = viewModel.currentUser.collectAsState().value
     var text by remember { mutableStateOf("") }
     var textFieldHeight by remember { mutableStateOf(0) }
@@ -185,8 +189,10 @@ fun PostDetailScreen(
                                 .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(painter = painterResource(
-                                id = R.drawable.defaultuser),
+                            Image(
+                                painter = painterResource(
+                                    id = R.drawable.defaultuser
+                                ),
                                 contentDescription = "defaultuser",
                                 modifier = Modifier
                                     .size(30.dp)
@@ -207,7 +213,10 @@ fun PostDetailScreen(
                                     .weight(2f),
                                 onClick = {
                                     viewModel.reportPost(post!!)
-                                    Log.d("PostView", "reportPost clicked for postId = ${post!!.id}")
+                                    Log.d(
+                                        "PostView",
+                                        "reportPost clicked for postId = ${post!!.id}"
+                                    )
                                 },
                                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                                 elevation = null
@@ -235,20 +244,25 @@ fun PostDetailScreen(
                             Button(
                                 modifier = Modifier.size(60.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    contentColor = if (isLikedByUser == true) Color(247, 152, 23) else Color.White,
+                                    contentColor = if (isLikedByUser.value) Color(
+                                        247,
+                                        152,
+                                        23
+                                    ) else Color.White,
                                     backgroundColor = Color.Transparent
                                 ),
                                 onClick = {
-                                    if (isLikedByUser == true) {
-                                        viewModel.unlikePost(post!!)
+                                    if (isLikedByUser.value) {
+                                        viewModel.unlikePost(currentPost!!)
                                     } else {
-                                        viewModel.likePost(post!!)
+                                        viewModel.likePost(currentPost!!)
                                     }
+                                    isLikedByUser.value = !isLikedByUser.value
                                 },
                                 elevation = null
                             ) {
                                 androidx.compose.material.Icon(
-                                    if (isLikedByUser == true) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                                    if (isLikedByUser.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
                                     null
                                 )
                             }
@@ -256,13 +270,13 @@ fun PostDetailScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp),
+                                .padding(top = 2.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
 
                             Text(
-                                text = "Likes: ${post!!.likesCount}",
+                                text = "$likesCount",
                                 style = MaterialTheme.typography.body1,
                                 color = Color.White,
                                 modifier = Modifier.padding(start = 8.dp, end = 20.dp)
@@ -273,121 +287,128 @@ fun PostDetailScreen(
                             Text(
                                 text = viewModel.calculateTimePassed(
                                     viewModel.convertTimestampToLocalDateTime(
-                                        post!!.timestamp
+                                        currentPost!!.timestamp
                                     )
                                 ),
                                 style = MaterialTheme.typography.body2.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
                                 color = Color.White
                             )
                         }
-                        if (post!!.imageUrl != null) {
-                            // Display the image only if showImage is true and imageUrl is not null
-                            AsyncImage(
-                                post!!.imageUrl,
-                                null,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                                    .clip(shape = RoundedCornerShape(20.dp))
-                            )
-                        }
-                        if (post!!.videoUrl != null) {
-                            VideoPlayer(
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(10.dp)
-                                    .height(800.dp),
-                                uri = android.net.Uri.parse(post!!.videoUrl)
-                            )
+                            if (post!!.imageUrl != null) {
+                                // Display the image only if showImage is true and imageUrl is not null
+                                AsyncImage(
+                                    post!!.imageUrl,
+                                    null,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                        .clip(shape = RoundedCornerShape(20.dp))
+                                )
+                            }
+                            if (post!!.videoUrl != null) {
+                                VideoPlayer(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .height(800.dp),
+                                    uri = android.net.Uri.parse(post!!.videoUrl)
+                                )
+                            }
+
                         }
 
                     }
+                    Divider()
+                    CommentList(myList)
 
+                    Spacer(modifier = Modifier.height((textFieldHeight / Resources.getSystem().displayMetrics.density + 0.5f).toInt().dp))
                 }
-                Divider()
-                CommentList(myList)
-                
-                Spacer(modifier = Modifier.height((textFieldHeight / Resources.getSystem().displayMetrics.density + 0.5f).toInt().dp))
-            }
 
-        }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter)
-            .background(Color(0xFF1B232E)),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextField(
-                value = text,
-                onValueChange = { text = it },
-                textStyle = TextStyle(color = Color.White),
-                placeholder = { Text("Enter your comment here...", color = Color.White) },
-                modifier = Modifier
-                    .weight(1f)
-                    .onGloballyPositioned {
-                        textFieldHeight = it.size.height
-                    }
-                    .background(Color(0xFF2D3949))
-                
-            )
-            Button(
-                onClick = {
-                    val comment = Comment(postId, text = text, author = currentUser?.username ?: "")
-                    commentViewModel.addComment(comment)
-                    text = ""
-                },
-                colors = ButtonDefaults.buttonColors(contentColor = Color.White, backgroundColor = Color(alpha = 255, red = 247, green = 152, blue = 23)),
-                modifier = Modifier
-                    .padding(8.dp)
-                    .height((textFieldHeight / Resources.getSystem().displayMetrics.density + 0.5f).toInt().dp)
-            ) {
-                Text("Send")
             }
-        }
-    }
-}
-
-@Composable
-fun CommentList(comments: List<Comment>) {
-    Column {
-        Text(
-            text = "Comments",
-            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-            color = Color.White,
-            modifier = Modifier.padding(12.dp)
-        )
-        for (comment in comments){
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .background(Color(0xFF1B232E)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Image(painter = painterResource(
-                    id = R.drawable.defaultuser),
-                    contentDescription = "defaultuser",
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    textStyle = TextStyle(color = Color.White),
+                    placeholder = { Text("Enter your comment here...", color = Color.White) },
                     modifier = Modifier
-                        .size(15.dp)
-                )
+                        .weight(1f)
+                        .onGloballyPositioned {
+                            textFieldHeight = it.size.height
+                        }
+                        .background(Color(0xFF2D3949))
 
-                Text(
-                    text = comment.author + " :",
-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White,
-                    modifier = Modifier.padding(6.dp)
                 )
-                Text(
-                    text = comment.text,
-                    style = MaterialTheme.typography.body2,
-                    color = Color.White,
-                    modifier = Modifier.padding(6.dp)
-                )
-            } }
-        Spacer(modifier = Modifier.padding(bottom = 12.dp))
+                Button(
+                    onClick = {
+                        val comment =
+                            Comment(postId, text = text, author = currentUser?.username ?: "")
+                        commentViewModel.addComment(comment)
+                        text = ""
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.White,
+                        backgroundColor = Color(alpha = 255, red = 247, green = 152, blue = 23)
+                    ),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .height((textFieldHeight / Resources.getSystem().displayMetrics.density + 0.5f).toInt().dp)
+                ) {
+                    Text("Send")
+                }
+            }
+        }
     }
-}
+
+
+    @Composable
+    fun CommentList(comments: List<Comment>) {
+        Column {
+            Text(
+                text = "Comments",
+                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
+                color = Color.White,
+                modifier = Modifier.padding(12.dp)
+            )
+            for (comment in comments) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Image(
+                        painter = painterResource(
+                            id = R.drawable.defaultuser
+                        ),
+                        contentDescription = "defaultuser",
+                        modifier = Modifier
+                            .size(15.dp)
+                    )
+
+                    Text(
+                        text = comment.author + " :",
+                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White,
+                        modifier = Modifier.padding(6.dp)
+                    )
+                    Text(
+                        text = comment.text,
+                        style = MaterialTheme.typography.body2,
+                        color = Color.White,
+                        modifier = Modifier.padding(6.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.padding(bottom = 12.dp))
+        }
+    }
 
 
 
@@ -411,12 +432,6 @@ fun SnapshotStateList<Comment>.swapComment(newList: List<Comment>){
 
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen() {
-    //HomeScreen()
-}
 
 
 
