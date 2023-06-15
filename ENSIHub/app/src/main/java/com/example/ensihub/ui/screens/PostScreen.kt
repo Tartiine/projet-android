@@ -37,18 +37,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.ensihub.mainClasses.FeedViewModel
 import com.example.ensihub.mainClasses.Post
-import com.example.ensihub.mainClasses.Role
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,7 +60,6 @@ fun PostView(
     viewModel: FeedViewModel,
     navigateToPostDetails: (String) -> Unit
 ) {
-    val currentUser = viewModel.currentUser.collectAsState().value
     val textLimit = 200
     val fullText = post.text
     val displayText = if (fullText.length > textLimit) {

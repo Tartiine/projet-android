@@ -36,7 +36,7 @@ class FeedViewModel : ViewModel() {
 
     private val _comments = MutableLiveData<Map<String, List<Comment>>>()
 
-    val comments = MutableLiveData<List<Comment>>()
+    private val comments = MutableLiveData<List<Comment>>()
 
 
     private val db = Firebase.firestore
@@ -59,7 +59,9 @@ class FeedViewModel : ViewModel() {
 
     val isUploading: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    var i: Long = 10
+    private var i: Long = 10
+
+    private val error = "Error getting documents: "
 
     init {
         reload()
@@ -67,20 +69,18 @@ class FeedViewModel : ViewModel() {
         loadLikesCountForAllPosts()
     }
 
-    fun fetchCurrentUser() {
+    private fun fetchCurrentUser() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val db = Firebase.firestore
 
         val docRef = uid?.let { db.collection("users").document(it) }
-        if (docRef != null) {
-            docRef.get().addOnSuccessListener { document ->
-                if (document != null) {
-                    val user = document.toObject(User::class.java)
-                    _currentUser.value = user
-                }
-            }.addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
+        docRef?.get()?.addOnSuccessListener { document ->
+            if (document != null) {
+                val user = document.toObject(User::class.java)
+                _currentUser.value = user
             }
+        }?.addOnFailureListener { exception ->
+            Log.d(TAG, "get failed with ", exception)
         }
     }
 
@@ -112,7 +112,7 @@ class FeedViewModel : ViewModel() {
 
                 }
                 .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents: ", exception)
+                    Log.w(TAG, error, exception)
                 }
         }
     }
@@ -149,7 +149,7 @@ class FeedViewModel : ViewModel() {
                                     _userPosts.value = userPostList
                                 }
                                 .addOnFailureListener { exception ->
-                                    Log.w(TAG, "Error getting documents: ", exception)
+                                    Log.w(TAG, error, exception)
                                 }
                         }
                     }
@@ -206,7 +206,7 @@ class FeedViewModel : ViewModel() {
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents.", exception)
+                    Log.w(TAG, error, exception)
                 }
         }
     }
@@ -234,7 +234,7 @@ class FeedViewModel : ViewModel() {
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents.", exception)
+                    Log.w(TAG, error, exception)
                 }
         }
     }
@@ -506,7 +506,7 @@ class FeedViewModel : ViewModel() {
 
     fun reportPost(post : Post) {
         val userId = Firebase.auth.currentUser?.uid
-        currentUser?.let { user ->
+        currentUser.let {
             if (userId != null) {
                 println("look:"+post.id)
                 db.collection("posts")

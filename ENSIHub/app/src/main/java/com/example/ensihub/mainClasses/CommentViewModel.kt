@@ -1,24 +1,18 @@
 package com.example.ensihub.mainClasses
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.firestore.Query
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CommentViewModel(postId: String): ViewModel() {
-
-    val postId = postId
+class CommentViewModel(private val postId: String): ViewModel() {
 
     private val _comments = MutableLiveData<List<Comment>>()
     val comments: LiveData<List<Comment>>
@@ -30,19 +24,13 @@ class CommentViewModel(postId: String): ViewModel() {
     private val _currentUser = MutableStateFlow<User?>( null)
     val currentUser: StateFlow<User?> get() = _currentUser
 
-    private val _isLikedByUserMap = mutableStateMapOf<String, Boolean>()
-    val isLikedByUserMap: Map<String, Boolean> = _isLikedByUserMap
-
-    private val _likesCountMap = mutableStateMapOf<String, Int>()
-    val likesCountMap: Map<String, Int> = _likesCountMap
-
 
     init {
         loadInitialComments()
     }
 
 
-    fun loadInitialComments() {
+    private fun loadInitialComments() {
         viewModelScope.launch {
             Log.d(TAG, "Loading")
             db.collection("comments")

@@ -7,16 +7,15 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class AuthRepository {
+class AuthRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.Default) {
     val currentUser:FirebaseUser? = Firebase.auth.currentUser
 
     fun hasUser():Boolean = Firebase.auth.currentUser != null
-
-    fun getUserId():String = Firebase.auth.currentUser?.uid.orEmpty()
 
     fun resetPassword(email: String) = Firebase.auth.sendPasswordResetEmail(email)
 
@@ -27,7 +26,7 @@ class AuthRepository {
         email:String,
         password:String,
         onComplete:(Boolean) -> Unit
-    ): AuthResult = withContext(Dispatchers.IO){
+    ): AuthResult = withContext(dispatcher){
         Firebase.auth
             .createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{
@@ -57,25 +56,17 @@ class AuthRepository {
             }.await()
     }
 
+
     suspend fun login(
         email: String,
         password: String,
         onComplete: (Boolean) -> Unit
-    ): AuthResult = withContext(Dispatchers.IO) {
+    ): AuthResult = withContext(dispatcher) {
         Firebase.auth
             .signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user = Firebase.auth.currentUser
-                    val isEmailVerified = user?.isEmailVerified ?: false
-
-                    if (isEmailVerified) {
-                        onComplete.invoke(true)
-                    } else {
-                        onComplete.invoke(true) //Pour le moment il y pas de verification d'email
-                        //donc faut le laisser a true sinon la variable de connection
-                        // ne s'actualise pas
-                    }
+                    onComplete.invoke(true)
                 } else {
                     onComplete.invoke(false)
                 }
