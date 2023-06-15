@@ -58,6 +58,12 @@ import com.example.ensihub.mainClasses.LoginViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.firestore.ktx.firestore
 
+/**
+ * @brief Vue des paramètres de l'application.
+ *
+ * @param navHostController Contrôleur de navigation pour gérer les transitions entre les écrans.
+ * @param loginViewModel ViewModel pour la gestion de l'authentification.
+ */
 @Composable
 fun SettingsView(navHostController: NavHostController, loginViewModel: LoginViewModel) {
     val popupControl = remember {
@@ -364,7 +370,11 @@ fun SettingsView(navHostController: NavHostController, loginViewModel: LoginView
     }
 }
 
-
+/**
+ * @brief Vue permettant de modifier le nom d'utilisateur.
+ *
+ * @param navHostController Contrôleur de navigation pour gérer les transitions entre les écrans.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeUsernameView(navHostController: NavHostController) {
@@ -478,6 +488,11 @@ fun ChangeUsernameView(navHostController: NavHostController) {
     }
 }
 
+/**
+ * @brief Vue permettant de modifier le mot de passe.
+ *
+ * @param navHostController Contrôleur de navigation pour gérer les transitions entre les écrans.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangePasswordView(navHostController: NavHostController) {
@@ -626,6 +641,11 @@ fun ChangePasswordView(navHostController: NavHostController) {
     }
 }
 
+/**
+ * @brief Vue pour contacter l'équipe de support.
+ *
+ * @param navHostController Contrôleur de navigation pour gérer les transitions entre les écrans.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactView(navHostController: NavHostController) {
@@ -753,6 +773,11 @@ fun ContactView(navHostController: NavHostController) {
     }
 }
 
+/**
+ * @brief Vue contenant des informations sur l'application et l'équipe de développement.
+ *
+ * @param navHostController Contrôleur de navigation pour gérer les transitions entre les écrans.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutUsView(navHostController: NavHostController){
