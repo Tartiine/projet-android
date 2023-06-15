@@ -11,6 +11,53 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * @class LoginViewModel
+ * @brief ViewModel class for the login functionality.
+ *
+ * This ViewModel handles the login and sign-up logic, and provides the necessary state and functions for the login UI.
+ *
+ * @property repository The authentication repository used for user authentication (default: AuthRepository).
+ * @property loginUiState The state of the login UI.
+ * @property password The password entered by the user.
+ * @property isLoggedIn Indicates whether a user is logged in (StateFlow).
+ *
+ * @constructor Creates a LoginViewModel instance with the provided authentication repository.
+ *
+ * @function updateStatusLogin Updates the login status of the user.
+ * @function onEmailChange Updates the email in the login UI state when the email input changes.
+ * @function onPasswordChange Updates the password in the login UI state when the password input changes.
+ * @function onEmailSignUpChange Updates the email in the sign-up UI state when the email input changes.
+ * @function onPasswordSignUpChange Updates the password in the sign-up UI state when the password input changes.
+ * @function onConfirmPasswordSignUpChange Updates the confirm password in the sign-up UI state when the input changes.
+ * @function onUserNameChange Updates the username in the login UI state when the username input changes.
+ * @function validateLoginForm Validates the login form inputs.
+ * @function validateSignUpForm Validates the sign-up form inputs.
+ * @function resetPassword Resets the user's password.
+ * @function createUser Creates a new user account.
+ * @function loginUser Logs in an existing user.
+ */
+
+/**
+ * @class LoginUiState
+ * @brief Represents the state of the login UI.
+ *
+ * This data class holds the various state properties related to the login UI, including username, email,
+ * password, loading state, success login flag, sign-up error, login error, and reset password error.
+ *
+ * @property userName The username entered in the UI.
+ * @property eMail The email entered in the login UI.
+ * @property password The password entered in the login UI.
+ * @property eMailSignUp The email entered in the sign-up UI.
+ * @property passwordSignUp The password entered in the sign-up UI.
+ * @property confirmPasswordSignUp The confirmed password entered in the sign-up UI.
+ * @property isLoading Indicates whether the UI is in a loading state.
+ * @property isSuccessLogin Indicates whether the login was successful.
+ * @property signUpError The error message related to sign-up (nullable).
+ * @property loginError The error message related to login (nullable).
+ * @property resetPasswordError The error message related to password reset (nullable).
+ */
+
 class LoginViewModel(
     private val repository: AuthRepository = AuthRepository()
 ): ViewModel() {

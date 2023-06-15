@@ -16,6 +16,20 @@ import com.example.ensihub.MainActivity
 import com.example.ensihub.R
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * @object NotificationUtils
+ * @brief Utility object for handling notifications of new posts.
+ *
+ * This object provides utility functions for checking for new posts in the database and sending notifications to the user.
+ *
+ * @property CHANNEL_ID The ID of the notification channel.
+ * @property NOTIFICATION_ID The ID of the notification.
+ *
+ * @function checkForNewPostInDatabase Checks the database for new posts and sends notifications if new posts are found.
+ * @function sendNotification Sends a notification to the user with the specified message.
+ * @function getLastPostTimestamp Retrieves the timestamp of the last post from shared preferences.
+ * @function updateLastPostTimestamp Updates the timestamp of the last post in shared preferences.
+ */
 
 object NotificationUtils {
     private const val CHANNEL_ID = "com.example.ensihub.newpostnotifications"

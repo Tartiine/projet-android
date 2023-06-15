@@ -14,6 +14,27 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * @class Moderation
+ * @brief ViewModel class for moderating posts.
+ *
+ * This ViewModel handles the moderation of posts, including approving and rejecting posts, as well as loading pending posts.
+ *
+ * @property db The instance of Firebase Firestore.
+ * @property _pendingPosts The MutableLiveData containing the list of pending posts.
+ * @property i The number of pending posts to load.
+ * @property pendingPosts The MutableLiveData containing the current list of pending posts.
+ * @property _currentUser The current user (MutableStateFlow).
+ * @property currentUser The current user (StateFlow).
+ *
+ * @constructor Creates a Moderation instance and initializes the list of pending posts.
+ *
+ * @function approvePost Approves a pending post by updating its status to "APPROVED".
+ * @function rejectPost Rejects a pending post by deleting it from the collection.
+ * @function reloadPendingPosts Reloads the list of pending posts.
+ * @function loadMorePendingPosts Loads more pending posts.
+ */
+
 class Moderation : ViewModel() {
     private val db = Firebase.firestore
     private val _pendingPosts = MutableLiveData<List<Post>>()
